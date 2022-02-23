@@ -1,0 +1,14 @@
+*~
+*.swp
+*.swo
+/node_modules
+/.pnp
+.pnp.js
+/coverage
+/build
+.DS_Store
+.env.*
+.environment
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
