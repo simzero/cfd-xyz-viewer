@@ -1,0 +1,95 @@
+{
+  "name": "cfd-xyz",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@firebase/app": "^0.7.16",
+    "@firebase/firestore": "^3.4.4",
+    "@firebase/storage": "^0.9.2",
+    "@fortawesome/fontawesome-svg-core": "^1.3.0",
+    "@fortawesome/free-brands-svg-icons": "^6.0.0",
+    "@fortawesome/free-regular-svg-icons": "^6.0.0",
+    "@fortawesome/free-solid-svg-icons": "^6.0.0",
+    "@fortawesome/react-fontawesome": "^0.1.17",
+    "@kitware/vtk.js": "^22.4.0",
+    "@mui/icons-material": "^5.4.1",
+    "@mui/material": "^5.4.3",
+    "@mui/styles": "^5.4.1",
+    "ajv": "^8.10.0",
+    "arraybuffer-loader": "^1.0.8",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "crypto-js": "^4.1.1",
+    "env-install": "^1.0.0",
+    "exports-loader": "^3.1.0",
+    "file-loader": "^5.0.2",
+    "hex-rgb": "^5.0.0",
+    "node-polyfill-webpack-plugin": "^1.1.4",
+    "papaparse": "^5.3.1",
+    "path-browserify": "^1.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-flippy": "^1.1.0",
+    "react-mui-dropzone": "^4.0.6",
+    "react-promise-loader": "^1.1.2",
+    "react-promise-tracker": "^2.1.0",
+    "react-router-dom": "^6.2.1",
+    "serve": "^13.0.2",
+    "styled-components": "^5.3.3",
+    "typescript": "^4.5.5",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2",
+    "wslink": "^1.4.1"
+  },
+  "envDependencies": {
+    "rom": "git+https://${GITHUB_TOKEN}:x-oauth-basic@github.com/carpemonf/ROM-js-dist.git"
+  },
+  "devDependencies": {
+    "react-scripts": "^5.0.0"
+  },
+  "scripts": {
+    "postinstall": "env-install",
+    "bundle": "webpack --mode production",
+    "dev": "react-scripts start",
+    "start": "serve -s build",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://localhost:3000",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browser": {
+    "crypto": false,
+    "fs": false,
+    "path": false,
+    "os": false
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "author": "",
+  "license": "I"
+}
