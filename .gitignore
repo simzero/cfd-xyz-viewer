@@ -9,6 +9,11 @@
 .DS_Store
 .env.*
 .environment
+package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+par
+*.txt
+*.vtu
+*.vtp
