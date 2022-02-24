@@ -21,11 +21,6 @@ function Footer() {
       <Typography variant="body2" style={{fontFamily: 'monospace', fontSize: 12}}>
         {'Copyright © '}
         {new Date().getFullYear()}
-        {' | '}
-        <Link className={classes.link} color="inherit" href="https://www.companyname.com">
-          Powered by HorizonOSS
-        </Link>{' '}
-        {''}
       </Typography>
     );
   }
