@@ -166,7 +166,7 @@ export const lightTheme = {
   },
   disabled: {},
   mainWrapper: {
-    backgroundColor: backgroundColor1,
+    background: backgroundColor1,
     position: 'relative',
     minHeight: '100vh'
   },
@@ -424,7 +424,7 @@ export const darkTheme = {
   },
   disabled: {},
   mainWrapper: {
-    backgroundColor: backgroundColor2,
+    background: backgroundColor2,
     position: 'relative',
     minHeight: '100vh'
   },

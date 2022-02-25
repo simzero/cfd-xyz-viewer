@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid, brands } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 function Footer() {
-  const themeType = window.localStorage.getItem('theme')
+  const themeType = window.localStorage.getItem('theme') || "light"
 
   //const localTheme = window.localStorage.getItem('theme');
   const theme = themeType === 'light' ? lightTheme : darkTheme;

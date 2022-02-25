@@ -38,8 +38,7 @@ function Navigation(element) {
   const useStyles =  makeStyles(navTheme);
   const classes = useStyles();
   const [theme, toggleTheme] = useDarkMode();
-  const theme2 = window.localStorage.getItem('theme')
-  console.log('theme2: ', theme2);
+  const theme2 = window.localStorage.getItem('theme') || 'light'
   const themeMode = theme2 === 'light' ? lightTheme : darkTheme;
   const icon = theme2 === 'light' ? <DarkModeIcon /> : <LightModeIcon />;
   const logo = theme2 === 'light' ? logoLight : logoDark;

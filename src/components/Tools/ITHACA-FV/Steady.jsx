@@ -106,9 +106,6 @@ function Steady() {
         scalarBarActor.modified();
         renderWindow.modified();
         renderWindow.render();
-        console.log("Changed theme1", currentTheme)
-        console.log("Changed theme2", background)
-        console.log("Changed theme3", textColor)
       }
     }
   }, [testVar, backgroundLight, backgroundDark]);
@@ -116,7 +113,6 @@ function Steady() {
 
   useEffect(() => {
     if (context.current) {
-      console.log("Creating scene")
       const { reduced } = context.current;
       const reader = vtkXMLPolyDataReader.newInstance();
       const actor = vtkActor.newInstance();
@@ -168,7 +164,6 @@ function Steady() {
         const grid_file = files.find(item => item.file.name.match(".*.vtu"));
         const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
           reduced.readUnstructuredGrid(atob(grid_data));
-          console.log("nuIni: ", nuIni)
           reduced.nu(nuIni*1e-05);
           reduced.solveOnline(new rom.Matrix([UIni]));
           //reduced.solveOnline(initialVelocity);
@@ -329,7 +324,6 @@ const readMatrixFile = async (data) => {
     }
     else
     {
-      console.log("FixedU: ", UMin)
       setUIni(UMin);
       //setVelocityValue(UMin);      
     }
@@ -353,21 +347,16 @@ const readMatrixFile = async (data) => {
 
     const isTurbulent = loadedNames.includes("coeffL2_mat.txt")
 
-    console.log("isTurbulent: ", isTurbulent)
-
     checkAll(loadedNames);
     setConfirmed(true);
-    console.log("A1")
+
     await rom.ready
-    console.log("A2")
 
     const B = new rom.Matrix(await readMatrixFile(getData("B_mat.txt")));
     const P = new rom.Matrix(await readMatrixFile(getData("P_mat.txt")));
     const M = new rom.Matrix(await readMatrixFile(getData("M_mat.txt")));
     const K = new rom.Matrix(await readMatrixFile(getData("K_mat.txt")));
     const modes = new rom.Matrix(await readMatrixFile(getData("EigenModes_U_mat.txt")));
-    console.log("A3")
-
 
     const mu = new rom.Matrix(await readMatrixFile(getData('par')));
     const Nphi_u = B.rows();
@@ -422,17 +411,10 @@ const readMatrixFile = async (data) => {
         reduced.addCMatrix(C, index);
       }));
 
-      console.log("A5")
       reduced.preprocess();
-      console.log("A6", nuMin)
       //reduced.nu(nuMin*1e-05);
-      console.log("A7")
       context.current = { reduced };
-      console.log("A8")
       setDataLoaded(true);
-      console.log("A10")
-      console.log("UFixed: ", UFixed)
-      console.log("nuFixed: ", nuFixed)
     })();
 
   }
@@ -473,7 +455,6 @@ const readMatrixFile = async (data) => {
 
   function handleUFixed() {
     if (!UFixed) {
-      console.log("Not fixed", UMin)
       setUMax(UMin);
       setVelocityValue(UMin);
       setUIni(UMin);
@@ -534,7 +515,6 @@ const readMatrixFile = async (data) => {
   useEffect(() => {
     if (context.current) {
       const { polydata, reduced, lookupTable, renderWindow, mapper } = context.current;
-      console.log(velocityValue, viscosityValue)
       reduced.nu(viscosityValue*1e-05);
       reduced.solveOnline(new rom.Matrix([velocityValue]));
       //reduced.solveOnline(velocityValue);

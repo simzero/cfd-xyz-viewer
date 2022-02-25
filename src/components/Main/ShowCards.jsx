@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 const ShowCards = ({post}) => {
-  const localTheme = window.localStorage.getItem('theme')
+  const localTheme = window.localStorage.getItem('theme') || "light"
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();

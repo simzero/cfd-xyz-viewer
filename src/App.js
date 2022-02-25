@@ -33,7 +33,7 @@ function App() {
   const value = {name, setName};
 
   return (
-    <div >
+    <div>
       <Router>
         <div className={classes.mainWrapper}>
           <ThemeContext.Provider value={value}>
