@@ -33,6 +33,10 @@ const { ColorMode } = vtkMapper;
 
 const data_source = "local" //  local | remote
 
+// TODO: redundand instances of vtkScalarBarActor to be removed
+// when issue https://github.com/Kitware/vtk-js/issues/2111
+// is fiex.
+
 function temperatureToViscosity(T) {
   const a0 = 1.145757;
   const a1 = 0.005236;
@@ -42,126 +46,121 @@ function temperatureToViscosity(T) {
 }
 
 function setScene(data, context, vtkContainerRef, theme) {
-      const { reduced } = context.current;
-      const reader = vtkXMLPolyDataReader.newInstance();
-      const actor = vtkActor.newInstance();
-      const scalarBarActor = vtkScalarBarActor.newInstance();
-      const lookupTable = vtkColorTransferFunction.newInstance();
-      const mapper = vtkMapper.newInstance({
-        interpolateScalarsBeforeMapping: true,
-        colorByArrayName: "uRec",
-        colorMode: ColorMode.DEFAULT,
-        scalarMode: 'pointData',
-        useLookupTableScalarRange: true,
-        lookupTable,
-      });
-      actor.setMapper(mapper);
-      mapper.setLookupTable(lookupTable);
-      scalarBarActor.setVisibility(true);
-      const mystyle = {
-        margin: '0',
-        padding: '0',
-        paddingBottom: '50',
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        width: '99%',
-        height: '93%',
-        overflow: 'hidden',
-      };
-      const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
-        containerStyle: mystyle,
-        background, 
-        rootContainer: vtkContainerRef.current,
-      });
-      const renderer = fullScreenRenderer.getRenderer();
-      const renderWindow = fullScreenRenderer.getRenderWindow();
-      const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
-      lookupTable.setVectorModeToMagnitude();
-      lookupTable.applyColorMap(preset);
-      lookupTable.updateRange();
+  const { reduced } = context.current;
+  const reader = vtkXMLPolyDataReader.newInstance();
+  const actor = vtkActor.newInstance();
+  const scalarBarActor = vtkScalarBarActor.newInstance();
+  const lookupTable = vtkColorTransferFunction.newInstance();
+  const mapper = vtkMapper.newInstance({
+    interpolateScalarsBeforeMapping: true,
+    colorByArrayName: "uRec",
+    colorMode: ColorMode.DEFAULT,
+    scalarMode: 'pointData',
+    useLookupTableScalarRange: true,
+    lookupTable,
+  });
+  actor.setMapper(mapper);
+  mapper.setLookupTable(lookupTable);
+  scalarBarActor.setVisibility(true);
+  const mystyle = {
+    margin: '0',
+    padding: '0',
+    paddingBottom: '50',
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    width: '99%',
+    height: '93%',
+    overflow: 'hidden',
+  };
+  const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
+    containerStyle: mystyle,
+    background, 
+    rootContainer: vtkContainerRef.current,
+  });
+  const renderer = fullScreenRenderer.getRenderer();
+  const renderWindow = fullScreenRenderer.getRenderWindow();
+  const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
+  lookupTable.setVectorModeToMagnitude();
+  lookupTable.applyColorMap(preset);
+  lookupTable.updateRange();
 
-      const scalarBarActorStyle = {
-        paddingBottom: 30,
-        fontColor: theme.vtkText.color,
-        fontStyle: 'normal',
-        fontFamily: theme.vtkText.fontFamily
-      };
-          reduced.readUnstructuredGrid(data);
-          reduced.solveOnline(new rom.Matrix([initialVelocity]));
-          const polydata_string = reduced.unstructuredGridToPolyData();
-          // TODO: parse directly as buffer or parse as a string...
-          var buf = Buffer.from(polydata_string, 'utf-8');	
-          reader.parseAsArrayBuffer(buf);
-          let polydata = reader.getOutputData(0);
+  const scalarBarActorStyle = {
+    paddingBottom: 30,
+    fontColor: theme.vtkText.color,
+    fontStyle: 'normal',
+    fontFamily: theme.vtkText.fontFamily
+  };
 
-          renderer.addActor(scalarBarActor);
-          renderer.addActor(actor);
+  reduced.readUnstructuredGrid(data);
+  reduced.solveOnline(new rom.Matrix([initialVelocity]));
+  const polydata_string = reduced.unstructuredGridToPolyData();
+  // TODO: parse directly as buffer or parse as a string...
+  var buf = Buffer.from(polydata_string, 'utf-8');	
+  reader.parseAsArrayBuffer(buf);
+  let polydata = reader.getOutputData(0);
 
-          reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
-          const newU = reduced.reconstruct();
+  renderer.addActor(scalarBarActor);
+  renderer.addActor(actor);
 
-          var nCells = polydata.getNumberOfPoints();
-          polydata.getPointData().setActiveScalars("uRec");
+  reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
+  const newU = reduced.reconstruct();
 
-          const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
-          for (let i = 0; i < nCells; i++) {
-            let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
-            array.setTuple(i, v)
-          }
-          array.modified();
-          array.modified();
+  var nCells = polydata.getNumberOfPoints();
+  polydata.getPointData().setActiveScalars("uRec");
 
-          polydata.getPointData().addArray(array);
+  const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
+  for (let i = 0; i < nCells; i++) {
+    let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
+    array.setTuple(i, v)
+  }
+  array.modified();
+  array.modified();
 
-          var activeArray = polydata.getPointData().getArray("uRec");
-          const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
-          lookupTable.setMappingRange(dataRange[0], dataRange[1]);
-          lookupTable.updateRange();
-          mapper.setScalarModeToUsePointFieldData();
-          mapper.setScalarRange(dataRange[0],dataRange[1]);
-          mapper.setColorByArrayName('uRec');
-          mapper.setInputData(polydata);
-          scalarBarActor.setScalarsToColors(mapper.getLookupTable());
-          scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
-          lookupTable.updateRange();
-          scalarBarActor.modified();
-          renderer.resetCamera();
-          renderer.getActiveCamera().zoom(1.3);
-          renderWindow.render();
-          renderer.resetCameraClippingRange();
-          scalarBarActor.modified();
-          //scalarBarActor.setVisibility(false);
-          renderWindow.render();
-          renderWindow.modified();
+  polydata.getPointData().addArray(array);
 
-          scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
-          scalarBarActor.setTickTextStyle(scalarBarActorStyle);
-          scalarBarActor.modified();
-          scalarBarActor.update();		
-          scalarBarActor.updatePolyDataForLabels();		
-          scalarBarActor.updateTextureAtlas();		
-          //scalarBarActor.setVisibility(true);
-          renderWindow.render();
+  var activeArray = polydata.getPointData().getArray("uRec");
+  const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
+  lookupTable.setMappingRange(dataRange[0], dataRange[1]);
+  lookupTable.updateRange();
+  mapper.setScalarModeToUsePointFieldData();
+  mapper.setScalarRange(dataRange[0],dataRange[1]);
+  mapper.setColorByArrayName('uRec');
+  mapper.setInputData(polydata);
+  scalarBarActor.setScalarsToColors(mapper.getLookupTable());
+  scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
+  lookupTable.updateRange();
+  scalarBarActor.modified();
+  renderer.resetCamera();
+  renderer.getActiveCamera().zoom(1.3);
+  renderer.resetCameraClippingRange();
+  scalarBarActor.setVisibility(false);
 
-          const camera = renderer.getActiveCamera();
-          const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
-          const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+  scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
+  scalarBarActor.setTickTextStyle(scalarBarActorStyle);
+  scalarBarActor.modified();
+  scalarBarActor.setVisibility(true);
+  renderWindow.modified();
+  renderWindow.render();
 
-          context.current = {
-            focalPoint,
-            cameraPosition,
-            reduced,
-            reader,
-            fullScreenRenderer,
-            renderWindow,
-            renderer,
-            lookupTable,
-            polydata,
-            actor,
-            scalarBarActor,
-            mapper,
-          };
+  const camera = renderer.getActiveCamera();
+  const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
+  const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+
+  context.current = {
+    focalPoint,
+    cameraPosition,
+    reduced,
+    reader,
+    fullScreenRenderer,
+    renderWindow,
+    renderer,
+    lookupTable,
+    polydata,
+    actor,
+    scalarBarActor,
+    mapper,
+  };
 }
 
 // Initialize Firebase
@@ -169,7 +168,7 @@ const app = initializeApp(environment.firebaseConfig);
 const storage = getStorage(app);
 
 var background = [255, 255, 255];
-var textColor = [0, 0, 0];
+//var textColor = [0, 0, 0];
 
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
@@ -239,12 +238,11 @@ function PitzDaily() {
   let textColorLight = lightTheme.vtkText.color;
   let textColorDark = darkTheme.vtkText.color;
 
+  const textColor = theme === 'light' ? textColorLight : textColorDark;
+
   background = hexRgb(theme.body, {format: 'array'});
-  textColor = hexRgb(theme.text, {format: 'array'});
   background = background.map(x => x / 255); 
-  textColor = textColor.map(x => x / 255); 
   background.pop();
-  textColor.pop();
 
   useEffect(() => {
     document.title = "cfd.xyz | OpenFOAM/incompressible/simpleFoam/pitzDaily"
@@ -437,7 +435,7 @@ function PitzDaily() {
 
   useEffect(() => {
     if (context.current) {
-      const { scalarBarActor, renderer, renderWindow } = context.current;
+      const { polydata, lookupTable, mapper, renderer, renderWindow, scalarBarActor } = context.current;
       if (renderWindow) {
         const currentTheme = window.localStorage.getItem('theme');
         const background = currentTheme === 'light' ? backgroundLight : backgroundDark;
@@ -445,7 +443,7 @@ function PitzDaily() {
 
         const scalarBarActorStyle1 = {
           paddingBottom: 30,
-          fontColor:  textColor,
+          fontColor: textColor,
           fontStyle: 'normal',
           fontFamily: theme.vtkText.fontFamily
         };
@@ -453,12 +451,11 @@ function PitzDaily() {
         renderer.setBackground(background);
         scalarBarActor.setAxisTextStyle(scalarBarActorStyle1);
         scalarBarActor.setTickTextStyle(scalarBarActorStyle1);
-        scalarBarActor.updateTextureAtlas();
-        scalarBarActor.updatePolyDataForLabels();		
-        scalarBarActor.completedImage();
-        scalarBarActor.update();
+        scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
+        scalarBarActor.setScalarsToColors(mapper.getLookupTable());
         scalarBarActor.modified();
-        renderWindow.modified();
+        //renderer.removeActor(scalarBarActor1);
+        //renderer.addActor(scalarBarActor1);
         renderWindow.render();
       }
     }
@@ -466,7 +463,7 @@ function PitzDaily() {
 
   useEffect(() => {
     if (context.current) {
-      const { polydata, reduced, lookupTable, renderWindow, mapper } = context.current;
+      const { lookupTable, mapper, polydata, reduced, renderer, renderWindow } = context.current;
       reduced.nu(temperatureToViscosity(temperatureValue)*1e-05);
       reduced.solveOnline(new rom.Matrix([velocityValue]));
       const newU = reduced.reconstruct();
@@ -538,7 +535,6 @@ function PitzDaily() {
         <div
           style={{
             paddingBottom: 60,
-            //padding: 10,
             position: 'absolute',
             top: '60px',
             right: '70px',
