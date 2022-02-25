@@ -25,7 +25,7 @@ function App() {
    document.title = "cfd.xyz | Home"
   }, []);
 
-  const themeType = window.localStorage.getItem('theme')
+  const themeType = window.localStorage.getItem('theme') || "light"
   const theme = themeType === 'light' ? lightTheme : darkTheme;
   const useStyles =  makeStyles(theme);
   const classes = useStyles();
