@@ -1,4 +1,5 @@
 import { React, useRef } from "react";
+import { useSwipeable } from 'react-swipeable';
 import Grid from '@mui/material/Grid'
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
@@ -18,9 +19,16 @@ const ShowCards = ({post}) => {
 
   const inputRef = useRef([]);
 
+  const handlers = useSwipeable({
+    onSwiped: () => inputRef.current[post.title].toggle(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
+  });
+
   return (
     <Grid item xs={10} sm={3} key={post.title}>
       <Card style={{ background: mainPrimaryColor }}>
+        <div {...handlers}>
         <Flippy
           flipOnClick={false}
           isFlipped={false}
@@ -43,7 +51,7 @@ const ShowCards = ({post}) => {
                   />
             }
             {post.ready
-              ? <div 
+              ? <div
                   onClick={() => inputRef.current[post.title].toggle() }
                 >
                   {inputRef.current &&
@@ -106,6 +114,7 @@ const ShowCards = ({post}) => {
             </BackSide>
           }
         </Flippy>
+        </div>
         <NavLink to={post.link} className={classes.link}>
           <div className={classes.cardTitle}>
             {post.title}
