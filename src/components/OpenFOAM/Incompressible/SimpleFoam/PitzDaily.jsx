@@ -159,7 +159,8 @@ function PitzDaily() {
       }
       else if (data_source === "remote")
       {
-        vtuPath = ref(storage, vtuPath, vtkContainerRef, initialTheme);
+        //vtuPath = ref(storage, vtuPath, vtkContainerRef, initialTheme);
+        vtuPath = ref(storage, vtuPath);
 
         getDownloadURL(vtuPath).then((url) => {
           const xhr = new XMLHttpRequest();
@@ -206,7 +207,7 @@ function PitzDaily() {
     const modes = new rom.Matrix(await readMatrixFile(storage, dataPath + 'EigenModes_U_mat.txt'));
     // Only needed for turbulent cases
     const coeffL2 = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/coeffL2_mat.txt'));
-    const mu = new rom.Matrix(await readMatrixFile(storage, dataPath + 'par'));
+    const mu = new rom.Matrix(await readMatrixFile(storage, dataPath + 'par.txt'));
     const Nphi_u = B.rows();
     const Nphi_p = K.cols();
     const N_BC = 1;
@@ -254,6 +255,7 @@ function PitzDaily() {
         const C = new rom.Matrix(await readMatrixFile(storage, dataPath + CPath));
         reduced.addCMatrix(C, index);
       }));
+
 
       reduced.preprocess();
       reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
