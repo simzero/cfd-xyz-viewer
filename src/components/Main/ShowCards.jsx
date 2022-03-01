@@ -146,7 +146,7 @@ function ShowBody() {
 
 
   return (
-    <Grid item xs={15} sm={3} key={post.title}>
+    <Grid item xs={12} sm={4} md={4} lg={8} xl={8} key={post.title}>
       <Card className={classes.cardMedia} style={{ background: mainPrimaryColor }}>
         {post.ready
           ? <div {...handlers}>

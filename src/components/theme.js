@@ -14,7 +14,7 @@ const cardWeight = '550';
 const cardTitleWeight =' 600';
 const toolsSize = 16;
 const vtkFontSize = 14;
-const cardDescriptionSize = 14;
+const cardDescriptionSize = 10;
 const bodySize = 14;
 const titleSize = 18;
 
@@ -223,11 +223,12 @@ export const lightTheme = {
   },
   cardDescription: {
     color: color2,
-    paddingTop: 60,
-    paddingRight: 40,
-    paddingLeft: 40,
+    paddingTop: 50,
+    paddingRight: 20,
+    paddingLeft: 20,
     float: 'left',
-    textAlign: 'justify',	  
+    textAlign: 'left',
+    whiteSpace: 'pre-line',
     backgroundColor: backgroundColorImage1,
     fontWeight: 400,
     fontSize: cardDescriptionSize,
@@ -238,9 +239,7 @@ export const lightTheme = {
     primary2Color: color2
   },
   cardMedia: {
-    minHeight: 112.5,
-    minWidth: 150,
-    maxWidth: 800,
+    maxWidth: "500px"
   },
   cardIcon: {
     opacity: '0.8',
@@ -498,6 +497,7 @@ export const darkTheme = {
     paddingLeft: 40,
     float: 'left',
     textAlign: 'justify',	  
+    whiteSpace: 'pre-line',
     backgroundColor: backgroundColorImage2,
     fontWeight: 400,
     fontSize: cardDescriptionSize,

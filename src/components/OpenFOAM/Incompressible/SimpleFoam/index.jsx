@@ -16,8 +16,7 @@ function SimpleFoam() {
   return (
     <div className={classes.root} align="center">
       <Grid
-        container
-        spacing={3}
+        container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16}}
         display="flex"
         flexDirection="row"
       >

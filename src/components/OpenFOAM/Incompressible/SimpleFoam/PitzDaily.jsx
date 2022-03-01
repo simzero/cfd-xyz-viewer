@@ -18,8 +18,6 @@ import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import debounce from "lodash/debounce";
 import { lightTheme, darkTheme } from './../../../theme';
 import hexRgb from 'hex-rgb';
-import { trackPromise, usePromiseTracker } from "react-promise-tracker";
-import Loader from 'react-promise-loader';
 import { initializeApp } from '@firebase/app';
 import { getBlob, getStorage, ref, getDownloadURL } from "@firebase/storage";
 import rom from 'rom'
@@ -53,16 +51,13 @@ function temperatureToViscosity(T) {
 const app = initializeApp(environment.firebaseConfig);
 const storage = getStorage(app);
 
-var background = [255, 255, 255];
 //var textColor = [0, 0, 0];
 
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
-const dataPath = '/OpenFOAM/incompressible/simpleFoam/pitzDaily/';
-const testRef = ref(storage, 'OpenFOAM/incompressible/simpleFoam/pitzDaily/pitzDaily.vtp');
+const dataPath = '/data/OpenFOAM/incompressible/simpleFoam/pitzDaily/';
 
 const readMatrixFile = async (storage, filePath) => {
-
   if (data_source === "local")
   {
     return new Promise(resolve => {
@@ -114,7 +109,7 @@ function PitzDaily() {
   const [showT, setShowT] = useState(false);
 
   const localTheme = window.localStorage.getItem('theme') || "light"
-  const testVar = useState(localTheme);
+  const trackTheme = useState(window.localStorage.getItem('theme') || "light");
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();
@@ -130,7 +125,7 @@ function PitzDaily() {
   let textColorDark = darkTheme.vtkText.color;
   const textColorLoader = localTheme === 'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
 
-  background = hexRgb(theme.body, {format: 'array'});
+  let background = hexRgb(theme.body, {format: 'array'});
   background = background.map(x => x / 255); 
   background.pop();
 
@@ -179,13 +174,13 @@ function PitzDaily() {
     }
   }, [dataLoaded, initialPortrait]);
 
-  let switch_storage = false;
+  //let switch_storage = false;
 
   const initialize = async() => {
     setVelocityValue(initialVelocity);
     setTemperatureValue(initialTemperature);
 
-    await getDownloadURL(testRef)
+    /*await getDownloadURL(testRef)
     .then((url) => {
     })
     .catch((error) => {
@@ -196,7 +191,7 @@ function PitzDaily() {
         default:
           break;
       }
-    });
+    });*/
 
     await rom.ready
 
@@ -271,7 +266,7 @@ function PitzDaily() {
 
   useEffect(() => {
     if (!context.current) {
-      trackPromise(initialize());
+      initialize();
     }
   }, []);
 
@@ -345,6 +340,7 @@ function PitzDaily() {
       rootContainer: vtkContainerRef.current,
     });
     const renderer = fullScreenRenderer.getRenderer();
+    renderer.setBackground(background);
     const renderWindow = fullScreenRenderer.getRenderWindow();
     const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
     lookupTable.setVectorModeToMagnitude();
@@ -470,9 +466,8 @@ function PitzDaily() {
     if (context.current) {
       const { mapper, renderer, renderWindow, scalarBarActor } = context.current;
       if (renderWindow) {
-        const currentTheme = window.localStorage.getItem('theme');
-        const background = currentTheme === 'light' ? backgroundLight : backgroundDark;
-        const textColor = currentTheme === 'light' ? textColorLight : textColorDark;
+        const background = localTheme === 'light' ? backgroundLight : backgroundDark;
+        const textColor = localTheme === 'light' ? textColorLight : textColorDark;
 
         const scalarBarActorStyle1 = {
           paddingBottom: 30,
@@ -487,12 +482,10 @@ function PitzDaily() {
         scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
         scalarBarActor.setScalarsToColors(mapper.getLookupTable());
         scalarBarActor.modified();
-        //renderer.removeActor(scalarBarActor1);
-        //renderer.addActor(scalarBarActor1);
         renderWindow.render();
       }
     }
-  }, [testVar, backgroundLight, backgroundDark]);
+  }, [trackTheme, localTheme, textColorLight, textColorDark, backgroundLight, backgroundDark, theme.vtkText.fontFamily]);
 
   useEffect(() => {
     if (context.current) {
