@@ -28,6 +28,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 import { environment } from './../../../../environments/environment';
+import useWindowOrientation from "use-window-orientation";
+import {isMobile} from 'react-device-detect';
+import PropagateLoader from "react-spinners/PropagateLoader";
 
 const { ColorMode } = vtkMapper;
 
@@ -45,123 +48,6 @@ function temperatureToViscosity(T) {
   return a0+a1*T+a2*Math.pow(T,2);
 }
 
-function setScene(data, context, vtkContainerRef, theme) {
-  const { reduced } = context.current;
-  const reader = vtkXMLPolyDataReader.newInstance();
-  const actor = vtkActor.newInstance();
-  const scalarBarActor = vtkScalarBarActor.newInstance();
-  const lookupTable = vtkColorTransferFunction.newInstance();
-  const mapper = vtkMapper.newInstance({
-    interpolateScalarsBeforeMapping: true,
-    colorByArrayName: "uRec",
-    colorMode: ColorMode.DEFAULT,
-    scalarMode: 'pointData',
-    useLookupTableScalarRange: true,
-    lookupTable,
-  });
-  actor.setMapper(mapper);
-  mapper.setLookupTable(lookupTable);
-  scalarBarActor.setVisibility(true);
-  const mystyle = {
-    margin: '0',
-    padding: '0',
-    paddingBottom: '50',
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    width: '99%',
-    height: '93%',
-    overflow: 'hidden',
-  };
-  const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
-    containerStyle: mystyle,
-    background, 
-    rootContainer: vtkContainerRef.current,
-  });
-  const renderer = fullScreenRenderer.getRenderer();
-  const renderWindow = fullScreenRenderer.getRenderWindow();
-  const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
-  lookupTable.setVectorModeToMagnitude();
-  lookupTable.applyColorMap(preset);
-  lookupTable.updateRange();
-
-  const scalarBarActorStyle = {
-    paddingBottom: 30,
-    fontColor: theme.vtkText.color,
-    fontStyle: 'normal',
-    fontFamily: theme.vtkText.fontFamily
-  };
-
-  reduced.readUnstructuredGrid(data);
-  reduced.solveOnline(new rom.Matrix([initialVelocity]));
-  const polydata_string = reduced.unstructuredGridToPolyData();
-  // TODO: parse directly as buffer or parse as a string...
-  var buf = Buffer.from(polydata_string, 'utf-8');	
-  reader.parseAsArrayBuffer(buf);
-  let polydata = reader.getOutputData(0);
-
-  renderer.addActor(scalarBarActor);
-  renderer.addActor(actor);
-
-  reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
-  const newU = reduced.reconstruct();
-
-  var nCells = polydata.getNumberOfPoints();
-  polydata.getPointData().setActiveScalars("uRec");
-
-  const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
-  for (let i = 0; i < nCells; i++) {
-    let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
-    array.setTuple(i, v)
-  }
-  array.modified();
-  array.modified();
-
-  polydata.getPointData().addArray(array);
-
-  var activeArray = polydata.getPointData().getArray("uRec");
-  const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
-  lookupTable.setMappingRange(dataRange[0], dataRange[1]);
-  lookupTable.updateRange();
-  mapper.setScalarModeToUsePointFieldData();
-  mapper.setScalarRange(dataRange[0],dataRange[1]);
-  mapper.setColorByArrayName('uRec');
-  mapper.setInputData(polydata);
-  scalarBarActor.setScalarsToColors(mapper.getLookupTable());
-  scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
-  lookupTable.updateRange();
-  scalarBarActor.modified();
-  renderer.resetCamera();
-  renderer.getActiveCamera().zoom(1.3);
-  renderer.resetCameraClippingRange();
-  scalarBarActor.setVisibility(false);
-
-  scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
-  scalarBarActor.setTickTextStyle(scalarBarActorStyle);
-  scalarBarActor.modified();
-  scalarBarActor.setVisibility(true);
-  renderWindow.modified();
-  renderWindow.render();
-
-  const camera = renderer.getActiveCamera();
-  const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
-  const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
-
-  context.current = {
-    focalPoint,
-    cameraPosition,
-    reduced,
-    reader,
-    fullScreenRenderer,
-    renderWindow,
-    renderer,
-    lookupTable,
-    polydata,
-    actor,
-    scalarBarActor,
-    mapper,
-  };
-}
 
 // Initialize Firebase
 const app = initializeApp(environment.firebaseConfig);
@@ -177,7 +63,7 @@ const testRef = ref(storage, 'OpenFOAM/incompressible/simpleFoam/pitzDaily/pitzD
 
 const readMatrixFile = async (storage, filePath) => {
 
-  if (data_source === "remote")
+  if (data_source === "local")
   {
     return new Promise(resolve => {
       fetch(filePath).then(res => res.text())
@@ -216,14 +102,19 @@ const readMatrixFile = async (storage, filePath) => {
 };
 
 function PitzDaily() {
+  const { orientation, portrait, landscape } = useWindowOrientation();
+  const initialPortrait = portrait;
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
   const [temperatureValue, setTemperatureValue] = useState(null);
   const [velocityValue, setVelocityValue] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(null);
+  const [sceneLoaded, setSceneLoaded] = useState(null);
+  const [showU, setShowU] = useState(false);
+  const [showT, setShowT] = useState(false);
 
-  const localTheme = window.localStorage.getItem('theme')
-  const testVar = useState(window.localStorage.getItem('theme'));
+  const localTheme = window.localStorage.getItem('theme') || "light"
+  const testVar = useState(localTheme);
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();
@@ -237,8 +128,7 @@ function PitzDaily() {
 
   let textColorLight = lightTheme.vtkText.color;
   let textColorDark = darkTheme.vtkText.color;
-
-  const textColor = theme === 'light' ? textColorLight : textColorDark;
+  const textColorLoader = localTheme === 'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
 
   background = hexRgb(theme.body, {format: 'array'});
   background = background.map(x => x / 255); 
@@ -249,7 +139,14 @@ function PitzDaily() {
   }, []);
 
   useEffect(() => {
+    if (context.current)
+     resetCamera();
+  }, [orientation]);
+
+  useEffect(() => {
     if (context.current) {
+      const localTheme = window.localStorage.getItem('theme') || "light"
+      const initialTheme = localTheme === 'light' ? lightTheme : darkTheme;
 
       let vtuPath = dataPath + 'pitzDaily.vtu';
 
@@ -257,19 +154,19 @@ function PitzDaily() {
       {
         fetch(vtuPath).then(res => res.text())
         .then((data) => {
-          setScene(data, context, vtkContainerRef, theme);
+          setScene(initialPortrait, data, context, vtkContainerRef, initialTheme);
         });
       }
       else if (data_source === "remote")
       {
-        vtuPath = ref(storage, vtuPath, vtkContainerRef, theme);
+        vtuPath = ref(storage, vtuPath, vtkContainerRef, initialTheme);
 
         getDownloadURL(vtuPath).then((url) => {
           const xhr = new XMLHttpRequest();
           xhr.responseType = 'text';
           xhr.onload = (event) => {
             const data = xhr.responseText;
-            setScene(data, context, vtkContainerRef, theme);
+            setScene(initialPortrait, data, context, vtkContainerRef, initialTheme);
           };
           xhr.open('GET', url);
           xhr.send();
@@ -279,7 +176,7 @@ function PitzDaily() {
       {
       }
     }
-  }, [dataLoaded]);
+  }, [dataLoaded, initialPortrait]);
 
   let switch_storage = false;
 
@@ -359,11 +256,14 @@ function PitzDaily() {
       }));
 
       reduced.preprocess();
-      reduced.setRBF(mu, coeffL2);
       reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
+      reduced.setRBF(mu, coeffL2);
       context.current = { reduced };
-      setDataLoaded(true);
       coeffL2.delete();
+      setDataLoaded(true);
+      setTimeout(myFunction, 10000); 
+      // TODO: fix this using track promise for setScene
+      //while(sceneLoaded==false) {}
     })();
   }
 
@@ -371,6 +271,12 @@ function PitzDaily() {
     if (!context.current) {
       trackPromise(initialize());
     }
+  }, []);
+
+  useEffect(() => {
+    /*if (!context.current && !dataLoaded) {
+      trackPromise(initialize());
+    }*/
     
     return () => {
       if (context.current) {
@@ -395,9 +301,134 @@ function PitzDaily() {
      renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)	    
      renderer.resetCamera();
      fullScreenRenderer.resize();
-     renderer.getActiveCamera().zoom(1.3);
+     if (portrait) 
+       renderer.getActiveCamera().zoom(0.55);
+     else
+       renderer.getActiveCamera().zoom(1.3);
      renderWindow.render();
     }    
+  }
+
+  function setScene(portrait, data, context, vtkContainerRef, theme) {
+    const { reduced } = context.current;
+    const reader = vtkXMLPolyDataReader.newInstance();
+    const actor = vtkActor.newInstance();
+    const scalarBarActor = vtkScalarBarActor.newInstance();
+    const lookupTable = vtkColorTransferFunction.newInstance();
+    const mapper = vtkMapper.newInstance({
+      interpolateScalarsBeforeMapping: true,
+      colorByArrayName: "uRec",
+      colorMode: ColorMode.DEFAULT,
+      scalarMode: 'pointData',
+      useLookupTableScalarRange: true,
+      lookupTable,
+    });
+    actor.setMapper(mapper);
+    mapper.setLookupTable(lookupTable);
+    scalarBarActor.setVisibility(true);
+    const mystyle = {
+      margin: '0',
+      padding: '0',
+      paddingBottom: '50',
+      position: 'absolute',
+      top: '0',
+      left: '0',
+      width: '99%',
+      height: '93%',
+      overflow: 'hidden',
+    };
+    const fullScreenRenderer = vtkFullScreenRenderWindow.newInstance({
+      containerStyle: mystyle,
+      background,
+      rootContainer: vtkContainerRef.current,
+    });
+    const renderer = fullScreenRenderer.getRenderer();
+    const renderWindow = fullScreenRenderer.getRenderWindow();
+    const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
+    lookupTable.setVectorModeToMagnitude();
+    lookupTable.applyColorMap(preset);
+    lookupTable.updateRange();
+
+    const scalarBarActorStyle = {
+      paddingBottom: 30,
+      fontColor: theme.vtkText.color,
+      fontStyle: 'normal',
+      fontFamily: theme.vtkText.fontFamily
+    };
+    reduced.readUnstructuredGrid(data);
+    reduced.solveOnline(new rom.Matrix([initialVelocity]));
+    const polydata_string = reduced.unstructuredGridToPolyData();
+    // TODO: parse directly as buffer or parse as a string...
+    var buf = Buffer.from(polydata_string, 'utf-8');
+    reader.parseAsArrayBuffer(buf);
+    let polydata = reader.getOutputData(0);
+
+    renderer.addActor(scalarBarActor);
+    renderer.addActor(actor);
+
+    reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
+    const newU = reduced.reconstruct();
+
+    var nCells = polydata.getNumberOfPoints();
+    polydata.getPointData().setActiveScalars("uRec");
+
+    const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
+    for (let i = 0; i < nCells; i++) {
+      let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
+      array.setTuple(i, v)
+    }
+    array.modified();
+    array.modified();
+
+    polydata.getPointData().addArray(array);
+
+    var activeArray = polydata.getPointData().getArray("uRec");
+    const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
+    lookupTable.setMappingRange(dataRange[0], dataRange[1]);
+    lookupTable.updateRange();
+    mapper.setScalarModeToUsePointFieldData();
+    mapper.setScalarRange(dataRange[0],dataRange[1]);
+    mapper.setColorByArrayName('uRec');
+    mapper.setInputData(polydata);
+    scalarBarActor.setScalarsToColors(mapper.getLookupTable());
+    scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
+    lookupTable.updateRange();
+    scalarBarActor.modified();
+    renderer.resetCamera();
+
+    if (portrait) 
+      renderer.getActiveCamera().zoom(0.55);
+    else
+      renderer.getActiveCamera().zoom(1.3);
+
+    scalarBarActor.setVisibility(false);
+
+    scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
+    scalarBarActor.setTickTextStyle(scalarBarActorStyle);
+    scalarBarActor.modified();
+    scalarBarActor.setVisibility(true);
+    renderWindow.modified();
+    renderWindow.render();
+
+    const camera = renderer.getActiveCamera();
+    const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
+    const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+
+    context.current = {
+      focalPoint,
+      cameraPosition,
+      reduced,
+      reader,
+      fullScreenRenderer,
+      renderWindow,
+      renderer,
+      lookupTable,
+      polydata,
+      actor,
+      scalarBarActor,
+      mapper,
+    };
+    setSceneLoaded(true);
   }
 
   function takeScreenshot() {
@@ -435,7 +466,7 @@ function PitzDaily() {
 
   useEffect(() => {
     if (context.current) {
-      const { polydata, lookupTable, mapper, renderer, renderWindow, scalarBarActor } = context.current;
+      const { mapper, renderer, renderWindow, scalarBarActor } = context.current;
       if (renderWindow) {
         const currentTheme = window.localStorage.getItem('theme');
         const background = currentTheme === 'light' ? backgroundLight : backgroundDark;
@@ -463,7 +494,7 @@ function PitzDaily() {
 
   useEffect(() => {
     if (context.current) {
-      const { lookupTable, mapper, polydata, reduced, renderer, renderWindow } = context.current;
+      const { lookupTable, mapper, polydata, reduced, renderWindow } = context.current;
       reduced.nu(temperatureToViscosity(temperatureValue)*1e-05);
       reduced.solveOnline(new rom.Matrix([velocityValue]));
       const newU = reduced.reconstruct();
@@ -491,6 +522,18 @@ function PitzDaily() {
     // console.log({ eventSrcDesc, newValue });
   };
 
+  const handleSetShowU = () => {
+    setShowU(!showU);
+    if (!showU)
+      setShowT(false);
+  };
+
+  const handleSetShowT = () => {
+    setShowT(!showT);
+    if (!showT)
+      setShowU(false);
+  };
+
   const handleTemperatureChange = (event, newValue) => {
     setTemperatureValue(newValue);
     stateDebounceMyFunction("slider-tate", newValue);
@@ -508,68 +551,348 @@ function PitzDaily() {
     })
   );
 
+  //? <Loader promiseTracker={usePromiseTracker}/>
   return (
-    <div style={{ paddingBottom: 60}}>
-      <div style={{ paddingBottom: 60}} ref={vtkContainerRef}>
-        <Loader promiseTracker={usePromiseTracker}/>
+    <div style={{ paddingBottom: 80}}>
+      <div ref={vtkContainerRef}>
+        {!dataLoaded
+          ? <div
+              style={{
+                position: 'absolute', left: '50%', top: '45%',
+                transform: 'translate(-50%, -50%)'
+              }}
+              className={classes.bodyText}
+            >
+              <div
+                style={{
+                  textAlign: 'center',
+                  paddingBottom: 20,
+                }}
+              >
+                LOADING DATA
+              </div>
+              <div
+                style={{
+                 textAlign: 'center'
+                }}
+              >
+                <PropagateLoader color={textColorLoader}/>
+              </div>
+            </div>
+          : <div
+              style={{
+                position: 'absolute', left: '50%', top: '45%',
+                transform: 'translate(-50%, -50%)'
+              }}
+              className={classes.bodyText}
+            >
+              <div
+                style={{
+                  textAlign: 'center',
+                  paddingBottom: 20,
+                }}
+              >
+                SETTING UP THE SCENE
+              </div>
+              <div
+                style={{
+                  textAlign: 'center'
+                }}
+              >
+                <PropagateLoader color={textColorLoader}/>
+              </div>
+            </div>
+        }
       </div>
+      {(sceneLoaded) &&
+        <div>
+          <div
+            style={{
+              paddingBottom: 80,
+              position: 'absolute',
+              top: '60px',
+              right: landscape ? '40px' : '20px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={downloadData}>
+              <FontAwesomeIcon
+                style={{width: '32px', height: '32px'}}
+                icon={solid('download')}
+              />
+            </Box>
+          </div>
+          <div
+            style={{
+              paddingBottom: 60,
+              position: 'absolute',
+              top: '60px',
+              right: landscape ? '90px' : '70px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={takeScreenshot}>
+              <FontAwesomeIcon
+                style={{width: '32px', height: '32px'}}
+                icon={solid('camera-retro')}
+              />
+            </Box>
+          </div>
+          <div
+            style={{
+              paddingBottom: 60,
+              position: 'absolute',
+              top: '60px',
+              right: landscape ? '140px' : '120px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={resetCamera}>
+              <FontAwesomeIcon
+                style={{width: '32px', height: '32px'}}
+                icon={solid('undo-alt')}
+              />
+            </Box>
+          </div>
+          {(isMobile && !showU) &&
+            <div
+              style={{
+                paddingBottom: 60,
+                position: 'absolute',
+                top: '60px',
+                right: landscape ? '190px' : '170px',
+                backgroundColor: background,
+                padding: '5px',
+                marginRight: '2%',
+                border: '1px solid rgba(125, 125, 125)',
+              }}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "20px"
+                }}
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={handleSetShowU}
+              >
+                U
+              </Box>
+            </div>
+          }
+          {(isMobile && showU) &&
+            <div
+              style={{
+                paddingBottom: 60,
+                position: 'absolute',
+                top: '60px',
+                right: landscape ? '190px' : '170px',
+                padding: '5px',
+                marginRight: '2%',
+                border: '1px solid rgba(125, 125, 125)',
+              }}
+              className={classes.viewButtonsPressed}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "20px"
+                }}
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={handleSetShowU}
+              >
+                U
+              </Box>
+            </div>
+          }
+          {(isMobile && !showT) &&
+            <div
+              style={{
+                paddingBottom: 60,
+                position: 'absolute',
+                top: '60px',
+                right: landscape ? '240px' : '220px',
+                backgroundColor: background,
+                padding: '5px',
+                marginRight: '2%',
+                border: '1px solid rgba(125, 125, 125)',
+              }}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "20px"
+                }}
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={handleSetShowT}>
+                  T
+              </Box>
+            </div>
+          }
+          {(isMobile && showT) &&
+            <div
+              style={{
+                paddingBottom: 60,
+                position: 'absolute',
+                top: '60px',
+                right: landscape ? '240px' : '220px',
+                padding: '5px',
+                marginRight: '2%',
+                border: '1px solid rgba(125, 125, 125)',
+              }}
+              className={classes.viewButtonsPressed}
+            >
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "800",
+                  fontSize: "20px"
+                }}
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={handleSetShowT}
+              >
+                T
+              </Box>
+            </div>
+          }
+        </div>
+        }
+        {(isMobile && showU && portrait) &&
+          <div
+            style={{
+              padding: 10,
+              position: 'absolute',
+              top: '115px',
+              right: '25px',
+              backgroundColor: background,
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <div>
+              <div style={{marginTop: '0%'}}>
+                <Box sx={{ width: 300, height: 34 }}>
+                  <Slider
+                    className={classes.slider}
+                    defaultValue={velocityValue}
+                    onChange={handleVelocityChange}
+                    step={0.1}
+                    min={1}
+                    max={20}
+                    valueLabelDisplay="on"
+                  />
+                </Box>
+              </div>
+            </div>
+          </div>
+        }
+        {(isMobile && showT && portrait) &&
         <div
           style={{
-            paddingBottom: 80,
+            padding: 10,
             position: 'absolute',
-            top: '60px',
-            right: '20px',
+            top: '115px',
+            right: '25px',
             backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
             border: '1px solid rgba(125, 125, 125)',
           }}
         >
-          <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={downloadData}>
-            <FontAwesomeIcon
-              style={{width: '32px', height: '32px'}}
-              icon={solid('download')}
+          <div>
+            <div style={{marginTop: '0%'}}>
+            <Box sx={{ width: 300, height: 30 }}>
+            <Slider
+              className={classes.slider}
+              defaultValue={temperatureValue}
+              onChange={handleTemperatureChange}
+              step={1}
+              min={-100}
+              max={1000}
+              valueLabelDisplay="on"
             />
-          </Box>
-        </div>
+            </Box>
+            </div>
+          </div>
+      </div>
+      }
+        {(isMobile && showU && landscape) &&
         <div
           style={{
-            paddingBottom: 60,
+            padding: 10,
             position: 'absolute',
             top: '60px',
-            right: '70px',
+            left: '20px',
             backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
             border: '1px solid rgba(125, 125, 125)',
           }}
         >
-           <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={takeScreenshot}>
-             <FontAwesomeIcon
-               style={{width: '32px', height: '32px'}}
-               icon={solid('camera-retro')}
-             />
-           </Box>
-        </div>
-        <div
-          style={{
-            paddingBottom: 60,
-            position: 'absolute',
-            top: '60px',
-            right: '120px',
-            backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
-          <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={resetCamera}>
-            <FontAwesomeIcon
-              style={{width: '32px', height: '32px'}}
-              icon={solid('undo-alt')}
+          <div>
+            <div style={{marginTop: '0%'}}>
+            <Box sx={{ width: 300, height: 30 }}>
+            <Slider
+              className={classes.slider}
+              defaultValue={velocityValue}
+              onChange={handleVelocityChange}
+              step={0.1}
+              min={1}
+              max={20}
+              valueLabelDisplay="on"
             />
-          </Box>
-        </div>
+            </Box>
+            </div>
+          </div>
+      </div>
+      }
+        {(isMobile && showT && landscape) &&
+        <div
+          style={{
+            padding: 10,
+            position: 'absolute',
+            top: '60px',
+            left: '20px',
+            backgroundColor: background,
+            border: '1px solid rgba(125, 125, 125)',
+          }}
+        >
+          <div>
+            <div style={{marginTop: '0%'}}>
+            <Box sx={{ width: 300, height: 30 }}>
+            <Slider
+              className={classes.slider}
+              defaultValue={temperatureValue}
+              onChange={handleTemperatureChange}
+              step={1}
+              min={-100}
+              max={1000}
+              valueLabelDisplay="on"
+            />
+            </Box>
+            </div>
+          </div>
+      </div>
+      }
+        {(!isMobile && sceneLoaded) &&
         <div
           style={{
             paddingTop: '100px',
@@ -592,7 +915,7 @@ function PitzDaily() {
               step={1}
               min={-100}
               max={1000}
-              valueLabelDisplay="auto"
+              valueLabelDisplay="on"
             />
             </Box>
             </div>
@@ -608,7 +931,7 @@ function PitzDaily() {
               step={0.1}
               min={1}
               max={20.0}
-              valueLabelDisplay="auto"
+              valueLabelDisplay="on"
             />
             </Box>
             </div>
@@ -617,6 +940,7 @@ function PitzDaily() {
             </div>
           </div>
       </div>
+      }
     </div>
   );
 }

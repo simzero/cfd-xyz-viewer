@@ -122,6 +122,9 @@ export const lightTheme = {
     width: '100px',
     height: '35px'
   },
+  viewButtonsPressed: {
+    backgroundColor: color1
+  },
   textField: {
     "& .MuiFormLabel-root": {
       color: color2
@@ -205,9 +208,11 @@ export const lightTheme = {
     flexDrection: 'column',
   },
   cardTitle: {
+    fontSize: 12,
+    fontFamily: globalFont,
+    maxHeight: 25,
     paddingRight: 10,
     paddingTop: 5,
-    background: color1,
     fontWeight: cardTitleWeight,
     flexDrection: 'column',
     textAlign: 'center',
@@ -232,8 +237,14 @@ export const lightTheme = {
     primary1Color: color1,
     primary2Color: color2
   },
+  cardMedia: {
+    minHeight: 112.5,
+    minWidth: 150,
+    maxWidth: 800,
+  },
   cardIcon: {
     opacity: '0.8',
+    fontSize: "24px",
     color: color2
   },
   cardMain: {
@@ -269,6 +280,7 @@ export const lightTheme = {
   },
   link: {
     fontFamily: globalFont,
+    fontWeight: cardTitleWeight,
     color: color2,
     '&:hover': {
        color: backgroundColor2,
@@ -371,6 +383,9 @@ export const darkTheme = {
     width: '100px',
     height: '35px'
   },
+  viewButtonsPressed: {
+    backgroundColor: color2
+  },
   textField: {
     "& .MuiFormLabel-root": {
       color: color1
@@ -463,9 +478,11 @@ export const darkTheme = {
     flexDrection: 'column',
   },
   cardTitle: {
+    fontSize: 12,
+    fontFamily: globalFont,
+    maxHeight: 25,
     paddingRight: 10,
     paddingTop: 5,
-    background: color2,
     fontWeight: cardTitleWeight,
     flexDrection: 'column',
     textAlign: 'center',
@@ -490,8 +507,14 @@ export const darkTheme = {
     primary1Color: color2,
     primary2Color: color1
   },
+  cardMedia: {
+    minHeight: 112.5,
+    minWidth: 150,
+    maxWidth: 800,
+  },
   cardIcon: {
     opacity: '0.8',
+    fontSize: "24px",
     color: color2
   },
   cardMain: {
@@ -527,6 +550,7 @@ export const darkTheme = {
   },
   link: {
     fontFamily: globalFont,
+    fontWeight: cardTitleWeight,
     color: color1,
     '&:hover': {
        color: backgroundColor1,

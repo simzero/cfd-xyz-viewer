@@ -16,6 +16,8 @@ import { lightTheme, darkTheme, navTheme } from './../theme';
 import { useDarkMode } from './useDarkMode';
 import logoLight from "./logoLight.svg";
 import logoDark from "./logoDark.svg";
+import useWindowOrientation from "use-window-orientation";
+import {isMobile} from 'react-device-detect';
 
 // TODO: fix
 function withRouter(Component) {
@@ -46,19 +48,32 @@ function Navigation(element) {
   const titleDark = 'Lights on';
   const iconTitle = theme2 === 'light' ? titleLight : titleDark; 
   const mainSecondaryColor = themeMode.palette.primary2Color;
+  const { landscape } = useWindowOrientation();
 
   const location = useLocation();
-  const location_path = location.pathname;
+  var location_path = location.pathname;
+
+  if (location.pathname.match('/.*/$')) {
+    location_path = location_path.slice(0, -1);
+  }
+
   const split = location_path.split("/");
   var title = [];
-  var link = "/";
+  var link = [];
+
   for (let i = 1; i < split.length; i++) {
-     if (i < split.length - 1) {
-	  link += split[i] + "/";
-          title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
-     }
-     else
-          title.push(<Link to="#" key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
+    link += "/" + split[i];
+    if (!isMobile || landscape) {
+      title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
+    }
+    else {
+      if (i < split.length - 1) {
+        title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/..</Link>);
+      }
+      else {
+        title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
+      }
+    }
   }
 
   return (

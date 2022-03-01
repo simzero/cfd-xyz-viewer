@@ -9,26 +9,42 @@ import { NavLink } from "react-router-dom";
 import { lightTheme, darkTheme } from './../theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
+import SwipeIcon from '@mui/icons-material/Swipe';
+import {isMobile} from 'react-device-detect';
+import Box from '@mui/material/Box';
+import { createTheme } from '@mui/material/styles';
 
 const ShowCards = ({post}) => {
   const localTheme = window.localStorage.getItem('theme') || "light"
-  const theme = localTheme === 'light' ? lightTheme : darkTheme;
+  let theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();
   const mainPrimaryColor = theme.palette.primary1Color;
 
   const inputRef = useRef([]);
+  //theme = responsiveFontSizes(theme);
+	//
+const theme2 = createTheme();
+//	theme2 = responsiveFontSizes(theme2);
+theme2.typography.h6 = {
+  fontSize: '0.1rem',
+  '@media (min-width:300px)': {
+    fontSize: '0.6rem',
+  },
+  [theme2.breakpoints.up('md')]: {
+    fontSize: '0.3rem',
+  },
+};
 
   const handlers = useSwipeable({
-    onSwiped: () => inputRef.current[post.title].toggle(),
+    onSwipedLeft: () => inputRef.current[post.title].toggle(),
+    onSwipedRight: () => inputRef.current[post.title].toggle(),
     preventDefaultTouchmoveEvent: true,
     trackMouse: true
   });
 
+function ShowBody() {
   return (
-    <Grid item xs={10} sm={3} key={post.title}>
-      <Card style={{ background: mainPrimaryColor }}>
-        <div {...handlers}>
         <Flippy
           flipOnClick={false}
           isFlipped={false}
@@ -38,6 +54,7 @@ const ShowCards = ({post}) => {
             {post.ready
               ? <NavLink to={post.link} className={classes.link}>
                   <CardMedia
+		    className={classes.cardMedia}
                     component="img"
                     image={post.image + '.png'}
                     title={post.title}
@@ -54,33 +71,42 @@ const ShowCards = ({post}) => {
               ? <div
                   onClick={() => inputRef.current[post.title].toggle() }
                 >
-                  {inputRef.current &&
+                  {(inputRef.current && !isMobile ) &&
                     <FontAwesomeIcon
                       style={{
-                        position: 'absolute', left: '98%', top: '8%',
+                        position: 'absolute', left: '96%', top: '8%',
                         transform: 'translate(-100%, -50%)'
                       }}
                       className={classes.cardIcon}
                       icon={solid('circle-info')}
                       title={"Show info"}
-                      size="2x"
+                    />
+                  }
+                  {(inputRef.current && isMobile) &&
+		    <SwipeIcon 
+                      style={{
+                        position: 'absolute', left: '96%', top: '12%',
+                        transform: 'translate(-100%, -50%)'
+                      }}
+                      className={classes.cardIcon}
                     />
                   }
                 </div>
               :
                 <div 
                   style={{
-                    position: 'absolute', left: '98%', top: '8%',
+                    position: 'absolute', left: '96%', top: '8%',
                     transform: 'translate(-100%, -50%)'
                   }}
                   onClick={() => inputRef.current[post.title].preventDefault() }
                 >
+	        {(!isMobile) &&
                   <FontAwesomeIcon
                     className={classes.cardIcon}
                     icon={solid('triangle-exclamation')}
                     title="On the backlog..."
-                    size="2x"
                   />
+		}
                 </div>
             }
           </FrontSide>
@@ -101,25 +127,47 @@ const ShowCards = ({post}) => {
               <div 
                 onClick={() => inputRef.current[post.title].toggle() }
               >
+	        {(!isMobile) &&
                 <FontAwesomeIcon
                   style={{
-                    position: 'absolute', left: '98%', top: '8%',
+                    position: 'absolute', left: '96%', top: '8%',
                     transform: 'translate(-100%, -50%)'
                   }}
                   className={classes.cardIcon}
                   icon={solid('circle-arrow-left')}
-                  size="2x"
                 />
+                }
               </div>
             </BackSide>
           }
         </Flippy>
-        </div>
-        <NavLink to={post.link} className={classes.link}>
-          <div className={classes.cardTitle}>
-            {post.title}
-          </div>
-        </NavLink>
+  );
+}
+
+
+  return (
+    <Grid item xs={15} sm={3} key={post.title}>
+      <Card className={classes.cardMedia} style={{ background: mainPrimaryColor }}>
+        {post.ready
+          ? <div {...handlers}>
+	      <ShowBody/>
+            </div>
+          : <div>
+	      <ShowBody/>
+            </div>
+	}
+        {post.ready
+          ? <NavLink to={post.link} className={classes.link}>
+              <div className={classes.cardTitle}>
+	        {post.title}
+              </div>
+            </NavLink>
+          : <div className={classes.link}>
+	      <Box className={classes.cardTitle}>
+	        {post.title}
+              </Box>
+            </div>
+	}
       </Card>
     </Grid>
   )
