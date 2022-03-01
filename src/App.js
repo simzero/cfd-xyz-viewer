@@ -34,7 +34,7 @@ function App() {
 
   return (
     <div>
-      <Router basename={"testing"}>
+      <Router>
         <div className={classes.mainWrapper}>
           <ThemeContext.Provider value={value}>
             <Navigation />
