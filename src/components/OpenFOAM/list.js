@@ -5,7 +5,7 @@ const posts = [
   image: "/OpenFOAM/incompressible/incompressible",
   key: "1",
   ready: true,
-  description: "Incompressible flow tutorials for different solvers: simpleFoam, icoFoam, ..."
+  description: "Incompressible flow tutorials for different solvers."
  },
 
  {

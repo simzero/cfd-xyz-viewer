@@ -4,7 +4,8 @@ const posts = [
   link: "/OpenFOAM/incompressible/simpleFoam/pitzDaily",
   key: "1",
   ready: true,
-  image: "/OpenFOAM/incompressible/simpleFoam/pitzDaily/pitzDaily"
+  image: "/OpenFOAM/incompressible/simpleFoam/pitzDaily/pitzDaily",
+  description: "Tutorial for a turbulent free shear layer formed a rearward-facing step. \n\nData:\n  -P = 101325 Pa \n -T = [-100, 1000] °C \n -U_{inlet} = [1,20] m/s"
  },
 
  {
