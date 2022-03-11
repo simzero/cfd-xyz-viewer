@@ -1,7 +1,7 @@
 const posts = [
  {
   title: "incompressible",
-  link: "/OpenFOAM/incompressible",
+  link: "/OF/incompressible",
   image: "/OpenFOAM/incompressible/incompressible",
   key: "1",
   ready: true,
@@ -10,7 +10,7 @@ const posts = [
 
  {
   title: "compressible",
-  link: "OpenFOAM/compressible",
+  link: "OF/compressible",
   image: "/OpenFOAM/compressible/compressible",
   key: "2",
   ready: false,
@@ -19,7 +19,7 @@ const posts = [
 
  {
   title: "multiphase",
-  link: "OpenFOAM/multiphase",
+  link: "OF/multiphase",
   image: "/OpenFOAM/multiphase/multiphase",
   key: "3",
   ready: false,
@@ -28,7 +28,7 @@ const posts = [
 
  {
   title: "heatTransfer",
-  link: "OpenFOAM/heatTransfer",
+  link: "OF/heatTransfer",
   image: "/OpenFOAM/heatTransfer/heatTransfer",
   key: "4",
   ready: false,
@@ -37,7 +37,7 @@ const posts = [
 
  {
   title: "lagrangian",
-  link: "OpenFOAM/lagrangian",
+  link: "OF/lagrangian",
   image: "/OpenFOAM/lagrangian/lagrangian",
   key: "5",
   ready: false,
@@ -46,7 +46,7 @@ const posts = [
 
  {
   title: "combustion",
-  link: "OpenFOAM/combustion",
+  link: "OF/combustion",
   image: "/OpenFOAM/combustion/combustion",
   key: "6",
   ready: false,

@@ -1,7 +1,7 @@
 const posts = [
  {
   title: "pitzDaily",
-  link: "/OpenFOAM/incompressible/simpleFoam/pitzDaily",
+  link: "/OF/incompressible/simpleFoam/pitzDaily",
   key: "1",
   ready: true,
   image: "/OpenFOAM/incompressible/simpleFoam/pitzDaily/pitzDaily",
@@ -10,7 +10,7 @@ const posts = [
 
  {
   title: "airFoil2D",
-  link: "/OpenFOAM/incompressible/simpleFoam/airFoil2D",
+  link: "/OF/incompressible/simpleFoam/airFoil2D",
   key: "2",
   ready: false,
   image: "/OpenFOAM/incompressible/simpleFoam/airFoil2D/airFoil2D"
@@ -18,7 +18,7 @@ const posts = [
 
  {
   title: "bump2D",
-  link: "/OpenFOAM/incompressible/simpleFoam/bump2D",
+  link: "/OF/incompressible/simpleFoam/bump2D",
   key: "3",
   ready: false,
   image: "/OpenFOAM/incompressible/simpleFoam/bump2D/bump2D"
@@ -26,7 +26,7 @@ const posts = [
 
  {
   title: "backwardFacingStep2D",
-  link: "/OpenFOAM/incompressible/simpleFoam/backwardFacingStep2D",
+  link: "/OF/incompressible/simpleFoam/backwardFacingStep2D",
   key: "4",
   ready: false,
   image: "/OpenFOAM/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"

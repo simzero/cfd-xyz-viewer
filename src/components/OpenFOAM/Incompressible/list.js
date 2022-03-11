@@ -1,7 +1,7 @@
 const posts = [
  {
   title: "simpleFoam",
-  link: "/OpenFOAM/incompressible/simpleFoam",
+  link: "/OF/incompressible/simpleFoam",
   image: "/OpenFOAM/incompressible/simpleFoam/simpleFoam",
   key: "1",
   ready: true,

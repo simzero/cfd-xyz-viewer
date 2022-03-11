@@ -1,7 +1,7 @@
 const posts = [
  {
   title: "OpenFOAM Tutorials",
-  link: "/OpenFOAM",
+  link: "/OF",
   image: "/OpenFOAM/OpenFOAM",
   key: "1",
   ready: true,
