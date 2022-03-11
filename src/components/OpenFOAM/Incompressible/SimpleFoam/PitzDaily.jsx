@@ -55,7 +55,16 @@ const storage = getStorage(app);
 
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
-const dataPath = '/data/OpenFOAM/incompressible/simpleFoam/pitzDaily/';
+const dataPath = '/surrogates/OpenFOAM/incompressible/simpleFoam/pitzDaily/';
+
+const loadData = async (storage, filePath) => {
+  return new Promise(resolve => {
+    fetch(filePath).then(res => res.text())
+      .then((data) => {
+            resolve(data);
+        })
+    })
+};
 
 const readMatrixFile = async (storage, filePath) => {
   if (data_source === "local")
@@ -174,37 +183,22 @@ function PitzDaily() {
     }
   }, [dataLoaded, initialPortrait]);
 
-  //let switch_storage = false;
-
   const initialize = async() => {
     setVelocityValue(initialVelocity);
     setTemperatureValue(initialTemperature);
 
-    /*await getDownloadURL(testRef)
-    .then((url) => {
-    })
-    .catch((error) => {
-      switch (error.code) {
-        case 'storage/quota-exceeded':
-          switch_storage = true;
-          break;
-        default:
-          break;
-      }
-    });*/
-
     await rom.ready
 
-    const P = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/P_mat.txt'));
-    const M = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/M_mat.txt'));
-    const K = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/K_mat.txt'));
-    const B = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/B_mat.txt'));
-    const modes = new rom.Matrix(await readMatrixFile(storage, dataPath + 'EigenModes_U_mat.txt'));
-    // Only needed for turbulent cases
-    const coeffL2 = new rom.Matrix(await readMatrixFile(storage, dataPath + 'matrices/coeffL2_mat.txt'));
-    const mu = new rom.Matrix(await readMatrixFile(storage, dataPath + 'par.txt'));
-    const Nphi_u = B.rows();
-    const Nphi_p = K.cols();
+    const P = await loadData(storage, dataPath + 'matrices/P_mat.txt');
+    const M = await loadData(storage, dataPath + 'matrices/M_mat.txt');
+    const K = await loadData(storage, dataPath + 'matrices/K_mat.txt');
+    const B = await loadData(storage, dataPath + 'matrices/B_mat.txt');
+    const modes = await loadData(storage, dataPath + 'EigenModes_U_mat.txt');
+    const coeffL2 = await loadData(storage, dataPath + 'matrices/coeffL2_mat.txt');
+    const mu = await loadData(storage, dataPath + 'par.txt');
+
+    const Nphi_u = B.split("\n").length;
+    const Nphi_p = K.split("\n")[0].split(" ").length;
     const N_BC = 1;
 
     const reduced = new rom.ReducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
@@ -215,12 +209,6 @@ function PitzDaily() {
     reduced.addMatrices(P, M, K, B);
     reduced.addModes(modes);
 
-    P.delete();
-    M.delete();
-    K.delete();
-    B.delete();
-    modes.delete();
-
     let Nphi_nut = 0;
 
     (async () => {
@@ -229,8 +217,9 @@ function PitzDaily() {
         indexes.push(i);
       }
 
-      Nphi_nut = coeffL2.rows();
+      Nphi_nut = coeffL2.split("\n").length;
       reduced.Nphi_nut(Nphi_nut);
+
       let indexesNut = []
       for (var j = 0; j < Nphi_u; j ++ ) {
         indexesNut.push(j);
@@ -239,28 +228,24 @@ function PitzDaily() {
       await Promise.all(indexesNut.map(async (indexNut) => {
         const C1Path = 'matrices/ct1_' + indexNut + "_mat.txt"
         const C2Path = 'matrices/ct2_' + indexNut + "_mat.txt"
-        const C1 = new rom.Matrix(await readMatrixFile(storage, dataPath + C1Path));
-        const C2 = new rom.Matrix(await readMatrixFile(storage, dataPath + C2Path));
+        const C1 = await loadData(storage, dataPath + C1Path);
+        const C2 = await loadData(storage, dataPath + C2Path);
         reduced.addCt1Matrix(C1, indexNut);
         reduced.addCt2Matrix(C2, indexNut);
       }));
 
       await Promise.all(indexes.map(async (index) => {
         const CPath = 'matrices/C' + index + "_mat.txt"
-        const C = new rom.Matrix(await readMatrixFile(storage, dataPath + CPath));
+        const C = await loadData(storage, dataPath + CPath);
         reduced.addCMatrix(C, index);
       }));
-
 
       reduced.preprocess();
       reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
       reduced.setRBF(mu, coeffL2);
       context.current = { reduced };
-      coeffL2.delete();
       setDataLoaded(true);
       setTimeout(myFunction, 10000); 
-      // TODO: fix this using track promise for setScene
-      //while(sceneLoaded==false) {}
     })();
   }
 
@@ -354,7 +339,7 @@ function PitzDaily() {
       fontFamily: theme.vtkText.fontFamily
     };
     reduced.readUnstructuredGrid(data);
-    reduced.solveOnline(new rom.Matrix([initialVelocity]));
+    reduced.solveOnline(initialVelocity);
     const polydata_string = reduced.unstructuredGridToPolyData();
     // TODO: parse directly as buffer or parse as a string...
     var buf = Buffer.from(polydata_string, 'utf-8');
@@ -491,7 +476,7 @@ function PitzDaily() {
     if (context.current) {
       const { lookupTable, mapper, polydata, reduced, renderWindow } = context.current;
       reduced.nu(temperatureToViscosity(temperatureValue)*1e-05);
-      reduced.solveOnline(new rom.Matrix([velocityValue]));
+      reduced.solveOnline(velocityValue);
       const newU = reduced.reconstruct();
       polydata.getPointData().removeArray('uRec');
       var nCells = polydata.getNumberOfPoints();
@@ -821,7 +806,7 @@ function PitzDaily() {
               className={classes.slider}
               defaultValue={temperatureValue}
               onChange={handleTemperatureChange}
-              step={1}
+              step={5}
               min={-100}
               max={1000}
               valueLabelDisplay="on"
