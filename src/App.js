@@ -10,6 +10,10 @@ import {
    Incompressible,
    SimpleFoam,
    PitzDaily,
+//    MixerVessel2D,
+//    MotorBike,
+//    TurbineSiting,
+//    WindAroundBuildings,
    Tools,
    Steady,
 } from "./components";
@@ -40,10 +44,10 @@ function App() {
             <Navigation />
             <Routes>
               <Route path="/" exact element={<Home />} />
-              <Route path="/OpenFOAM" exact element={<OpenFOAM />} />
-              <Route path="/OpenFOAM/incompressible" exact element={<Incompressible />} />
-              <Route path="/OpenFOAM/incompressible/simpleFoam" exact element={<SimpleFoam />} />
-              <Route path="/OpenFOAM/incompressible/simpleFoam/PitzDaily" exact element={<PitzDaily />} />
+              <Route path="/OF" exact element={<OpenFOAM />} />
+              <Route path="/OF/incompressible" exact element={<Incompressible />} />
+              <Route path="/OF/incompressible/simpleFoam" exact element={<SimpleFoam />} />
+              <Route path="/OF/incompressible/simpleFoam/PitzDaily" exact element={<PitzDaily />} />
               <Route path="/Tools" exact element={<Tools />} />
               <Route path="/Tools/ITHACA-FV_Steady" exact element={<Steady />} />
             </Routes>
