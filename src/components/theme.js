@@ -281,6 +281,7 @@ export const lightTheme = {
     fontFamily: globalFont,
     fontWeight: cardTitleWeight,
     color: color2,
+    textDecoration: 'none!important',
     '&:hover': {
        color: backgroundColor2,
        textDecoration: 'none',
@@ -552,6 +553,7 @@ export const darkTheme = {
     fontFamily: globalFont,
     fontWeight: cardTitleWeight,
     color: color1,
+    textDecoration: 'none!important',
     '&:hover': {
        color: backgroundColor1,
        textDecoration: 'none',
