@@ -18,19 +18,36 @@ function Footer() {
 
   function Copyright() {
     return (
-      <Typography variant="body2" style={{fontFamily: 'monospace', fontSize: 12}}>
-        {'Copyright © '}
-        {new Date().getFullYear()}
-      </Typography>
+      <div>
+        <Typography
+          style={{
+            fontFamily: 'monospace',
+            fontSize: 12,
+            fontWeight: 600
+	  }}
+	>
+          {'© '}
+          {new Date().getFullYear()}
+          {' '}
+          <Link
+            className={classes.link}
+            color="inherit"
+            href="https://www.companyname.com"
+            target="_blank"
+          >
+          </Link>
+        </Typography>
+      </div>
     );
   }
 
+  //{'SIMZERO'}
   //<div style={{position: "fixed", left: 0, bottom: 0, right: 0}}>
   return (
     <div>
       <div style={{position: "absolute", left: 0, bottom: 0, right: 0}}>
         <footer style={{ padding: '0px', bottom: '0', position: 'relative', height: '50px', width: '100%', backgroundColor: mainPrimaryColor, color: mainSecondaryColor }}>
-          <div style={{marginTop: 8, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: "column", display: 'inline-flex', float: 'left'}}>
+          <div style={{marginTop: 8, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: "column", display: 'inline-block', float: 'left'}}>
             <Copyright />
           </div>
           <div style={{alignSelf: 'flex-end', position: 'absolute', marginTop: 4, right: 8}}>
@@ -51,7 +68,7 @@ function Footer() {
                     align="center"
                     style={{fontFamily: 'monospace', fontSize: 12}}
                   >
-                    <a className={classes.link} href="http://linkedin.com">
+                    <a className={classes.link} target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=http://www.cfd.xyz">
                       <FontAwesomeIcon title="Contribute (GitHub)" style={{ width: '24px', height: '24px'}} icon={brands('github')} />
                     </a>
                   </Typography>
@@ -61,7 +78,7 @@ function Footer() {
                     align="center"
                     style={{fontFamily: 'monospace', fontSize: 12}}
                   >
-                    <a className={classes.link} href="http://github.com">
+                    <a className={classes.link} target="_blank" href="http://github.com">
                       <FontAwesomeIcon title="Share (LinkedIn)" style={{width: '24px', height: '24px'}} icon={brands('linkedin')} />
                     </a>
                   </Typography>
@@ -71,7 +88,7 @@ function Footer() {
                     align="center"
                     style={{fontFamily: 'monospace', fontSize: 12}}
                   >
-                    <a className={classes.link} href="http://example.com">
+                    <a className={classes.link} target="_blank" href="https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4">
                       <FontAwesomeIcon title="Donate (PayPal)" style={{ width: '24px', height: '24px'}} icon={solid('piggy-bank')} />
                     </a>
                   </Typography>
