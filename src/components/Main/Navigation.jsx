@@ -1,3 +1,7 @@
+// Copyright (c) 2022 Carlos Peña-Monferrer. All rights reserved.
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+
 import AppBar from "@mui/material/AppBar";
 import { makeStyles } from "@mui/styles";
 import Toolbar from '@mui/material/Toolbar';
@@ -84,7 +88,7 @@ function Navigation(element) {
             <Link to="/">
 	        <img alt="cfd.xyz" src={logo} className={classes.logo} />
             </Link>
-            <Typography style={{ flexGrow: 1, fontWeight: 550, color: mainSecondaryColor}}>
+            <Typography style={{ paddingTop: 6, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor}}>
                 { title }
 	    </Typography>
           <IconButton

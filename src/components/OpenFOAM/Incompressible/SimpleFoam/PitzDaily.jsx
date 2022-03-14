@@ -1,3 +1,7 @@
+// Copyright (c) 2022 Carlos Peña-Monferrer. All rights reserved.
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>. 
+
 import { useState, useRef, useEffect } from 'react';
 import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';

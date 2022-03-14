@@ -1,3 +1,7 @@
+// Copyright (c) 2022 Carlos Peña-Monferrer. All rights reserved.
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>. 
+
 const backgroundColor1 = '#FFFFFF'
 const backgroundColor2 = '#000000'
 const color1 = '#E2E2E2'
