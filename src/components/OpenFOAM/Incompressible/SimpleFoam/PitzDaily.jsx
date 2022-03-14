@@ -201,7 +201,7 @@ function PitzDaily() {
     const Nphi_p = K.split("\n")[0].split(" ").length;
     const N_BC = 1;
 
-    const reduced = new rom.ReducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
+    const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
