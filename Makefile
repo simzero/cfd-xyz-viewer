@@ -6,7 +6,8 @@ SHELL := /bin/bash
 
 cfd-xyz-image := cfd-xyz:v0.1
 cfd-xyz := docker run --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
-data-url := https://github.com/carpemonf/rom-js-data/raw/main/surrogates_v0.1.tar.gz
+data-version := surrogates_v1.0.0-beta.0
+data-url := https://github.com/carpemonf/rom-js-data/raw/main/$(data-version).tar.gz
 
 all: install run-build data start
 
