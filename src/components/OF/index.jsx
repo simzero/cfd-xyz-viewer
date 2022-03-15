@@ -4,15 +4,15 @@
 
 import { React, useEffect } from "react";
 import Grid from '@mui/material/Grid'
-import ShowCards  from './../../../Main/ShowCards';
+import ShowCards  from './../Main/ShowCards';
 import { makeStyles } from "@mui/styles";
 import posts from "./list";
-import { global } from './../../../theme';
+import { global } from './../theme';
 
-function SimpleFoam() {
+function OF() {
   useEffect(() => {
-    document.title = "cfd.xyz | OpenFOAM/incompressible/simpleFoam"
-   }, []);
+   document.title = "cfd.xyz | OF"
+  }, []);
 
   const useStyles = makeStyles(global);
   const classes = useStyles();
@@ -20,7 +20,7 @@ function SimpleFoam() {
   return (
     <div className={classes.root} align="center">
       <Grid
-        container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16}}
+        container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16 }}
         display="flex"
         flexDirection="row"
       >
@@ -32,4 +32,4 @@ function SimpleFoam() {
   );
 }
 
-export default SimpleFoam;
+export default OF;

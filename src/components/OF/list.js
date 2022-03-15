@@ -6,7 +6,7 @@ const posts = [
  {
   title: "incompressible",
   link: "/OF/incompressible",
-  image: "/OpenFOAM/incompressible/incompressible",
+  image: "/OF/incompressible/incompressible",
   key: "1",
   ready: true,
   description: "Incompressible flow tutorials for different solvers."
@@ -15,7 +15,7 @@ const posts = [
  {
   title: "compressible",
   link: "OF/compressible",
-  image: "/OpenFOAM/compressible/compressible",
+  image: "/OF/compressible/compressible",
   key: "2",
   ready: false,
   description: " "
@@ -24,7 +24,7 @@ const posts = [
  {
   title: "multiphase",
   link: "OF/multiphase",
-  image: "/OpenFOAM/multiphase/multiphase",
+  image: "/OF/multiphase/multiphase",
   key: "3",
   ready: false,
   description: " "
@@ -33,7 +33,7 @@ const posts = [
  {
   title: "heatTransfer",
   link: "OF/heatTransfer",
-  image: "/OpenFOAM/heatTransfer/heatTransfer",
+  image: "/OF/heatTransfer/heatTransfer",
   key: "4",
   ready: false,
   description: " "
@@ -42,7 +42,7 @@ const posts = [
  {
   title: "lagrangian",
   link: "OF/lagrangian",
-  image: "/OpenFOAM/lagrangian/lagrangian",
+  image: "/OF/lagrangian/lagrangian",
   key: "5",
   ready: false,
   description: " "
@@ -51,7 +51,7 @@ const posts = [
  {
   title: "combustion",
   link: "OF/combustion",
-  image: "/OpenFOAM/combustion/combustion",
+  image: "/OF/combustion/combustion",
   key: "6",
   ready: false,
   description: " "

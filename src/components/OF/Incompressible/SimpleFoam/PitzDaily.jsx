@@ -59,7 +59,7 @@ const storage = getStorage(app);
 
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
-const dataPath = '/surrogates/OpenFOAM/incompressible/simpleFoam/pitzDaily/';
+const dataPath = '/surrogates/OF/incompressible/simpleFoam/pitzDaily/';
 
 const loadData = async (storage, filePath) => {
   return new Promise(resolve => {
@@ -143,7 +143,7 @@ function PitzDaily() {
   background.pop();
 
   useEffect(() => {
-    document.title = "cfd.xyz | OpenFOAM/incompressible/simpleFoam/pitzDaily"
+    document.title = "cfd.xyz | OF/incompressible/simpleFoam/pitzDaily"
   }, []);
 
   useEffect(() => {

@@ -2,7 +2,7 @@ const posts = [
  {
   title: "OpenFOAM Tutorials",
   link: "/OF",
-  image: "/OpenFOAM/OpenFOAM",
+  image: "/OF/OF",
   key: "1",
   ready: true,
   description: "Collection of OpenFOAM tutorials. OpenFOAM is a free, open source CFD software."

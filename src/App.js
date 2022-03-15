@@ -11,7 +11,8 @@ import {
    Navigation,
    Footer,
    Home,
-   OpenFOAM,
+   About,
+   OF,
    Incompressible,
    SimpleFoam,
    PitzDaily,
@@ -64,12 +65,13 @@ function App() {
             <Navigation />
             <Routes>
               <Route path="/" exact element={<Home />} />
-              <Route path="/OF" exact element={<OpenFOAM />} />
+              <Route path="/OF" exact element={<OF />} />
               <Route path="/OF/incompressible" exact element={<Incompressible />} />
               <Route path="/OF/incompressible/simpleFoam" exact element={<SimpleFoam />} />
               <Route path="/OF/incompressible/simpleFoam/PitzDaily" exact element={<PitzDaily />} />
               <Route path="/Tools" exact element={<Tools />} />
               <Route path="/Tools/ITHACA-FV_Steady" exact element={<Steady />} />
+              <Route path="/About" exact element={<About />} />
             </Routes>
             <Footer />
           </ThemeContext.Provider>
