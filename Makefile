@@ -20,7 +20,7 @@ run-build:
 start:
 	npm start
 data:
-	curl -LJ0 $(data-url) -o surrogates.tar.gz
+	curl -L $(data-url) -o surrogates.tar.gz
 	tar -zxvf surrogates.tar.gz -C public/
 
 install-docker:
