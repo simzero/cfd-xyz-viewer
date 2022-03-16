@@ -260,10 +260,6 @@ function PitzDaily() {
   }, []);
 
   useEffect(() => {
-    /*if (!context.current && !dataLoaded) {
-      trackPromise(initialize());
-    }*/
-    
     return () => {
       if (context.current) {
         const { reduced, fullScreenRenderer, polydata, actor, scalarBarActor, mapper } = context.current;
@@ -779,6 +775,7 @@ function PitzDaily() {
               <div style={{marginTop: '0%'}}>
                 <Box sx={{ width: 300, height: 34 }}>
                   <Slider
+                    key={`slider-${velocityValue}`}
                     className={classes.slider}
                     defaultValue={velocityValue}
                     onChange={handleVelocityChange}
@@ -807,6 +804,7 @@ function PitzDaily() {
             <div style={{marginTop: '0%'}}>
             <Box sx={{ width: 300, height: 30 }}>
             <Slider
+              key={`slider-${temperatureValue}`}
               className={classes.slider}
               defaultValue={temperatureValue}
               onChange={handleTemperatureChange}
@@ -835,6 +833,7 @@ function PitzDaily() {
             <div style={{marginTop: '0%'}}>
             <Box sx={{ width: 300, height: 30 }}>
             <Slider
+              key={`slider-${velocityValue}`}
               className={classes.slider}
               defaultValue={velocityValue}
               onChange={handleVelocityChange}
@@ -863,6 +862,7 @@ function PitzDaily() {
             <div style={{marginTop: '0%'}}>
             <Box sx={{ width: 300, height: 30 }}>
             <Slider
+              key={`slider-${temperatureValue}`}
               className={classes.slider}
               defaultValue={temperatureValue}
               onChange={handleTemperatureChange}
