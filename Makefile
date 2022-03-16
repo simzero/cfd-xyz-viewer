@@ -4,19 +4,31 @@
 
 SHELL := /bin/bash
 
-cfd-xyz-image := cfd-xyz:v1.0.0-rc.1
+version := v1.0.0-rc.1
+cfd-xyz-image := cfd-xyz:$(version)
 cfd-xyz := docker run --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
-data-version := surrogates_v1.0.0-beta.0
+data-version := surrogates_$(version)
 data-url := https://github.com/carpemonf/rom-js-data/raw/main/$(data-version).tar.gz
 
 all: install run-build data start
+all-docker: install-docker run-build-docker data-docker start-docker
 
 install:
-	$(cfd-xyz) npm install
+	npm install
 run-build:
-	$(cfd-xyz) npm run build
+	npm run build
 start:
-	$(cfd-xyz) npm start
+	npm start
 data:
+	curl -LJ0 $(data-url) -o surrogates.tar.gz
+	tar -zxvf surrogates.tar.gz -C public/
+
+install-docker:
+	$(cfd-xyz) npm install
+run-build-docker:
+	$(cfd-xyz) npm run build
+start-docker:
+	$(cfd-xyz) npm start
+data-docker:
 	$(cfd-xyz) curl -LJ0 $(data-url) -o surrogates.tar.gz
 	tar -zxvf surrogates.tar.gz -C public/
