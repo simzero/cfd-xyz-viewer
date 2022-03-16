@@ -54,8 +54,7 @@ function Steady() {
   const [UFixed, setUFixed] = useState(false);
   const [nuFixed, setNuFixed] = useState(false);
 
-  //const localTheme = window.localStorage.getItem('theme')
-  const localTheme = window.localStorage.getItem('theme');
+  const localTheme = window.localStorage.getItem('theme') || "light";
   const testVar = useState(window.localStorage.getItem('theme'));
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
