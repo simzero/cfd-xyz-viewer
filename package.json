@@ -1,6 +1,6 @@
 {
   "name": "cfd-xyz",
-  "version": "0.1.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "dependencies": {
     "@babel/helper-module-imports": "^7.16.7",
@@ -18,7 +18,7 @@
     "@mui/icons-material": "^5.4.1",
     "@mui/material": "^5.4.3",
     "@mui/styles": "^5.4.1",
-    "@simzero/rom": "^1.0.0-rc.1",
+    "@simzero/rom": "^1.0.0-rc.2",
     "ajv": "^8.10.0",
     "arraybuffer-loader": "^1.0.8",
     "babel-loader": "^8.0.6",
