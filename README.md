@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-[cfd.xyz](http://cfd.xyz) is an open-source web app to efficiently and easily explore fluid dynamics problems for a wide range of parameters. The framework provides a proof of technology for OpenFOAM tutorials, showing the whole process from the generation of the data-driven surrogate models to the web browser. It also includes a standalone web tool for visualizing users' data-driven models by directly dragging and dropping the output folder of the ROM offline stage. Beyond the current proof of technology, this enables a collaborative effort for the implementation of OpenFOAM data-driven models in applications demanding real-time solutions such as digital twins and other digital transformation technologies.
+[cfd.xyz](http://cfd.xyz) is an open-source web app to efficiently and easily explore fluid dynamics problems for a wide range of parameters. The framework provides a proof of technology for OpenFOAM tutorials, showing the whole process from the generation of the surrogate models to the web browser. It also includes a standalone web tool for visualizing users' models by directly dragging and dropping the output folder of the ROM offline stage. Beyond the current proof of technology, this enables a collaborative effort for the implementation of OpenFOAM-based surrogate models in applications demanding real-time solutions such as digital twins and other digital transformation technologies.
 
 We aim with the developments presented in this work to create a common place where canonical and industrial CFD problems can be visualized and analyzed without carrying out a simulation, or as a preliminary step for optimizing parameters of new simulations. Having an open-source centralized service has several advantages from educational, optimization and reproducibility point of views. But also from a CO2 footprint perspective.
 
@@ -41,7 +41,12 @@ The web will be accessible at `http://localhost:3001`.
 
 ## License
 
-Code on this repository is covered by the MIT license, and media/images by CC BY 4.0. The cfd.xyz logo and SIMZERO are trademarks.
+Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
 
 * Code: [MIT](https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE)
-* Media: [CC BY 4.0](https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE.media)
+* Media: [CC BY 4.0](https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE-CC-BY)
+* Media (`public/constructionSolver.png`): [CC0](https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE-CC-0)
+
+* Trademarks:
+  - OPENFOAM® is a registered trade mark of OpenCFD Limited, producer and distributor of the OpenFOAM software via [www.openfoam.com](www.openfoam.com).
+  - cfd.xyz logo and SIMZERO are exclusive trademarks. Their use is only allowed in the context of this web app and in compliance with trademark law. Adaptations or modifications of the cfd.xyz logo are not permitted.

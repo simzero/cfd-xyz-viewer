@@ -24,7 +24,7 @@ import { lightTheme, darkTheme } from './../../../theme';
 import hexRgb from 'hex-rgb';
 import { initializeApp } from '@firebase/app';
 import { getBlob, getStorage, ref, getDownloadURL } from "@firebase/storage";
-import rom from 'rom'
+import rom from '@simzero/rom'
 import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'

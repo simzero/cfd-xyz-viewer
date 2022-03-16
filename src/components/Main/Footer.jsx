@@ -28,11 +28,12 @@ function Footer() {
             fontFamily: 'monospace',
             fontSize: 12,
             fontWeight: 600
-	  }}
-	>
+          }}
+        >
           {'© '}
           {new Date().getFullYear()}
           {' '}
+          {'SIMZERO'}
           <Link
             className={classes.link}
             color="inherit"
@@ -45,7 +46,6 @@ function Footer() {
     );
   }
 
-  //{'SIMZERO'}
   //<div style={{position: "fixed", left: 0, bottom: 0, right: 0}}>
   return (
     <div>

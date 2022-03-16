@@ -19,7 +19,7 @@ const cardTitleWeight =' 600';
 const toolsSize = 16;
 const vtkFontSize = 14;
 const cardDescriptionSize = 10;
-const bodySize = 14;
+const bodySize = 16;
 const titleSize = 18;
 
 export const global = {
@@ -576,7 +576,7 @@ export const navTheme = {
     margin: "0px",
   },
   logo: {
-    maxWidth: 70,
+    maxWidth: 60,
     marginRight: '2px',
     paddingLeft: 0,
     paddingRight:0,

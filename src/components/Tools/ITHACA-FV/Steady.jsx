@@ -32,7 +32,7 @@ import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransf
 import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import debounce from "lodash/debounce";
 import { lightTheme, darkTheme } from './../../theme';
-import rom from 'rom'
+import rom from '@simzero/rom'
 import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import AttachFileIcon from '@mui/icons-material/AttachFile';

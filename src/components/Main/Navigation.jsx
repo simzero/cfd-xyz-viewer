@@ -2,6 +2,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import { makeStyles } from "@mui/styles";
 import Toolbar from '@mui/material/Toolbar';
@@ -22,6 +23,7 @@ import logoLight from "./logoLight.svg";
 import logoDark from "./logoDark.svg";
 import useWindowOrientation from "use-window-orientation";
 import {isMobile} from 'react-device-detect';
+import { NavLink } from "react-router-dom";
 
 // TODO: fix
 function withRouter(Component) {
@@ -44,6 +46,7 @@ function Navigation(element) {
   const useStyles =  makeStyles(navTheme);
   const classes = useStyles();
   const [theme, toggleTheme] = useDarkMode();
+  const [show, setShow] = useState(true);
   const theme2 = window.localStorage.getItem('theme') || 'light'
   const themeMode = theme2 === 'light' ? lightTheme : darkTheme;
   const icon = theme2 === 'light' ? <DarkModeIcon /> : <LightModeIcon />;
@@ -53,6 +56,22 @@ function Navigation(element) {
   const iconTitle = theme2 === 'light' ? titleLight : titleDark; 
   const mainSecondaryColor = themeMode.palette.primary2Color;
   const { landscape } = useWindowOrientation();
+  const controlToolbar = () => {
+    if (window.scrollY > 100) {
+      setShow(false)
+    }
+    else
+    {
+      setShow(true)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', controlToolbar)
+    return () => {
+      window.removeEventListener('scroll', controlToolbar)
+    }
+  }, [])
 
   const location = useLocation();
   var location_path = location.pathname;
@@ -82,26 +101,35 @@ function Navigation(element) {
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-    <div>
-      <AppBar position="fixed">
-         <Toolbar style={{ background: themeMode.appBar.background, minHeight: themeMode.appBar.minHeight, height: themeMode.appBar.height}}>
+    <div className={classes.root}>
+      {show &&
+        <AppBar position="fixed">
+          <Toolbar style={{ background: themeMode.appBar.background, minHeight: themeMode.appBar.minHeight, height: themeMode.appBar.height }}>
             <Link to="/">
-	        <img alt="cfd.xyz" src={logo} className={classes.logo} />
+	      <img alt="cfd.xyz" src={logo} className={classes.logo} />
             </Link>
-            <Typography style={{ paddingTop: 6, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor}}>
-                { title }
+            <Typography style={{ paddingTop: 1, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor}}>
+              { title }
 	    </Typography>
-          <IconButton
-            edge={false}
-            style={{ border: "none", outline: "none", color: mainSecondaryColor }}
-            aria-label="mode"
-	    title={iconTitle}
-            onClick={() => toggleTheme(theme)}
-          >
-            {icon}
-          </IconButton>
-         </Toolbar>
-    </AppBar>
+            <div className={classes.root}>
+              <NavLink to="/About" style={{ paddingTop: 1, paddingRight: 0, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>
+                <div className={classes.link} color="inherit">
+                  {"About"}
+                </div>
+              </NavLink>
+            </div>
+            <IconButton
+              edge={false}
+              style={{ border: "none", outline: "none", color: mainSecondaryColor }}
+              aria-label="mode"
+              title={iconTitle}
+              onClick={() => toggleTheme(theme)}
+            >
+              {icon}
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+      }
     <Toolbar style={{ background: themeMode.appBar.background, minHeight: themeMode.appBar.minHeight, height: themeMode.appBar.height}} />
     </div>
     </ThemeProvider>

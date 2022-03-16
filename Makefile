@@ -4,7 +4,7 @@
 
 SHELL := /bin/bash
 
-cfd-xyz-image := cfd-xyz:v0.1
+cfd-xyz-image := cfd-xyz:v1.0.0-rc.1
 cfd-xyz := docker run --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
 data-version := surrogates_v1.0.0-beta.0
 data-url := https://github.com/carpemonf/rom-js-data/raw/main/$(data-version).tar.gz
