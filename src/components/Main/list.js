@@ -2,7 +2,7 @@ const posts = [
  {
   title: "OpenFOAM Tutorials",
   link: "/OF",
-  image: "/OF/OF",
+  image: "/images/OF/OF",
   key: "1",
   ready: true,
   description: "Collection of OpenFOAM tutorials. OpenFOAM is a free, open source CFD software."
@@ -11,7 +11,7 @@ const posts = [
  {
   title: "Tools",
   link: "/Tools",
-  image: "/Tools/Tools",
+  image: "/images/Tools/Tools",
   key: "2",
   ready: true,
   description: "Standalone tools."
@@ -20,7 +20,7 @@ const posts = [
  {
   title: "Another solver",
   link: "none",
-  image: "constructionSolver",
+  image: "/images/constructionSolver",
   key: "3",
   ready: false,
   description: "Engage or contact us for adding your case or CFD solver."

@@ -8,7 +8,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/pitzDaily",
   key: "1",
   ready: true,
-  image: "/OF/incompressible/simpleFoam/pitzDaily/pitzDaily",
+  image: "/images/OF/incompressible/simpleFoam/pitzDaily/pitzDaily",
   description: "Tutorial for a turbulent free shear layer formed a rearward-facing step. \n\nData:\n  -P = 101325 Pa \n -T = [-100, 1000] °C \n -U_{inlet} = [1,20] m/s"
  },
 
@@ -17,7 +17,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/airFoil2D",
   key: "2",
   ready: false,
-  image: "/OF/incompressible/simpleFoam/airFoil2D/airFoil2D"
+  image: "/images/OF/incompressible/simpleFoam/airFoil2D/airFoil2D"
  },
 
  {
@@ -25,7 +25,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/bump2D",
   key: "3",
   ready: false,
-  image: "/OF/incompressible/simpleFoam/bump2D/bump2D"
+  image: "/images/OF/incompressible/simpleFoam/bump2D/bump2D"
  },
 
  {
@@ -33,7 +33,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/backwardFacingStep2D",
   key: "4",
   ready: false,
-  image: "/OF/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"
+  image: "/images/OF/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"
  }
 ]
 
