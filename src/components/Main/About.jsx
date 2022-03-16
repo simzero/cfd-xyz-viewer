@@ -61,7 +61,7 @@ function About() {
             className={classes.bodyText}
             style={{ marginTop: 0, marginLeft: 20, marginRight: 0, marginBottom: 40,  whiteSpace: "pre-wrap"}}
           >
-             - cfd.xyz is an open-source web app. You can install it locally, fix bugs or add new features at the <a target="_blank" href="https://github.com/carpemonf/cfd-xyz">cfd.xyz</a> or <a target="_blank" href="https://github.com/carpemonf/rom-js">rom-js</a> GitHub repositories.
+             - cfd.xyz is an open-source web app. You can install it locally, fix bugs or add new features at the <a target="_blank" href="https://github.com/simzero-oss/cfd-xyz">cfd.xyz</a> or <a target="_blank" href="https://github.com/simzero-oss/rom-js">rom-js</a> GitHub repositories.
           </div>
           <div
             className={classes.titleText}
@@ -76,7 +76,7 @@ function About() {
             <div
               style={{ marginTop: 0, marginRight: 0, marginBottom: 20}}
             >
-              - cfd.xyz code and images (excluding the logo) are mainly covered by <a target="_blank" href="https://github.com/carpemonf/cfd-xyz/blob/main/LICENSE">MIT</a> and <a target="_blank" href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a> licenses, respectively. Further details about the licenses can be found at <a target="_blank" href="https://github.com/carpemonf/cfd-xyz#License">cfd.xyz licenses</a>. You can reuse this code under the terms of these licenses. Please cite this website and related repositories to help us to build more assets.
+              - cfd.xyz code and images (excluding the logo) are mainly covered by <a target="_blank" href="https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE">MIT</a> and <a target="_blank" href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a> licenses, respectively. Further details about the licenses can be found at <a target="_blank" href="https://github.com/simzero-oss/cfd-xyz#License">cfd.xyz licenses</a>. You can reuse this code under the terms of these licenses. Please cite this website and related repositories to help us to build more assets.
             </div>
             <div
               style={{ marginTop: 0, marginRight: 0, marginBottom: 20}}
