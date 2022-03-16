@@ -1,198 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   width="2414.5823"
-   height="1199.9022"
-   version="1.1"
-   viewBox="0 0 638.84234 317.46443"
-   id="svg74"
-   sodipodi:docname="logoLight.svg"
-   inkscape:version="1.1.2 (1:1.1+202202050852+0a00cf5339)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs78" />
-  <sodipodi:namedview
-     id="namedview76"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     showgrid="false"
-     lock-margins="true"
-     fit-margin-top="100"
-     fit-margin-left="100"
-     fit-margin-right="100"
-     fit-margin-bottom="100"
-     inkscape:zoom="0.11575153"
-     inkscape:cx="1131.7345"
-     inkscape:cy="587.46522"
-     inkscape:window-width="1366"
-     inkscape:window-height="699"
-     inkscape:window-x="1366"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="g72" />
-  <g
-     transform="translate(-84.720717,-1218.2912)"
-     id="g72">
-    <text
-       x="107.53339"
-       y="165.00235"
-       fill="#000000"
-       font-family="sans-serif"
-       font-size="22.578px"
-       style="line-height:1.25;white-space:pre;inline-size:1.21821"
-       xml:space="preserve"
-       id="text2" />
-    <text
-       transform="scale(0.26458)"
-       fill="#000000"
-       font-family="sans-serif"
-       font-size="40px"
-       style="line-height:1.25;white-space:pre;shape-inside:url(#rect173330)"
-       xml:space="preserve"
-       id="text4" />
-    <text
-       x="-641.47601"
-       y="2560.1089"
-       font-family="Rasa"
-       font-size="25.4px"
-       font-weight="bold"
-       stroke-width="0.26458"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text8"><tspan
-         x="-641.47601"
-         y="2560.1089"
-         stroke-width="0.26458"
-         id="tspan6" /></text>
-    <g
-       transform="matrix(0.23132,-0.010198,0.007382,0.21224,611.95,1426)"
-       fill="none"
-       stroke="#050505"
-       stroke-linejoin="round"
-       id="g44">
-      <path
-         d="M 359.96,-219.49 12.6,-72.05 -0.559,378.48 346.801,231.04 Z"
-         stroke-width="27.894"
-         id="path38" />
-      <path
-         transform="matrix(1.142,0.054871,-0.039722,1.2447,-8718.8,-3941.8)"
-         d="m 7892,2582.6 -145.95,174.89 -306.51,-110.8 -16.354,7.1875 318.66,113.69 299.58,-131.66 z"
-         stroke-width="20"
-         id="path40" />
-      <path
-         d="m 12.602,-72.045 -359.4,-159 -13.159,450.53 359.4,159 z"
-         stroke-width="27.894"
-         id="path42" />
-    </g>
-    <text
-       transform="scale(1.0406,0.96099)"
-       x="97.295021"
-       y="1518.0146"
-       font-family="Rasa"
-       font-size="329.16px"
-       font-weight="bold"
-       stroke-width="3.4288"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text48"><tspan
-         x="97.295021"
-         y="1518.0146"
-         font-family="Rasa"
-         font-weight="bold"
-         stroke-width="3.4288"
-         id="tspan46">c</tspan></text>
-    <text
-       transform="scale(1.0002,0.99982)"
-       x="352.3927"
-       y="1459.3793"
-       font-family="Rasa"
-       font-size="327.12px"
-       font-weight="bold"
-       stroke-width="3.4075"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text52"><tspan
-         x="352.3927"
-         y="1459.3793"
-         font-family="Rasa"
-         font-weight="bold"
-         stroke-width="3.4075"
-         id="tspan50">d</tspan></text>
-    <path
-       d="m 336.79,1248.6 c -7.7268,0 -15.453,2.2537 -23.18,6.761 -7.5122,4.2929 -14.273,9.9808 -20.283,17.064 -5.795,6.8684 -10.517,14.595 -14.166,23.18 -3.649,8.5855 -5.4731,17.064 -5.4731,25.435 v 4.8291 l -20.605,3.8638 v 16.098 l 13.132,2.3678 h 86.029 v -22.007 h -37.347 v -19.317 c 0,-10.517 2.039,-17.278 6.117,-20.283 4.0781,-3.0049 9.7661,-4.615 17.064,-4.8295 2.7904,-0.2148 6.5465,0.1075 11.269,0.9655 4.9366,0.644 9.7658,1.3952 14.488,2.2538 l 8.3707,-22.859 c -4.9366,-3.6488 -10.517,-6.7609 -16.742,-9.3364 -6.0098,-2.7904 -12.234,-4.1857 -18.673,-4.1857 z"
-       stroke="#000000"
-       stroke-width="7.7043"
-       id="path54" />
-    <path
-       d="m 271.81,1348.2 1.2085,0.218 v 84.352 c 0,1.9319 -0.53646,3.4344 -1.6097,4.5075 -0.85851,1.0731 -2.1463,1.7172 -3.8634,1.9318 l -12.556,2.2538 v 16.742 h 90.147 v -16.742 l -23.824,-2.5759 c -1.9317,-0.2147 -3.4341,-0.8582 -4.5074,-1.9314 -0.85852,-1.0732 -1.2879,-2.4686 -1.2879,-4.1858 v -84.57 z"
-       fill="none"
-       stroke="#000000"
-       stroke-width="7.7043"
-       id="path56" />
-    <text
-       transform="matrix(0.94336,-0.48491,0.0062036,1.0568,0,0)"
-       x="651.00098"
-       y="1712.7589"
-       font-family="sans-serif"
-       font-size="90.319px"
-       font-weight="bold"
-       stroke-width="0.94082"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text60"><tspan
-         x="651.00098"
-         y="1712.7589"
-         stroke-width="0.94082"
-         id="tspan58">Y</tspan></text>
-    <text
-       transform="matrix(0.94829,0.35338,0.0062036,1.0568,0,0)"
-       x="561.05359"
-       y="1201.0162"
-       font-family="sans-serif"
-       font-size="90.201px"
-       font-weight="bold"
-       stroke-width="0.93959"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text64"><tspan
-         x="561.05359"
-         y="1201.0162"
-         stroke-width="0.93959"
-         id="tspan62">X</tspan></text>
-    <rect
-       transform="matrix(0.94044,0.33995,-0.6407,0.76779,0,0)"
-       x="1373.3"
-       y="1079.8"
-       width="89.197998"
-       height="106.34"
-       fill="none"
-       stroke="#010101"
-       stroke-linecap="square"
-       stroke-width="5.4906"
-       style="paint-order:markers fill stroke"
-       id="rect66" />
-    <text
-       transform="matrix(0.89062,0.31853,-0.7189,0.86569,0,0)"
-       x="1464.2712"
-       y="1044.9611"
-       font-family="sans-serif"
-       font-size="91.408px"
-       font-weight="bold"
-       stroke-width="0.95217"
-       style="line-height:1.25"
-       xml:space="preserve"
-       id="text70"><tspan
-         x="1464.2712"
-         y="1044.9611"
-         stroke-width="0.95217"
-         id="tspan68">Z</tspan></text>
+<svg width="2414.6" height="1199.9" version="1.1" viewBox="0 0 638.84 317.46" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-84.721 -1218.3)">
+  <text x="107.53339" y="165.00235" fill="#000000" font-family="sans-serif" font-size="22.578px" style="inline-size:1.21821;line-height:1.25;white-space:pre" xml:space="preserve"/>
+  <text transform="scale(.26458)" fill="#000000" font-family="sans-serif" font-size="40px" style="line-height:1.25;shape-inside:url(#rect173330);white-space:pre" xml:space="preserve"/>
+  <text x="-641.47601" y="2560.1089" font-family="Rasa" font-size="25.4px" font-weight="bold" stroke-width=".26458" style="line-height:1.25" xml:space="preserve"><tspan x="-641.47601" y="2560.1089" stroke-width=".26458"/></text>
+  <g transform="matrix(.23132 -.010198 .007382 .21224 611.95 1426)" fill="none" stroke="#050505" stroke-linejoin="round">
+   <path d="m359.96-219.49-347.36 147.44-13.159 450.53 347.36-147.44z" stroke-width="27.894"/>
+   <path transform="matrix(1.142 .054871 -.039722 1.2447 -8718.8 -3941.8)" d="m7892 2582.6-145.95 174.89-306.51-110.8-16.354 7.1875 318.66 113.69 299.58-131.66z" stroke-width="20"/>
+   <path d="m12.602-72.045-359.4-159-13.159 450.53 359.4 159z" stroke-width="27.894"/>
   </g>
+  <text transform="scale(1.0406 .96099)" x="97.295021" y="1518.0146" font-family="Rasa" font-size="329.16px" font-weight="bold" stroke-width="3.4288" style="line-height:1.25" xml:space="preserve"><tspan x="97.295021" y="1518.0146" font-family="Rasa" font-weight="bold" stroke-width="3.4288">c</tspan></text>
+  <text transform="scale(1.0002 .99982)" x="352.3927" y="1459.3793" font-family="Rasa" font-size="327.12px" font-weight="bold" stroke-width="3.4075" style="line-height:1.25" xml:space="preserve"><tspan x="352.3927" y="1459.3793" font-family="Rasa" font-weight="bold" stroke-width="3.4075">d</tspan></text>
+  <path d="m336.79 1248.6c-7.7268 0-15.453 2.2537-23.18 6.761-7.5122 4.2929-14.273 9.9808-20.283 17.064-5.795 6.8684-10.517 14.595-14.166 23.18-3.649 8.5855-5.4731 17.064-5.4731 25.435v4.8291l-20.605 3.8638v16.098l13.132 2.3678h86.029v-22.007h-37.347v-19.317c0-10.517 2.039-17.278 6.117-20.283 4.0781-3.0049 9.7661-4.615 17.064-4.8295 2.7904-0.2148 6.5465 0.1075 11.269 0.9655 4.9366 0.644 9.7658 1.3952 14.488 2.2538l8.3707-22.859c-4.9366-3.6488-10.517-6.7609-16.742-9.3364-6.0098-2.7904-12.234-4.1857-18.673-4.1857z" stroke="#000" stroke-width="7.7043"/>
+  <path d="m271.81 1348.2 1.2085 0.218v84.352c0 1.9319-0.53646 3.4344-1.6097 4.5075-0.85851 1.0731-2.1463 1.7172-3.8634 1.9318l-12.556 2.2538v16.742h90.147v-16.742l-23.824-2.5759c-1.9317-0.2147-3.4341-0.8582-4.5074-1.9314-0.85852-1.0732-1.2879-2.4686-1.2879-4.1858v-84.57z" fill="none" stroke="#000" stroke-width="7.7043"/>
+  <text transform="matrix(.94336 -.48491 .0062036 1.0568 0 0)" x="651.00098" y="1712.7589" font-family="sans-serif" font-size="90.319px" font-weight="bold" stroke-width=".94082" style="line-height:1.25" xml:space="preserve"><tspan x="651.00098" y="1712.7589" stroke-width=".94082">Y</tspan></text>
+  <text transform="matrix(.94829 .35338 .0062036 1.0568 0 0)" x="561.05359" y="1201.0162" font-family="sans-serif" font-size="90.201px" font-weight="bold" stroke-width=".93959" style="line-height:1.25" xml:space="preserve"><tspan x="561.05359" y="1201.0162" stroke-width=".93959">X</tspan></text>
+  <rect transform="matrix(.94044 .33995 -.6407 .76779 0 0)" x="1373.3" y="1079.8" width="89.198" height="106.34" fill="none" stroke="#010101" stroke-linecap="square" stroke-width="5.4906" style="paint-order:markers fill stroke"/>
+  <text transform="matrix(.89062 .31853 -.7189 .86569 0 0)" x="1464.2712" y="1044.9611" font-family="sans-serif" font-size="91.408px" font-weight="bold" stroke-width=".95217" style="line-height:1.25" xml:space="preserve"><tspan x="1464.2712" y="1044.9611" stroke-width=".95217">Z</tspan></text>
+ </g>
 </svg>
