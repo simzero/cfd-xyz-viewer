@@ -1,43 +1,354 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="2218.6" height="1004.1" version="1.1" viewBox="0 0 586.99 265.66" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g transform="translate(-112.21 -991.02)">
-  <text x="107.53339" y="165.00235" fill="#000000" font-family="sans-serif" font-size="22.578px" style="inline-size:1.21821;line-height:1.25;white-space:pre" xml:space="preserve"/>
-  <text transform="scale(.26458)" fill="#000000" font-family="sans-serif" font-size="40px" style="line-height:1.25;shape-inside:url(#rect173330);white-space:pre" xml:space="preserve"/>
-  <text x="-641.47601" y="2560.1089" font-family="Rasa" font-size="25.4px" font-weight="bold" stroke-width=".26458" style="line-height:1.25" xml:space="preserve"><tspan x="-641.47601" y="2560.1089" stroke-width=".26458"/></text>
-  <g transform="matrix(.26458 0 0 .26458 514.72 -3597.7)">
-   <path d="m250-250h-500v500h500z" fill="#cd0000" stroke="#000" stroke-linejoin="round" stroke-width="2"/>
+
+<svg
+   sodipodi:docname="logoDark2.svg"
+   inkscape:version="1.1.2 (1:1.1+202202050852+0a00cf5339)"
+   id="svg5"
+   version="1.1"
+   viewBox="0 0 638.85128 317.5168"
+   height="1200.0636"
+   width="2414.5562"
+   inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     showborder="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:zoom="0.12727922"
+     inkscape:cx="1186.368"
+     inkscape:cy="974.23601"
+     inkscape:window-width="1366"
+     inkscape:window-height="699"
+     inkscape:window-x="1366"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     fit-margin-top="100"
+     fit-margin-left="100"
+     fit-margin-right="100"
+     fit-margin-bottom="100"
+     lock-margins="true" />
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect10492"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect9578"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient39955">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop39951" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop39953" />
+    </linearGradient>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect202464"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <rect
+       x="58.747337"
+       y="1130.5706"
+       width="128.76575"
+       height="90.747841"
+       id="rect191028" />
+    <rect
+       x="356.60266"
+       y="853.99744"
+       width="157.76912"
+       height="169.34071"
+       id="rect173330" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect156273" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect163886" />
+    <rect
+       x="58.747337"
+       y="1130.5706"
+       width="128.76575"
+       height="90.747841"
+       id="rect211986" />
+    <rect
+       x="58.747337"
+       y="1130.5706"
+       width="128.76575"
+       height="90.747841"
+       id="rect217656" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect207051" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect207171" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect233135" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect269761" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect270701" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect271554" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect281971" />
+    <rect
+       x="1282.646"
+       y="800.36743"
+       width="151.57462"
+       height="149.30157"
+       id="rect1589" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient39955"
+       id="linearGradient39957"
+       x1="-1287.397"
+       y1="2661.2148"
+       x2="-1169.5563"
+       y2="2661.2148"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-86.278147,-965.08632)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:22.5778px;line-height:1.25;font-family:sans-serif;white-space:pre;inline-size:1.21821;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="107.53339"
+       y="165.00235"
+       id="text980"><tspan
+         x="107.53339"
+         y="165.00235"
+         id="tspan1091"><tspan
+           dx="0 12.413381 7.9485331"
+           id="tspan1089">cfd</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text173328"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect173330);fill:#000000;fill-opacity:1;stroke:none" />
+    <g
+       aria-label="f"
+       transform="matrix(1.1322615,-0.25575426,-0.35833521,1.2348705,-25.353286,296.14349)"
+       id="g310376"
+       style="font-weight:bold;font-size:333.043px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#000000;stroke-width:3.46919"
+       inkscape:groupmode="layer"
+       inkscape:label="#g310376" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:25.4px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';stroke-width:0.264583"
+       x="-641.47601"
+       y="2560.1089"
+       id="text119883"><tspan
+         sodipodi:role="line"
+         id="tspan119881"
+         style="stroke-width:0.264583"
+         x="-641.47601"
+         y="2560.1089" /></text>
+    <g
+       inkscape:label="cube:x35.00:y41.00:z23.00:x0.00:y0.00:z0.00"
+       transform="matrix(0.23132493,-0.01019752,0.00738201,0.21223772,613.51409,1172.8463)"
+       id="g1230-9"
+       style="fill:none;fill-opacity:1;stroke:#e2e2e2;stroke-width:27.8942;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
+      <path
+         inkscape:label="Face:0"
+         style="fill:none;fill-opacity:1;stroke:#e2e2e2;stroke-width:27.8942;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 359.959,-219.489 12.6021,-72.0452 -0.556749,378.488 346.8,231.043 Z"
+         id="path1224-1" />
+      <path
+         id="path1226-7"
+         style="fill:none;fill-opacity:1;stroke:#e2e2e2;stroke-width:20;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         inkscape:label="Face:2"
+         d="m 7892.0176,2582.6309 -145.9473,174.8945 -306.5137,-110.7988 -16.3535,7.1875 318.6621,113.6894 299.5801,-131.6601 z"
+         transform="matrix(1.1420224,0.05487147,-0.0397216,1.2447281,-8718.8472,-3941.7668)" />
+      <path
+         inkscape:label="Face:3"
+         style="fill:none;fill-opacity:1;stroke:#e2e2e2;stroke-width:27.8942;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 12.6021,-72.0452 -346.8,-231.043 -359.959,219.489 -0.556749,378.488 Z"
+         id="path1228-7" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:329.164px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:3.42879"
+       x="98.793388"
+       y="1254.5673"
+       id="text1234-1"
+       transform="scale(1.0405886,0.96099457)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1232-1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:3.42879"
+         x="98.793388"
+         y="1254.5673">c</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:327.124px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:3.40753"
+       x="353.9516"
+       y="1206.1615"
+       id="text1238-5"
+       transform="scale(1.0001823,0.99981773)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1236-9"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:3.40753"
+         x="353.9516"
+         y="1206.1615">d</tspan></text>
+    <path
+       id="path1240-7"
+       style="font-weight:bold;font-size:335.083px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:#e2e2e2;fill-opacity:1;stroke:#e2e2e2;stroke-width:7.7043;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 338.34747,995.3968 c -7.72683,0 -15.45345,2.2537 -23.18037,6.761 -7.51223,4.2929 -14.27338,9.9808 -20.28327,17.0639 -5.79498,6.8684 -10.51717,14.5949 -14.16593,23.1803 -3.64896,8.5855 -5.47312,17.0638 -5.47312,25.4346 v 4.8291 l -20.60493,3.8638 v 16.0977 l 13.13231,2.3678 h 86.02935 v -22.0071 h -37.34688 v -19.3174 c 0,-10.5172 2.03898,-17.2778 6.11703,-20.2827 4.07808,-3.0049 9.76611,-4.615 17.06371,-4.8295 2.79036,-0.2148 6.54647,0.1075 11.26854,0.9655 4.93659,0.644 9.76581,1.3952 14.48789,2.2538 l 8.37072,-22.8587 c -4.93658,-3.6488 -10.51716,-6.7609 -16.74156,-9.3364 -6.00979,-2.7904 -12.23438,-4.1857 -18.67349,-4.1857 z"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <path
+       id="path1242-7"
+       style="font-weight:bold;font-size:335.083px;line-height:1.25;font-family:Rasa;-inkscape-font-specification:'Rasa Bold';fill:none;stroke:#e2e2e2;stroke-width:7.7043;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 273.36526,1094.995 1.20852,0.218 v 84.3515 c 0,1.9319 -0.53646,3.4344 -1.60968,4.5075 -0.85851,1.0731 -2.14633,1.7172 -3.86336,1.9318 l -12.55643,2.2538 v 16.7415 h 90.14701 v -16.7415 l -23.82439,-2.5759 c -1.93172,-0.2147 -3.43414,-0.8582 -4.50736,-1.9314 -0.85852,-1.0732 -1.28792,-2.4686 -1.28792,-4.1858 v -84.5695 z"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:90.319px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:0.940818"
+       x="654.22034"
+       y="1474.689"
+       id="text1246-6"
+       transform="matrix(0.94336446,-0.48490812,0.00620362,1.0568469,0,0)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1244-7"
+         style="fill:#e2e2e2;fill-opacity:1;stroke-width:0.940818"
+         x="654.22034"
+         y="1474.689">Y</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:90.2006px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:0.939588"
+       x="564.27295"
+       y="960.38739"
+       id="text1250-3"
+       transform="matrix(0.94828514,0.3533777,0.00620362,1.0568469,0,0)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1248-6"
+         style="fill:#e2e2e2;fill-opacity:1;stroke-width:0.939588"
+         x="564.27295"
+         y="960.38739">X</tspan></text>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#e2e2e2;stroke-width:5.49061;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
+       id="rect1254-5"
+       width="89.198326"
+       height="106.3405"
+       x="1202.0372"
+       y="825.94873"
+       transform="matrix(0.94044223,0.33995354,-0.64070459,0.76778749,0,0)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:91.4079px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#e2e2e2;fill-opacity:1;stroke-width:0.952168"
+       x="1283.6215"
+       y="818.98633"
+       id="text1258-6"
+       transform="matrix(0.89062071,0.31853351,-0.71890236,0.86569456,0,0)"
+       inkscape:export-filename="/home/carmen/Escritorio/logo/logo cfd/archivos finales cfd/prueba_cubo.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan1256-3"
+         style="fill:#e2e2e2;fill-opacity:1;stroke-width:0.952168"
+         x="1283.6215"
+         y="818.98633">Z</tspan></text>
   </g>
-  <g transform="matrix(.26458 0 0 .26458 514.72 -3597.7)" stroke="#000" stroke-linejoin="round" stroke-width="2">
-   <path d="m250-202.79h-500v492.4h500z" fill="#c20000"/>
-   <path d="m250-202.79v-86.824h-500v86.824z" fill="#ae0000"/>
-  </g>
-  <g transform="matrix(.26458 0 0 .26458 514.72 -2748.7)" stroke="#000" stroke-linejoin="round" stroke-width="2">
-   <path d="m250-202.79h-500v492.4h500z" fill="#c20000"/>
-   <path d="m250-202.79v-86.824h-500v86.824z" fill="#ae0000"/>
-  </g>
-  <g transform="matrix(.26458 0 0 .26458 514.72 -2748.7)" stroke="#000" stroke-linejoin="round" stroke-width="2">
-   <path d="m250-202.79h-500v492.4h500z" fill="#c20000"/>
-   <path d="m250-202.79v-86.824h-500v86.824z" fill="#ae0000"/>
-  </g>
-  <g transform="matrix(.26458 0 0 .26458 514.72 -2748.7)" stroke="#000" stroke-linejoin="round" stroke-width="2">
-   <path d="m250-202.79h-500v492.4h500z" fill="#c20000"/>
-   <path d="m250-202.79v-86.824h-500v86.824z" fill="#ae0000"/>
-  </g>
-  <g transform="matrix(.23132 -.010198 .007382 .21224 613.51 1172.8)" fill="none" stroke="#e2e2e2" stroke-linejoin="round">
-   <path d="m359.96-219.49-347.36 147.44-13.159 450.53 347.36-147.44z" stroke-width="27.894"/>
-   <path transform="matrix(1.142 .054871 -.039722 1.2447 -8718.8 -3941.8)" d="m7892 2582.6-145.95 174.89-306.51-110.8-16.354 7.1875 318.66 113.69 299.58-131.66z" stroke-width="20"/>
-   <path d="m12.602-72.045-359.4-159-13.159 450.53 359.4 159z" stroke-width="27.894"/>
-  </g>
-  <g fill="#e2e2e2">
-   <text transform="scale(1.0406 .96099)" x="98.793388" y="1254.5673" font-family="Rasa" font-size="329.16px" font-weight="bold" stroke-width="3.4288" style="line-height:1.25" xml:space="preserve"><tspan x="98.793388" y="1254.5673" fill="#e2e2e2" font-family="Rasa" font-weight="bold" stroke-width="3.4288">c</tspan></text>
-   <text transform="scale(1.0002 .99982)" x="353.9516" y="1206.1615" font-family="Rasa" font-size="327.12px" font-weight="bold" stroke-width="3.4075" style="line-height:1.25" xml:space="preserve"><tspan x="353.9516" y="1206.1615" fill="#e2e2e2" font-family="Rasa" font-weight="bold" stroke-width="3.4075">d</tspan></text>
-   <path d="m338.35 995.4c-7.7268 0-15.453 2.2537-23.18 6.761-7.5122 4.2929-14.273 9.9808-20.283 17.064-5.795 6.8684-10.517 14.595-14.166 23.18-3.649 8.5855-5.4731 17.064-5.4731 25.435v4.8291l-20.605 3.8638v16.098l13.132 2.3678h86.029v-22.007h-37.347v-19.317c0-10.517 2.039-17.278 6.117-20.283 4.0781-3.0049 9.7661-4.615 17.064-4.8295 2.7904-0.2148 6.5465 0.1075 11.269 0.9655 4.9366 0.644 9.7658 1.3952 14.488 2.2538l8.3707-22.859c-4.9366-3.6488-10.517-6.7609-16.742-9.3364-6.0098-2.7904-12.234-4.1857-18.673-4.1857z" stroke="#e2e2e2" stroke-width="7.7043"/>
-  </g>
-  <path d="m273.37 1095 1.2085 0.218v84.352c0 1.9319-0.53646 3.4344-1.6097 4.5075-0.85851 1.0731-2.1463 1.7172-3.8634 1.9318l-12.556 2.2538v16.742h90.147v-16.742l-23.824-2.5759c-1.9317-0.2147-3.4341-0.8582-4.5074-1.9314-0.85852-1.0732-1.2879-2.4686-1.2879-4.1858v-84.57z" fill="none" stroke="#e2e2e2" stroke-width="7.7043"/>
-  <text transform="matrix(.94336 -.48491 .0062036 1.0568 0 0)" x="654.22034" y="1474.689" fill="#e2e2e2" font-family="sans-serif" font-size="90.319px" font-weight="bold" stroke-width=".94082" style="line-height:1.25" xml:space="preserve"><tspan x="654.22034" y="1474.689" fill="#e2e2e2" stroke-width=".94082">Y</tspan></text>
-  <text transform="matrix(.94829 .35338 .0062036 1.0568 0 0)" x="564.27295" y="960.38739" fill="#e2e2e2" font-family="sans-serif" font-size="90.201px" font-weight="bold" stroke-width=".93959" style="line-height:1.25" xml:space="preserve"><tspan x="564.27295" y="960.38739" fill="#e2e2e2" stroke-width=".93959">X</tspan></text>
-  <rect transform="matrix(.94044 .33995 -.6407 .76779 0 0)" x="1202" y="825.95" width="89.198" height="106.34" fill="none" stroke="#e2e2e2" stroke-linecap="square" stroke-width="5.4906" style="paint-order:markers fill stroke"/>
-  <text transform="matrix(.89062 .31853 -.7189 .86569 0 0)" x="1283.6215" y="818.98633" fill="#e2e2e2" font-family="sans-serif" font-size="91.408px" font-weight="bold" stroke-width=".95217" style="line-height:1.25" xml:space="preserve"><tspan x="1283.6215" y="818.98633" fill="#e2e2e2" stroke-width=".95217">Z</tspan></text>
- </g>
 </svg>
