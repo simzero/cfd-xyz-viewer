@@ -9,7 +9,7 @@ function About() {
     document.title = "cfd.xyz | About"
   }, []);
 
-  const localTheme = window.localStorage.getItem('theme') || "ligth";
+  const localTheme = window.localStorage.getItem('theme') || "light";
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();
