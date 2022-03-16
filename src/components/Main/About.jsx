@@ -45,7 +45,13 @@ function About() {
             className={classes.bodyText}
             style={{ marginTop: 0, marginLeft: 20, marginRight: 0, marginBottom: 20}}
           >
-            <div>- Control view keys: </div>
+           - This is a beta version, please handle it with care. Further features, optimizations and fixes are expected.
+          </div>
+          <div
+            className={classes.bodyText}
+            style={{ marginTop: 0, marginLeft: 20, marginRight: 0, marginBottom: 20}}
+          >
+            <div>- 3D view control keys: </div>
             <div> &nbsp;&nbsp; * Rotate: LEFT MOUSE</div>
             <div> &nbsp;&nbsp; * Pan: SHIFT + LEFT MOUSE</div>
             <div> &nbsp;&nbsp; * Spin: CTRL/ALT + LEFT MOUSE</div>

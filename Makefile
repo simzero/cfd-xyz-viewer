@@ -4,11 +4,11 @@
 
 SHELL := /bin/bash
 
-version := v1.0.0-rc.1
-cfd-xyz-image := cfd-xyz:$(version)
+version := v1.0.0-rc.2
+cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:$(version)
 cfd-xyz := docker run --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
 data-version := surrogates_$(version)
-data-url := https://github.com/carpemonf/rom-js-data/raw/main/$(data-version).tar.gz
+data-url := https://github.com/simzero-oss/rom-js-data/raw/main/$(data-version).tar.gz
 
 all: install run-build data start
 all-docker: install-docker run-build-docker data-docker start-docker
