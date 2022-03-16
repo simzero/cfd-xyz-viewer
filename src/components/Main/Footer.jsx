@@ -72,7 +72,7 @@ function Footer() {
                     align="center"
                     style={{fontFamily: 'monospace', fontSize: 12}}
                   >
-                    <a className={classes.link} target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=http://www.cfd.xyz">
+                    <a className={classes.link} target="_blank" href="https://github.com/simzero-oss/cfd-xyz">
                       <FontAwesomeIcon title="Contribute (GitHub)" style={{ width: '24px', height: '24px'}} icon={brands('github')} />
                     </a>
                   </Typography>
@@ -82,7 +82,7 @@ function Footer() {
                     align="center"
                     style={{fontFamily: 'monospace', fontSize: 12}}
                   >
-                    <a className={classes.link} target="_blank" href="http://github.com">
+                    <a className={classes.link} target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=http://www.cfd.xyz">
                       <FontAwesomeIcon title="Share (LinkedIn)" style={{width: '24px', height: '24px'}} icon={brands('linkedin')} />
                     </a>
                   </Typography>
