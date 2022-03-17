@@ -34,6 +34,42 @@ const posts = [
   key: "4",
   ready: false,
   image: "/images/OF/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"
+ },
+
+ {
+  title: "mixerVessel2D",
+  link: "/OF/incompressible/simpleFoam/mixerVessel2D",
+  key: "5",
+  ready: false,
+  image: "/images/OF/incompressible/simpleFoam/mixerVessel2D/mixerVessel2D",
+  description: ""
+ },
+
+ {
+  title: "motorBike",
+  link: "/OF/incompressible/simpleFoam/motorBike",
+  key: "6",
+  ready: false,
+  image: "/images/OF/incompressible/simpleFoam/motorBike/motorBike",
+  description: ""
+ },
+
+ {
+  title: "turbineSiting",
+  link: "/OF/incompressible/simpleFoam/turbineSiting",
+  key: "7",
+  ready: false,
+  image: "/images/OF/incompressible/simpleFoam/turbineSiting/turbineSiting",
+  description: ""
+ },
+
+ {
+  title: "windAroundBuildings",
+  link: "/OF/incompressible/simpleFoam/windAroundBuildings",
+  key: "8",
+  ready: false,
+  image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
+  description: ""
  }
 ]
 
