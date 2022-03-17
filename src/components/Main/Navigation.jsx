@@ -21,7 +21,6 @@ import { lightTheme, darkTheme, navTheme } from './../theme';
 import { useDarkMode } from './useDarkMode';
 import logoLight from "./logoLight.svg";
 import logoDark from "./logoDark.svg";
-import useWindowOrientation from "use-window-orientation";
 import {isMobile} from 'react-device-detect';
 import { NavLink } from "react-router-dom";
 
@@ -55,7 +54,6 @@ function Navigation(element) {
   const titleDark = 'Lights on';
   const iconTitle = theme2 === 'light' ? titleLight : titleDark; 
   const mainSecondaryColor = themeMode.palette.primary2Color;
-  const { landscape } = useWindowOrientation();
   const controlToolbar = () => {
     if (window.scrollY > 100) {
       setShow(false)
@@ -86,16 +84,8 @@ function Navigation(element) {
 
   for (let i = 1; i < split.length; i++) {
     link += "/" + split[i];
-    if (!isMobile || landscape) {
+    if (!isMobile) {
       title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
-    }
-    else {
-      if (i < split.length - 1) {
-        title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/..</Link>);
-      }
-      else {
-        title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
-      }
     }
   }
 
