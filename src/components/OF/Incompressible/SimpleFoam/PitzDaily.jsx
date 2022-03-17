@@ -22,21 +22,16 @@ import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import debounce from "lodash/debounce";
 import { lightTheme, darkTheme } from './../../../theme';
 import hexRgb from 'hex-rgb';
-import { initializeApp } from '@firebase/app';
-import { getBlob, getStorage, ref, getDownloadURL } from "@firebase/storage";
 import rom from '@simzero/rom'
 import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
-import { environment } from './../../../../environments/environment';
 import useWindowOrientation from "use-window-orientation";
 import {isMobile} from 'react-device-detect';
 import PropagateLoader from "react-spinners/PropagateLoader";
 
 const { ColorMode } = vtkMapper;
-
-const data_source = "local" //  local | remote
 
 // TODO: redundand instances of vtkScalarBarActor to be removed
 // when issue https://github.com/Kitware/vtk-js/issues/2111
@@ -51,17 +46,11 @@ function temperatureToViscosity(T) {
 }
 
 
-// Initialize Firebase
-const app = initializeApp(environment.firebaseConfig);
-const storage = getStorage(app);
-
-//var textColor = [0, 0, 0];
-
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
 const dataPath = '/surrogates/OF/incompressible/simpleFoam/pitzDaily/';
 
-const loadData = async (storage, filePath) => {
+const loadData = async (filePath) => {
   return new Promise(resolve => {
     fetch(filePath).then(res => res.text())
       .then((data) => {
@@ -70,43 +59,22 @@ const loadData = async (storage, filePath) => {
     })
 };
 
-const readMatrixFile = async (storage, filePath) => {
-  if (data_source === "local")
-  {
-    return new Promise(resolve => {
-      fetch(filePath).then(res => res.text())
-      .then((data) => {
-        Papa.parse(data, {
-          download: false,
-          delimiter: " ",
-          dynamicTyping: true,
-          skipEmptyLines: true,
-          header: false,
-          complete: results => {
-            resolve(results.data);
-          }
-        })
-     })
-    })
-  }
-  else
-  {
-    const refPath = ref(storage, filePath);
-    return new Promise(resolve => {
-      getBlob(refPath).then((data) => {
-        Papa.parse(data, {
-          download: true,
-          delimiter: " ",
-          dynamicTyping: true,
-          skipEmptyLines: true,
-          header: false,
-          complete: results => {
-            resolve(results.data);
-          }
-        });
-     });
-    });
-  }
+const readMatrixFile = async (filePath) => {
+  return new Promise(resolve => {
+    fetch(filePath).then(res => res.text())
+    .then((data) => {
+      Papa.parse(data, {
+        download: false,
+        delimiter: " ",
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        header: false,
+        complete: results => {
+          resolve(results.data);
+        }
+      })
+   })
+  })
 };
 
 function PitzDaily() {
@@ -158,32 +126,10 @@ function PitzDaily() {
 
       let vtuPath = dataPath + 'pitzDaily.vtu';
 
-      if (data_source === "local")
-      {
-        fetch(vtuPath).then(res => res.text())
-        .then((data) => {
-          setScene(initialPortrait, data, context, vtkContainerRef, initialTheme);
-        });
-      }
-      else if (data_source === "remote")
-      {
-        //vtuPath = ref(storage, vtuPath, vtkContainerRef, initialTheme);
-        vtuPath = ref(storage, vtuPath);
-
-        getDownloadURL(vtuPath).then((url) => {
-          const xhr = new XMLHttpRequest();
-          xhr.responseType = 'text';
-          xhr.onload = (event) => {
-            const data = xhr.responseText;
-            setScene(initialPortrait, data, context, vtkContainerRef, initialTheme);
-          };
-          xhr.open('GET', url);
-          xhr.send();
-        });
-      }
-      else
-      {
-      }
+      fetch(vtuPath).then(res => res.text())
+      .then((data) => {
+        setScene(initialPortrait, data, context, vtkContainerRef, initialTheme);
+      });
     }
   }, [dataLoaded, initialPortrait]);
 
@@ -193,13 +139,13 @@ function PitzDaily() {
 
     await rom.ready
 
-    const P = await loadData(storage, dataPath + 'matrices/P_mat.txt');
-    const M = await loadData(storage, dataPath + 'matrices/M_mat.txt');
-    const K = await loadData(storage, dataPath + 'matrices/K_mat.txt');
-    const B = await loadData(storage, dataPath + 'matrices/B_mat.txt');
-    const modes = await loadData(storage, dataPath + 'EigenModes_U_mat.txt');
-    const coeffL2 = await loadData(storage, dataPath + 'matrices/coeffL2_mat.txt');
-    const mu = await loadData(storage, dataPath + 'par.txt');
+    const P = await loadData(dataPath + 'matrices/P_mat.txt');
+    const M = await loadData(dataPath + 'matrices/M_mat.txt');
+    const K = await loadData(dataPath + 'matrices/K_mat.txt');
+    const B = await loadData(dataPath + 'matrices/B_mat.txt');
+    const modes = await loadData(dataPath + 'EigenModes_U_mat.txt');
+    const coeffL2 = await loadData(dataPath + 'matrices/coeffL2_mat.txt');
+    const mu = await loadData(dataPath + 'par.txt');
 
     const Nphi_u = B.split("\n").length;
     const Nphi_p = K.split("\n")[0].split(" ").length;
@@ -232,15 +178,15 @@ function PitzDaily() {
       await Promise.all(indexesNut.map(async (indexNut) => {
         const C1Path = 'matrices/ct1_' + indexNut + "_mat.txt"
         const C2Path = 'matrices/ct2_' + indexNut + "_mat.txt"
-        const C1 = await loadData(storage, dataPath + C1Path);
-        const C2 = await loadData(storage, dataPath + C2Path);
+        const C1 = await loadData(dataPath + C1Path);
+        const C2 = await loadData(dataPath + C2Path);
         reduced.addCt1Matrix(C1, indexNut);
         reduced.addCt2Matrix(C2, indexNut);
       }));
 
       await Promise.all(indexes.map(async (index) => {
         const CPath = 'matrices/C' + index + "_mat.txt"
-        const C = await loadData(storage, dataPath + CPath);
+        const C = await loadData(dataPath + CPath);
         reduced.addCMatrix(C, index);
       }));
 
