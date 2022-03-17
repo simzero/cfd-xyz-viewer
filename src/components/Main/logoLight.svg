@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="2414.6" height="1199.9" version="1.1" viewBox="0 0 638.84 317.46" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(-84.721 -1218.3)">
+ <g transform="translate(-84.721,-1218.3)">
   <g transform="matrix(.23132 -.010198 .007382 .21224 611.95 1426)" fill="none" stroke="#050505" stroke-linejoin="round">
    <path d="m359.96-219.49-347.36 147.44-13.159 450.53 347.36-147.44z" stroke-width="27.894"/>
-   <path transform="matrix(1.142 .054871 -.039722 1.2447 -8718.8 -3941.8)" d="m7892 2582.6-145.95 174.89-306.51-110.8-16.354 7.1875 318.66 113.69 299.58-131.66z" stroke-width="20"/>
+   <path transform="matrix(1.142 .054871 -.039722 1.2447 -8718.8 -3941.8)" d="m7893.4 2583.7-147.35 173.74-306.51-110.8-16.354 7.1875 318.66 113.69 298.19-133.46z" stroke-width="20"/>
    <path d="m12.602-72.045-359.4-159-13.159 450.53 359.4 159z" stroke-width="27.894"/>
   </g>
   <g transform="matrix(1.0406 0 0 .96099 3.1701e-7 1.2356e-5)" stroke-width="3.4288" aria-label="c">
@@ -20,7 +20,7 @@
   <g transform="matrix(.94829 .35338 .0062036 1.0568 3.1701e-7 1.2356e-5)" stroke-width=".93959" aria-label="X">
    <path d="m605.98 1167.5 22.815 33.561h-17.661l-15.371-22.462-15.239 22.462h-17.75l22.815-33.561-21.934-32.196h17.705l14.402 21.185 14.358-21.185h17.794z"/>
   </g>
-  <rect transform="matrix(.94044 .33995 -.6407 .76779 0 0)" x="1373.3" y="1079.8" width="89.198" height="106.34" fill="none" stroke="#010101" stroke-linecap="square" stroke-width="5.4906" style="paint-order:markers fill stroke"/>
+  <rect transform="matrix(.94052 .33974 -.64097 .76757 0 0)" x="1374.1" y="1080.8" width="89.253" height="106.37" ry="0" fill="none" stroke="#010101" stroke-linecap="square" stroke-width="5.4931" style="paint-order:markers fill stroke"/>
   <g transform="matrix(.89062 .31853 -.7189 .86569 3.1701e-7 1.2356e-5)" stroke-width=".95217" aria-label="Z">
    <path d="m1469.4 978.32h56.014v10.399l-35.751 43.249h36.777v12.988h-58.067v-10.4l35.751-43.249h-34.724z"/>
   </g>
