@@ -86,6 +86,7 @@ function PitzDaily() {
   const [velocityValue, setVelocityValue] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(null);
   const [sceneLoaded, setSceneLoaded] = useState(null);
+  const [process, setProcess] = useState(1);
   const [showU, setShowU] = useState(false);
   const [showT, setShowT] = useState(false);
 
@@ -143,6 +144,7 @@ function PitzDaily() {
     const M = await loadData(dataPath + 'matrices/M_mat.txt');
     const K = await loadData(dataPath + 'matrices/K_mat.txt');
     const B = await loadData(dataPath + 'matrices/B_mat.txt');
+    setProcess(2);
     const modes = await loadData(dataPath + 'EigenModes_U_mat.txt');
     const coeffL2 = await loadData(dataPath + 'matrices/coeffL2_mat.txt');
     const mu = await loadData(dataPath + 'par.txt');
@@ -153,6 +155,7 @@ function PitzDaily() {
 
     const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
+
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
     reduced.N_BC(N_BC);
@@ -161,34 +164,30 @@ function PitzDaily() {
 
     let Nphi_nut = 0;
 
-    (async () => {
-      let indexes = []
-      for (var i = 0; i < Nphi_u; i ++ ) {
-        indexes.push(i);
-      }
+    setProcess(3);
 
+    (async () => {
       Nphi_nut = coeffL2.split("\n").length;
       reduced.Nphi_nut(Nphi_nut);
 
-      let indexesNut = []
+      let indexes = []
       for (var j = 0; j < Nphi_u; j ++ ) {
-        indexesNut.push(j);
+        indexes.push(j);
       }
 
-      await Promise.all(indexesNut.map(async (indexNut) => {
-        const C1Path = 'matrices/ct1_' + indexNut + "_mat.txt"
-        const C2Path = 'matrices/ct2_' + indexNut + "_mat.txt"
+      await Promise.all(indexes.map(async (index) => {
+        const C1Path = 'matrices/ct1_' + index + "_mat.txt"
+        const C2Path = 'matrices/ct2_' + index + "_mat.txt"
+        const CPath = 'matrices/C' + index + "_mat.txt"
         const C1 = await loadData(dataPath + C1Path);
         const C2 = await loadData(dataPath + C2Path);
-        reduced.addCt1Matrix(C1, indexNut);
-        reduced.addCt2Matrix(C2, indexNut);
-      }));
-
-      await Promise.all(indexes.map(async (index) => {
-        const CPath = 'matrices/C' + index + "_mat.txt"
         const C = await loadData(dataPath + CPath);
+        reduced.addCt1Matrix(C1, index);
+        reduced.addCt2Matrix(C2, index);
         reduced.addCMatrix(C, index);
       }));
+
+      setProcess(4);
 
       reduced.preprocess();
       reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
@@ -484,8 +483,8 @@ function PitzDaily() {
         {!dataLoaded
           ? <div
               style={{
-                position: 'absolute', left: '50%', top: '45%',
-                transform: 'translate(-50%, -50%)'
+                position: 'absolute', left: '50%', top: '35%',
+                transform: 'translate(-50%, -35%)'
               }}
               className={classes.bodyText}
             >
@@ -495,7 +494,7 @@ function PitzDaily() {
                   paddingBottom: 20,
                 }}
               >
-                LOADING DATA
+                LOADING AND READING DATA {process}/4
               </div>
               <div
                 style={{
@@ -507,8 +506,8 @@ function PitzDaily() {
             </div>
           : <div
               style={{
-                position: 'absolute', left: '50%', top: '45%',
-                transform: 'translate(-50%, -50%)'
+                position: 'absolute', left: '50%', top: '35%',
+                transform: 'translate(-50%, -35%)'
               }}
               className={classes.bodyText}
             >
@@ -530,6 +529,31 @@ function PitzDaily() {
             </div>
         }
       </div>
+      {(!sceneLoaded && !isMobile) &&
+        <div
+          style={{
+            position: 'absolute', left: '50%', top: '70%',
+            transform: 'translate(-50%, -50%)'
+          }}
+          className={classes.bodyText}
+        >
+          <div
+            style={{
+              textAlign: 'left',
+              paddingBottom: 0,
+              paddingRight: 0,
+              paddingTop: 0,
+              paddingLeft: 0,
+            }}
+          >
+            <div>CONTROL VIEW TIPS:</div>
+            <div>* ROTATE: LEFT MOUSE</div>
+            <div>* PAN: LEFT MOUSE + SHIFT</div>
+            <div>* SPIN: LEFT MOUSE + CTRL/ALT</div>
+            <div>* ZOOM: MOUSE WHEEL</div>
+          </div>
+        </div>
+      }
       {(sceneLoaded) &&
         <div>
           <div
