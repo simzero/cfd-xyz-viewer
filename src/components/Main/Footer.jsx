@@ -62,7 +62,7 @@ function Footer() {
                     variant="body2"
                     align="center"
                   >
-                    <a className={classes.link} target="_blank" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-12uquswo6-FFVy95vRjfMF~~t8j~UBHA">
+                    <a className={classes.link} target="_blank" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ">
                       <FontAwesomeIcon title="Engage (Slack)" style={{ align: 'center', color:mainPrimaryColor,background: mainSecondaryColor, width: '24px', height: '24px', display: 'inline-block'}} icon={brands('slack')} />
                     </a>
                   </Typography>

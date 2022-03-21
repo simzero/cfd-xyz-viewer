@@ -103,7 +103,7 @@ function About() {
             className={classes.bodyText}
             style={{ marginTop: 0, marginLeft: 20, marginRight: 0, marginBottom: 40,  whiteSpace: "pre-wrap"}}
           >
-	      - cfd.xyz is developed and maintained by Carlos Peña-Monferrer<a target="_blank" href="https://orcid.org/0000-0003-3271-6399"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a> in collaboration with Carmen Diaz-Marin<a target="_blank" href="https://orcid.org/0000-0002-8924-9544"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>. Please feel free to contact us by email (info@simzero.es) or joining the <a target="_blank" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-12uquswo6-FFVy95vRjfMF~~t8j~UBHA">Slack channel</a>. 
+	      - cfd.xyz is developed and maintained by Carlos Peña-Monferrer<a target="_blank" href="https://orcid.org/0000-0003-3271-6399"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a> in collaboration with Carmen Diaz-Marin<a target="_blank" href="https://orcid.org/0000-0002-8924-9544"> <img alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" /></a>. Please feel free to contact us by email (info@simzero.es) or joining the <a target="_blank" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ">Slack channel</a>. 
           </div>
           <div
             className={classes.titleText}

@@ -3,7 +3,7 @@
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://cfd.xyz)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz)
 [![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)]()
-[![Join Slack](https://img.shields.io/badge/Join%20us%20on-Slack-e01563.svg)](https://join.slack.com/t/cfd-xyz/shared_invite/zt-12uquswo6-FFVy95vRjfMF~~t8j~UBHA)
+[![Join Slack](https://img.shields.io/badge/Join%20us%20on-Slack-e01563.svg)](https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
