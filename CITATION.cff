@@ -7,6 +7,17 @@ authors:
   - family-names: Díaz Marín
     given-names: Carmen
     orcid: https://orcid.org/0000-0002-8924-9544
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.6365614
+    description: Persistent identifier for all versions of cfd-xyz
+  - type: doi
+    value: 10.5281/zenodo.6365615
+    description: Persistent identifier for this version of cfd-xyz
+  - type: url
+    value: https://github.com/simzero-oss/cfd-xyz
+    description: URL to the cfd-xyz GitHub repository
+repository-code: https://github.com/simzero-oss/cfd-xyz
 title: simzero-oss/cfd-xyz
 version: v1.0.0-rc.3
-date-released: 2017-12-18
+date-released: 2022-03-17
