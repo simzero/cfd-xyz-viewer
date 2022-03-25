@@ -48,18 +48,32 @@ function temperatureToViscosity(T) {
 
 const initialTemperature = 20; // 1e-05
 const initialVelocity = 10.0;
-const dataPath = '/surrogates/OF/incompressible/simpleFoam/pitzDaily/';
+const rootPath = '/surrogates/OF/incompressible/simpleFoam/pitzDaily/';
 
-const loadData = async (filePath) => {
-  return new Promise(resolve => {
-    fetch(filePath).then(res => res.text())
-      .then((data) => {
-            resolve(data);
-        })
-    })
-};
+const dataToVector = (data) => {
+  const vecVec = new rom.VectorVector();
+  let rows = 0;
+  let cols = 0;
+  data.forEach(row => {
+    var vec = new rom.Vector();
+    row.forEach(value => {
+      vec.push_back(value)
+      if (rows === 0)
+        cols++;
+    });
+    vecVec.push_back(vec)
+    rows++;
+  })
+  return [vecVec, rows, cols];
+}
 
-const readMatrixFile = async (filePath) => {
+const loadData = async (dataPath) => {
+  const data = await readFile(rootPath + dataPath)
+  const vector = dataToVector(data);
+  return vector;
+}
+
+const readFile = async (filePath) => {
   return new Promise(resolve => {
     fetch(filePath).then(res => res.text())
     .then((data) => {
@@ -125,7 +139,7 @@ function PitzDaily() {
       const localTheme = window.localStorage.getItem('theme') || "light"
       const initialTheme = localTheme === 'light' ? lightTheme : darkTheme;
 
-      let vtuPath = dataPath + 'pitzDaily.vtu';
+      let vtuPath = rootPath + 'pitzDaily.vtu';
 
       fetch(vtuPath).then(res => res.text())
       .then((data) => {
@@ -140,36 +154,32 @@ function PitzDaily() {
 
     await rom.ready
 
-    const P = await loadData(dataPath + 'matrices/P_mat.txt');
-    const M = await loadData(dataPath + 'matrices/M_mat.txt');
-    const K = await loadData(dataPath + 'matrices/K_mat.txt');
-    const B = await loadData(dataPath + 'matrices/B_mat.txt');
+    const P = await loadData('matrices/P_mat.txt');
+    const M = await loadData('matrices/M_mat.txt');
+    const K = await loadData('matrices/K_mat.txt');
+    const B = await loadData('matrices/B_mat.txt');
     setProcess(2);
-    const modes = await loadData(dataPath + 'EigenModes_U_mat.txt');
-    const coeffL2 = await loadData(dataPath + 'matrices/coeffL2_mat.txt');
-    const mu = await loadData(dataPath + 'par.txt');
+    const modes = await loadData('EigenModes_U_mat.txt');
+    const coeffL2 = await loadData('matrices/coeffL2_mat.txt');
+    const mu = await loadData('par.txt');
 
-    const Nphi_u = B.split("\n").length;
-    const Nphi_p = K.split("\n")[0].split(" ").length;
+    const Nphi_u = B[1];
+    const Nphi_p = K[2];
+    const Nphi_nut = coeffL2[1];
     const N_BC = 1;
 
     const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
-
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
+    reduced.Nphi_nut(Nphi_nut);
     reduced.N_BC(N_BC);
-    reduced.addMatrices(P, M, K, B);
-    reduced.addModes(modes);
-
-    let Nphi_nut = 0;
+    reduced.addMatrices(P[0], M[0], K[0], B[0]);
+    reduced.addModes(modes[0]);
 
     setProcess(3);
 
     (async () => {
-      Nphi_nut = coeffL2.split("\n").length;
-      reduced.Nphi_nut(Nphi_nut);
-
       let indexes = []
       for (var j = 0; j < Nphi_u; j ++ ) {
         indexes.push(j);
@@ -179,19 +189,19 @@ function PitzDaily() {
         const C1Path = 'matrices/ct1_' + index + "_mat.txt"
         const C2Path = 'matrices/ct2_' + index + "_mat.txt"
         const CPath = 'matrices/C' + index + "_mat.txt"
-        const C1 = await loadData(dataPath + C1Path);
-        const C2 = await loadData(dataPath + C2Path);
-        const C = await loadData(dataPath + CPath);
-        reduced.addCt1Matrix(C1, index);
-        reduced.addCt2Matrix(C2, index);
-        reduced.addCMatrix(C, index);
+        const C1 = await loadData(C1Path);
+        const C2 = await loadData(C2Path);
+        const C = await loadData(CPath);
+        reduced.addCt1Matrix(C1[0], index);
+        reduced.addCt2Matrix(C2[0], index);
+        reduced.addCMatrix(C[0], index);
       }));
 
       setProcess(4);
 
       reduced.preprocess();
       reduced.nu(temperatureToViscosity(initialTemperature)*1e-05);
-      reduced.setRBF(mu, coeffL2);
+      reduced.setRBF(mu[0], coeffL2[0]);
       context.current = { reduced };
       setDataLoaded(true);
       setTimeout(myFunction, 10000); 
