@@ -130,6 +130,9 @@ export const lightTheme = {
     backgroundColor: color1
   },
   textField: {
+    [`& fieldset`]: {
+      borderRadius: 0
+    },
     "& .MuiFormLabel-root": {
       color: color2
     },
@@ -164,7 +167,6 @@ export const lightTheme = {
         borderColor: color2
       },
     },
-    width: '120px',
   },
   checked: {
   },
@@ -391,6 +393,9 @@ export const darkTheme = {
     backgroundColor: color2
   },
   textField: {
+    [`& fieldset`]: {
+      borderRadius: 0
+    },
     "& .MuiFormLabel-root": {
       color: color1
     },
@@ -434,7 +439,6 @@ export const darkTheme = {
       color: color1,
       fontWeight: '600',
     },
-    width: '120px',
   },
   checked: {
   },
