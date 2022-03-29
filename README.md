@@ -43,6 +43,10 @@ The web will be accessible at `http://localhost:3001`.
 
 Everyone is welcome to contribute to this project. See [CONTRIBUTING.md](https://github.com/simzero-oss/cfd-xyz/blob/main/CONTRIBUTING.md) for further details.
 
+cfd.xyz is a self-funded initiative, free of charge, with no adds, no popups, no registration and no data collection.
+
+Your donations encourage future developments and help with server costs for providing a better service. If you like the tool you can [:heart: donate](https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4).
+
 ## License
 
 Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
