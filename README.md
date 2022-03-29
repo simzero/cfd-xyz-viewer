@@ -39,6 +39,10 @@ make all-docker
 
 The web will be accessible at `http://localhost:3001`.
 
+## Contributing
+
+Everyone is welcome to contribute to this project. See [CONTRIBUTING.md](https://github.com/simzero-oss/cfd-xyz/blob/main/CONTRIBUTING.md) for further details.
+
 ## License
 
 Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
