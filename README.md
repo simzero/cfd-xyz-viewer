@@ -2,10 +2,11 @@
 
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://cfd.xyz)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz)
-[![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)]()
+[![stability-beta](https://img.shields.io/badge/stability-beta-33bbff.svg)](https://github.com/simzero-oss/cfd-xyz/releases)
 [![Join Slack](https://img.shields.io/badge/Join%20us%20on-Slack-e01563.svg)](https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![PayPal donate button](https://img.shields.io/badge/paypal-donate-red.svg)](https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4)
 
 [cfd.xyz](http://cfd.xyz) is an open-source web app to efficiently and easily explore fluid dynamics problems for a wide range of parameters. The framework provides a proof of technology for OpenFOAM tutorials, showing the whole process from the generation of the surrogate models to the web browser. It also includes a standalone web tool for visualizing users' models by directly dragging and dropping the output folder of the ROM offline stage. Beyond the current proof of technology, this enables a collaborative effort for the implementation of OpenFOAM-based surrogate models in applications demanding real-time solutions such as digital twins and other digital transformation technologies.
 
