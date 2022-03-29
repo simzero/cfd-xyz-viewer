@@ -1,10 +1,10 @@
 # How can I contribute?
 
-This document is a work in progress. More details will bhe shared soon.
+This document is a work in progress. More details will be shared soon.
 
 Your help is very welcome whether it is reporting or fixing a bug, suggesting enhancements or contributing with new code.
 
-You can reach us at our [cfd-xyz Slack channel](https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ).
+You can reach us at the [cfd-xyz Slack channel](https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ).
 
 ## Reporting Bugs
 
