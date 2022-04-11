@@ -85,12 +85,11 @@ function Navigation(element) {
   for (let i = 1; i < split.length; i++) {
     link += "/" + split[i];
     if (!isMobile) {
-      title.push(<Link to={link} key={i} style={{ color:mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>/{split[i]}</Link>);
+      title.push(<Link to={link} key={i} className={classes.links} style={{color: mainSecondaryColor}}>/{split[i]}</Link>);
     }
   }
 
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
     <div className={classes.root}>
       {show &&
         <AppBar position="fixed">
@@ -98,12 +97,12 @@ function Navigation(element) {
             <Link to="/">
 	      <img alt="cfd.xyz" src={logo} className={classes.logo} />
             </Link>
-            <Typography style={{ paddingTop: 1, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor}}>
+            <div style={{ paddingTop: 1, flexGrow: 1}}>
               { title }
-	    </Typography>
-            <div className={classes.root}>
-              <NavLink to="/About" style={{ paddingTop: 1, paddingRight: 0, flexGrow: 1, fontWeight: 550, color: mainSecondaryColor, textDecoration: 'none', fontFamily: 'monospace', fontSize: 15}}>
-                <div className={classes.link} color="inherit">
+	    </div>
+            <div className={classes.root} style={{paddingRight: 5}}>
+              <NavLink to="/About" className={classes.links} style={{color: mainSecondaryColor}}>
+                <div>
                   {"About"}
                 </div>
               </NavLink>
@@ -122,7 +121,6 @@ function Navigation(element) {
       }
     <Toolbar style={{ background: themeMode.appBar.background, minHeight: themeMode.appBar.minHeight, height: themeMode.appBar.height}} />
     </div>
-    </ThemeProvider>
   );
 }
 

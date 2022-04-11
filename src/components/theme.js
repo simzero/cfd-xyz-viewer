@@ -12,13 +12,13 @@ const backgroundColorImageDisabled1 = '#325354'
 const backgroundColorImage2 = '#708090'
 const backgroundColorImageDisabled2 = '#384048'
 
-const globalFont = 'monospace';
+const globalFont = 'IBM Plex Sans';
 const cardBorder = 0;
 const cardWeight = '550';
 const cardTitleWeight =' 600';
 const toolsSize = 16;
 const vtkFontSize = 14;
-const cardDescriptionSize = 10;
+const cardDescriptionSize = 14;
 const bodySize = 16;
 const titleSize = 18;
 
@@ -50,7 +50,7 @@ export const lightTheme = {
     paddingLeft: 20,
   },
   typography: {
-    fontFamily: 'monospace'
+    fontFamily: globalFont
   },
   appBar: {
     height: 40,
@@ -214,7 +214,7 @@ export const lightTheme = {
     flexDrection: 'column',
   },
   cardTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: globalFont,
     maxHeight: 25,
     paddingRight: 10,
@@ -314,7 +314,7 @@ export const darkTheme = {
     //maxHeight: '10px'
   },
   typography: {
-    fontFamily: 'monospace'
+    fontFamily: globalFont
   },
   appBar: {
     height: 40,
@@ -486,7 +486,7 @@ export const darkTheme = {
     flexDrection: 'column',
   },
   cardTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: globalFont,
     maxHeight: 25,
     paddingRight: 10,
@@ -573,7 +573,15 @@ export const darkTheme = {
 export const navTheme = {
   links: {
     color: color2,
-    textDecoration: 'none'
+    textDecoration: 'none!important',
+    fontFamily: globalFont,
+    fontSize: 15,
+    fontWeight: 600,
+    letterSpacing: '0.5',
+    '&:hover': {
+       color: color2,
+       fontFamily: globalFont
+    }
   },
   root: {
     display: "flex",
