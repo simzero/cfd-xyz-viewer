@@ -2,8 +2,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>. 
 
-const backgroundColor1 = '#FFFFFF'
-const backgroundColor2 = '#000000'
+const backgroundColor1 = '#f4f4f4'
+const backgroundColor2 = '#151515'
 const color1 = '#E2E2E2'
 const color2 = '#363537'
 
