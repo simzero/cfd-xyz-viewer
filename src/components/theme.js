@@ -61,6 +61,8 @@ export const lightTheme = {
     color: backgroundColor2,
     fontFamily: globalFont,
     fontSize: bodySize,
+    fontWeight: 500,
+    letterSpacing: '0.5'
   },
   titleText: {
     display: "flex",
@@ -325,6 +327,8 @@ export const darkTheme = {
     color: color1,
     fontFamily: globalFont,
     fontSize: bodySize,
+    fontWeight: 500,
+    letterSpacing: '0.5'
   },
   titleText: {
     display: "flex",
