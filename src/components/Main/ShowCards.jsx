@@ -128,7 +128,6 @@ function ShowBody() {
             }
           </FrontSide>
           {post.ready &&
-            <NavLink to={post.link} className={classes.link}>
               <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
                 {post.ready
                   ?  <div className={classes.cardDescription} >
@@ -155,7 +154,6 @@ function ShowBody() {
                 }
               </div>
             </BackSide>
-            </NavLink>
           }
         </Flippy>
   );

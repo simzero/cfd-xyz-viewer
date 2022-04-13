@@ -7,7 +7,6 @@ import AppBar from "@mui/material/AppBar";
 import { makeStyles } from "@mui/styles";
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import {
   Link,
   useLocation,
@@ -16,7 +15,6 @@ import {
 } from "react-router-dom";
 import LightModeIcon from '@mui/icons-material/WbSunny';
 import DarkModeIcon from '@mui/icons-material/Brightness2';
-import { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme, navTheme } from './../theme';
 import { useDarkMode } from './useDarkMode';
 import logoLight from "./logoLight.svg";
