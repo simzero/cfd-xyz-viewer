@@ -273,11 +273,11 @@ const GenericView = ({
         actorPlaneY.setVisibility(false);
         actorPlaneZ.setVisibility(false);
         scalarBarActorPlaneX.setVisibility(false);
-        mapper.setColorByArrayName(vtpVariable)
+        mapper.setColorByArrayName(vtpVariable);
         scalarBarActor.setVisibility(true);
       }
       if (!showPlanes) {
-        mapper.setColorByArrayName("solid")
+        mapper.setColorByArrayName("solid");
         scalarBarActor.setVisibility(false);
         scalarBarActorPlaneX.setVisibility(true);
         if (showPlaneX)
@@ -335,7 +335,6 @@ const GenericView = ({
   }
 
   function setScene(portrait, VTK, reader, context, vtkContainerRef, theme) {
-    console.log("setScene")
     const actor = vtkActor.newInstance();
     const scalarBarActor = vtkScalarBarActor.newInstance();
     const scalarBarActorPlaneX = vtkScalarBarActor.newInstance();
@@ -386,7 +385,7 @@ const GenericView = ({
     lookupTablePlaneZ.applyColorMap(preset);
     actor.setMapper(mapper);
     mapper.setLookupTable(lookupTable);
-    scalarBarActor.setVisibility(false);
+    mapper.setColorByArrayName(vtpVariable);
     const mystyle = {
       margin: '0',
       padding: '0',
@@ -442,20 +441,18 @@ const GenericView = ({
     const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
     lookupTable.setMappingRange(dataRange[0], dataRange[1]);
 
-    renderer.addActor(scalarBarActor);
     renderer.addActor(scalarBarActorPlaneX);
     renderer.addActor(actor);
 
     actor.setMapper(mapper);
-    scalarBarActor.setVisibility(true);
     scalarBarActor.setScalarsToColors(mapper.getLookupTable());
 
     scalarBarActorPlaneX.setScalarsToColors(mapperPlaneX.getLookupTable());
     scalarBarActorPlaneX.setVisibility(false);
 
-    mapper.setScalarRange(dataRange[0],dataRange[1]);
     mapper.setInputData(polydata);
     mapper.setLookupTable(lookupTable);
+    mapper.setScalarRange(dataRange[0],dataRange[1]);
     mapper.setScalarModeToUsePointFieldData();
 
     const planeReader = vtkXMLPolyDataReader.newInstance();
@@ -509,6 +506,9 @@ const GenericView = ({
     actorPlaneX.setMapper(mapperPlaneX);
     actorPlaneY.setMapper(mapperPlaneY);
     actorPlaneZ.setMapper(mapperPlaneZ);
+
+    renderer.addActor(scalarBarActor);
+    scalarBarActor.setVisibility(true);
 
     context.current = {
       VTK,
