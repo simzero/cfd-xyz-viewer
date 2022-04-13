@@ -8,6 +8,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/pitzDaily",
   key: "1",
   ready: true,
+  surrogate: true,
   image: "/images/OF/incompressible/simpleFoam/pitzDaily/pitzDaily",
   description: "Tutorial for a turbulent free shear layer formed a rearward-facing step. \n\nData:\n  -P = 101325 Pa \n -ti_{inlet} = 5% \n -T = [-100, 1000] °C \n -U_{inlet} = [1,20] m/s"
  },
@@ -17,6 +18,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/airFoil2D",
   key: "2",
   ready: false,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/airFoil2D/airFoil2D"
  },
 
@@ -25,6 +27,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/bump2D",
   key: "3",
   ready: false,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/bump2D/bump2D"
  },
 
@@ -33,6 +36,7 @@ const posts = [
   link: "/OF/incompressible/simpleFoam/backwardFacingStep2D",
   key: "4",
   ready: false,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"
  },
 
@@ -40,7 +44,8 @@ const posts = [
   title: "mixerVessel2D",
   link: "/OF/incompressible/simpleFoam/mixerVessel2D",
   key: "5",
-  ready: false,
+  ready: true,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/mixerVessel2D/mixerVessel2D",
   description: ""
  },
@@ -49,7 +54,8 @@ const posts = [
   title: "motorBike",
   link: "/OF/incompressible/simpleFoam/motorBike",
   key: "6",
-  ready: false,
+  ready: true,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/motorBike/motorBike",
   description: ""
  },
@@ -58,7 +64,8 @@ const posts = [
   title: "turbineSiting",
   link: "/OF/incompressible/simpleFoam/turbineSiting",
   key: "7",
-  ready: false,
+  ready: true,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/turbineSiting/turbineSiting",
   description: ""
  },
@@ -67,7 +74,8 @@ const posts = [
   title: "windAroundBuildings",
   link: "/OF/incompressible/simpleFoam/windAroundBuildings",
   key: "8",
-  ready: false,
+  ready: true,
+  surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
   description: ""
  }

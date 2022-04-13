@@ -71,6 +71,19 @@ function ShowBody() {
                     title={post.title}
                   />
             }
+            {post.surrogate &&
+              <div>
+                <FontAwesomeIcon
+                  style={{
+                    position: 'absolute', left: '8%', top: '8%',
+                    transform: 'translate(-100%, -50%)'
+                  }}
+                  className={classes.cardIcon}
+                  icon={solid('database')}
+                  title={"Surrogate model available"}
+                />
+              </div>
+            }
             {post.ready
               ? <div
                   onClick={() => inputRef.current[post.title].toggle() }
@@ -115,13 +128,12 @@ function ShowBody() {
             }
           </FrontSide>
           {post.ready &&
-            <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
-              {post.ready
-                ? <NavLink to={post.link} className={classes.link}>
-                    <div className={classes.cardDescription} >
-                      {post.description}
-                    </div>
-                  </NavLink>
+            <NavLink to={post.link} className={classes.link}>
+              <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
+                {post.ready
+                  ?  <div className={classes.cardDescription} >
+                       {post.description}
+                     </div>
                 : <NavLink to={post.link} onClick={e => e.preventDefault()}>
                     <div className={classes.cardDescription} >
                       {post.description}
@@ -143,6 +155,7 @@ function ShowBody() {
                 }
               </div>
             </BackSide>
+            </NavLink>
           }
         </Flippy>
   );

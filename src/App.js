@@ -15,10 +15,10 @@ import {
    Incompressible,
    SimpleFoam,
    PitzDaily,
-//    MixerVessel2D,
-//    MotorBike,
-//    TurbineSiting,
-//    WindAroundBuildings,
+   MixerVessel2D,
+   MotorBike,
+   TurbineSiting,
+   WindAroundBuildings,
    Tools,
    Steady,
 } from "./components";
@@ -53,6 +53,10 @@ function App() {
               <Route path="/OF/incompressible" exact element={<Incompressible />} />
               <Route path="/OF/incompressible/simpleFoam" exact element={<SimpleFoam />} />
               <Route path="/OF/incompressible/simpleFoam/PitzDaily" exact element={<PitzDaily />} />
+              <Route path="/OF/incompressible/simpleFoam/MixerVessel2D" exact element={<MixerVessel2D />} />
+              <Route path="/OF/incompressible/simpleFoam/TurbineSiting" exact element={<TurbineSiting />} />
+              <Route path="/OF/incompressible/simpleFoam/WindAroundBuildings" exact element={<WindAroundBuildings />} />
+              <Route path="/OF/incompressible/simpleFoam/MotorBike" exact element={<MotorBike />} />
               <Route path="/Tools" exact element={<Tools />} />
               <Route path="/Tools/ITHACA-FV_Steady" exact element={<Steady />} />
               <Route path="/About" exact element={<About />} />

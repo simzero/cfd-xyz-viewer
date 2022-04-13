@@ -7,10 +7,10 @@ export { default as OF } from "./OF";
 export { default as Incompressible } from "./OF/Incompressible";
 export { default as SimpleFoam } from "./OF/Incompressible/SimpleFoam";
 export { default as PitzDaily } from "./OF/Incompressible/SimpleFoam/PitzDaily";
-// export { default as MixerVessel2D } from "./OpenFOAM/Incompressible/SimpleFoam/MixerVessel2D";
-// export { default as MotorBike } from "./OpenFOAM/Incompressible/SimpleFoam/MotorBike";
-// export { default as TurbineSiting } from "./OpenFOAM/Incompressible/SimpleFoam/TurbineSiting";
-// export { default as WindAroundBuildings } from "./OpenFOAM/Incompressible/SimpleFoam/WindAroundBuildings";
+export { default as MixerVessel2D } from "./OF/Incompressible/SimpleFoam/MixerVessel2D";
+export { default as MotorBike } from "./OF/Incompressible/SimpleFoam/MotorBike";
+export { default as TurbineSiting } from "./OF/Incompressible/SimpleFoam/TurbineSiting";
+export { default as WindAroundBuildings } from "./OF/Incompressible/SimpleFoam/WindAroundBuildings";
 // Tools
 export { default as Tools } from "./Tools";
 export { default as Steady } from "./Tools/ITHACA-FV/Steady";
