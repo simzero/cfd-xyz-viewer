@@ -39,6 +39,7 @@ function Footer() {
             color="inherit"
             href="https://www.companyname.com"
             target="_blank"
+            rel="noreferrer"
           >
           </Link>
         </Typography>
@@ -50,7 +51,7 @@ function Footer() {
   return (
     <div>
       <div style={{position: "absolute", left: 0, bottom: 0, right: 0}}>
-        <footer style={{ padding: '0px', bottom: '0', position: 'relative', height: '50px', width: '100%', backgroundColor: mainPrimaryColor, color: mainSecondaryColor }}>
+        <footer style={{ padding: '0px', bottom: '0', position: 'relative', height: '52px', width: '100%', backgroundColor: mainPrimaryColor, color: mainSecondaryColor }}>
           <div style={{marginTop: 8, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: "column", display: 'inline-block', float: 'left'}}>
             <Copyright />
           </div>
@@ -62,37 +63,28 @@ function Footer() {
                     variant="body2"
                     align="center"
                   >
-                    <a className={classes.link} target="_blank" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ">
+                    <a className={classes.link} target="_blank" rel="noreferrer" href="https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ">
                       <FontAwesomeIcon title="Engage (Slack)" style={{ align: 'center', color:mainPrimaryColor,background: mainSecondaryColor, width: '24px', height: '24px', display: 'inline-block'}} icon={brands('slack')} />
                     </a>
                   </Typography>
                 </div>
                 <div style={{align: 'center', width: '600px', display: 'table-cell', paddingLeft: 10}}>
-                  <Typography
-                    align="center"
-                    style={{fontFamily: 'monospace', fontSize: 12}}
-                  >
-                    <a className={classes.link} target="_blank" href="https://github.com/simzero-oss/cfd-xyz">
+                  <Typography align="center">
+                    <a className={classes.link} target="_blank" rel="noreferrer" href="https://github.com/simzero-oss/cfd-xyz">
                       <FontAwesomeIcon title="Contribute (GitHub)" style={{ width: '24px', height: '24px'}} icon={brands('github')} />
                     </a>
                   </Typography>
                 </div>
                 <div style={{flexGrow: '1',align: 'center', width: '600px', display: 'table-cell', paddingLeft: 10}}>
-                  <Typography
-                    align="center"
-                    style={{fontFamily: 'monospace', fontSize: 12}}
-                  >
-                    <a className={classes.link} target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=http://www.cfd.xyz">
+                  <Typography align="center">
+                    <a className={classes.link} target="_blank" rel="noreferrer" href="https://www.linkedin.com/sharing/share-offsite/?url=http://www.cfd.xyz">
                       <FontAwesomeIcon title="Share (LinkedIn)" style={{width: '24px', height: '24px'}} icon={brands('linkedin')} />
                     </a>
                   </Typography>
                 </div>
                 <div style={{align: 'center', width: '600px', display: 'table-cell', paddingLeft: 10}}>
-                  <Typography
-                    align="center"
-                    style={{fontFamily: 'monospace', fontSize: 12}}
-                  >
-                    <a className={classes.link} target="_blank" href="https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4">
+                  <Typography align="center">
+                    <a className={classes.link} target="_blank" rel="noreferrer" href="https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4">
                       <FontAwesomeIcon title="Donate (PayPal)" style={{ width: '24px', height: '24px'}} icon={solid('piggy-bank')} />
                     </a>
                   </Typography>
