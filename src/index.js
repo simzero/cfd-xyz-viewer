@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import "@fontsource/ibm-plex-sans";
+import "@fontsource/varela";
 
 ReactDOM.render(
   <React.StrictMode>
