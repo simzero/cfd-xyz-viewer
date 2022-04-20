@@ -10,7 +10,34 @@ const posts = [
   ready: true,
   surrogate: true,
   image: "/images/OF/incompressible/simpleFoam/pitzDaily/pitzDaily",
-  description: "Tutorial for a turbulent free shear layer formed a rearward-facing step. \n\nData:\n  -P = 101325 Pa \n -ti_{inlet} = 5% \n -T = [-100, 1000] °C \n -U_{inlet} = [1,20] m/s"
+  description: `Turbulent free shear layer forming a rearward-facing step.
+                \nData:
+                  - P = 101325 Pa
+                  - ti_{inlet} = 5%
+                  - T = [-100, 1000] °C
+                  - U_{inlet} = [1,20] m/s
+                  - Turb. model = kEpsilon
+                \nDocs:
+                  - https://ntrs.nasa.gov/citations/19810023603
+               `
+ },
+
+ {
+  title: "bump2D",
+  link: "/OF/incompressible/simpleFoam/bump2D",
+  key: "3",
+  ready: true,
+  surrogate: true,
+  image: "/images/OF/incompressible/simpleFoam/bump2D/bump2D",
+  description: `Turbulent air flow in a channel with a bump (wall curvature).
+                \nData:
+                  - P = 101325 Pa
+                  - T = [-100, 1000] °C
+                  - U_{inlet} = [5,100] m/s
+                  - Turb. model = kOmegaSST
+                \nDocs:
+                  - https://turbmodels.larc.nasa.gov/bump.html
+               `
  },
 
  {
@@ -19,25 +46,8 @@ const posts = [
   key: "2",
   ready: false,
   surrogate: false,
-  image: "/images/OF/incompressible/simpleFoam/airFoil2D/airFoil2D"
- },
-
- {
-  title: "bump2D",
-  link: "/OF/incompressible/simpleFoam/bump2D",
-  key: "3",
-  ready: false,
-  surrogate: false,
-  image: "/images/OF/incompressible/simpleFoam/bump2D/bump2D"
- },
-
- {
-  title: "backwardFacingStep2D",
-  link: "/OF/incompressible/simpleFoam/backwardFacingStep2D",
-  key: "4",
-  ready: false,
-  surrogate: false,
-  image: "/images/OF/incompressible/simpleFoam/backwardFacingStep2D/backwardFacingStep2D"
+  image: "/images/OF/incompressible/simpleFoam/airFoil2D/airFoil2D",
+  description: "Tutorial for a . \n\nData:\n  -P = 101325 Pa \n -T = [-100, 1000] °C \n -U_{inlet} = [1,100] m/s \n -Turb. model = SpalartAllmaras"
  },
 
  {
@@ -47,7 +57,10 @@ const posts = [
   ready: true,
   surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/mixerVessel2D/mixerVessel2D",
-  description: ""
+  description: `2D mixer vessel.
+                \nVisualization of data from an OpenFOAM simulation.
+                \nModel with ROM is pending for a multiple reference frame (MRF). See GitHub issue: https://github.com/simzero-oss/cfd-xyz/issues/1.
+               `
  },
 
  {
@@ -57,7 +70,10 @@ const posts = [
   ready: true,
   surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/motorBike/motorBike",
-  description: ""
+  description: `Flow around a motorbike.
+                \nVisualization of data from an OpenFOAM simulation.
+                \nModel with ROM will be soon available.
+               `
  },
 
  {
@@ -67,7 +83,10 @@ const posts = [
   ready: true,
   surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/turbineSiting/turbineSiting",
-  description: ""
+  description: `Flow around a turbine siting.
+                \nVisualization of data from an OpenFOAM simulation.
+                \nModel with ROM will be soon available.
+               `
  },
 
  {
@@ -77,7 +96,10 @@ const posts = [
   ready: true,
   surrogate: false,
   image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
-  description: ""
+  description: `Wind around building.
+                \nVisualization of data from an OpenFOAM simulation.
+                \nModel with ROM will be soon available.
+               `
  }
 ]
 
