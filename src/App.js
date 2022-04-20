@@ -15,6 +15,7 @@ import {
    Incompressible,
    SimpleFoam,
    PitzDaily,
+   Bump2D,
    MixerVessel2D,
    MotorBike,
    TurbineSiting,
@@ -31,7 +32,7 @@ export const ThemeContext = createContext({
 function App() {
 
   useEffect(() => {
-   document.title = "cfd.xyz | Home"
+   document.title = "cfd.xyz"
   }, []);
 
   const themeType = window.localStorage.getItem('theme') || "light"
@@ -53,6 +54,7 @@ function App() {
               <Route path="/OF/incompressible" exact element={<Incompressible />} />
               <Route path="/OF/incompressible/simpleFoam" exact element={<SimpleFoam />} />
               <Route path="/OF/incompressible/simpleFoam/PitzDaily" exact element={<PitzDaily />} />
+              <Route path="/OF/incompressible/simpleFoam/Bump2D" exact element={<Bump2D />} />
               <Route path="/OF/incompressible/simpleFoam/MixerVessel2D" exact element={<MixerVessel2D />} />
               <Route path="/OF/incompressible/simpleFoam/TurbineSiting" exact element={<TurbineSiting />} />
               <Route path="/OF/incompressible/simpleFoam/WindAroundBuildings" exact element={<WindAroundBuildings />} />
