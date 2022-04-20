@@ -13,7 +13,7 @@ const vtuVariable = "U";
 const vtpTitle = "Pressure (m2/s2)";
 const vtuTitle = "Velocity magnitude (m/s)";
 const step = 0.0025;
-const caseLink = 'src/components/OF/Incompressible/SimpleFoam/MixerVessel2D.jsx';
+const codeLink = 'src/components/OF/Incompressible/SimpleFoam/MixerVessel2D.jsx';
 //
 
 function MixerVessel2D() {
@@ -33,7 +33,7 @@ function MixerVessel2D() {
         MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
-        caseLink={caseLink}
+        codeLink={codeLink}
       />
     </div>
   );

@@ -13,7 +13,7 @@ const vtuVariable = "U";
 const vtpTitle = "Pressure (m2/s2)";
 const vtuTitle = "Velocity magnitude (m/s)";
 const step = 10;
-const caseLink = 'src/components/OF/Incompressible/SimpleFoam/TurbineSiting.jsx';
+const codeLink = 'src/components/OF/Incompressible/SimpleFoam/TurbineSiting.jsx';
 //
 
 function TurbineSiting() {
@@ -33,7 +33,7 @@ function TurbineSiting() {
         MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
-        caseLink={caseLink}
+        codeLink={codeLink}
       />
     </div>
   );

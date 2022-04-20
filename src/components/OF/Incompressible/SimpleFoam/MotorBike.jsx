@@ -13,7 +13,7 @@ const vtuVariable = "U";
 const vtpTitle = "Pressure (m2/s2)";
 const vtuTitle = "Velocity magnitude (m/s)";
 const step = 0.1;
-const caseLink = 'src/components/OF/Incompressible/SimpleFoam/MotorBike.jsx';
+const codeLink = 'src/components/OF/Incompressible/SimpleFoam/MotorBike.jsx';
 //
 
 function MotorBike() {
@@ -33,7 +33,7 @@ function MotorBike() {
         MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
-        caseLink={caseLink}
+        codeLink={codeLink}
       />
     </div>
   );

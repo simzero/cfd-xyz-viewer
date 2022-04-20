@@ -9,6 +9,7 @@ import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip'
 import rom from '@simzero/rom'
 import hexRgb from 'hex-rgb';
 import useWindowOrientation from "use-window-orientation";
@@ -19,6 +20,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CodeIcon from '@mui/icons-material/Code';
+import GroupsIcon from '@mui/icons-material/Groups';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
@@ -42,13 +44,15 @@ const GenericView = ({
     MB,
     initialPlanesCoords,
     step,
-    caseLink
+    codeLink
   }) => {
 
   const { orientation, portrait, landscape } = useWindowOrientation();
   const initialPortrait = portrait;
   const context = useRef(null);
   const vtkContainerRef = useRef(null);
+  const [authorsTooltip, setAuthorsTooltipOpen] = useState(false);
+  const [authors, setAuthors] = useState("");
   const localTheme = window.localStorage.getItem('theme') || "light"
   const trackTheme = useState(window.localStorage.getItem('theme') || "light");
   const [doIncrementX, setDoIncrementX] = useState(false);
@@ -92,7 +96,7 @@ const GenericView = ({
   const initialPlaneZ = initialPlanesCoords[2];
 
   const repo = 'https://github.com/simzero-oss/cfd-xyz/blob/main/'
-  const link = repo + caseLink;
+  const link = repo + codeLink;
 
   const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
 
@@ -315,6 +319,10 @@ const GenericView = ({
 
   const myFunction = (eventSrcDesc, newValue) => {
     // console.log({ eventSrcDesc, newValue });
+  };
+
+  const toogleTooltip= () => {
+    setAuthorsTooltipOpen(!authorsTooltip);
   };
 
   const [stateDebounceMyFunction] = useState(() =>
@@ -558,6 +566,51 @@ const GenericView = ({
       setIsReady(true);
     }
   }
+
+  // - Fetching a contributors list for this file
+  useEffect(() => {
+    const githubAPI = "https://api.github.com"
+    const repoURL = "/repos/simzero-oss/cfd-xyz/"
+    const commitsEndpoint = repoURL + "commits"
+    const commitsURL = githubAPI + commitsEndpoint
+    fetch(commitsURL + "?path=" + codeLink)
+      .then(response => response.json())
+      .then(commits => {
+        const names = [];
+        const authorComponent = [];
+        authorComponent.push(
+          <div
+            style={{
+              color: "#777",
+              fontFamily: theme.vtkText.fontFamily,
+              //textDecoration: 'underline',
+              paddingiBottom: 4
+            }}
+          >
+            Contributors:
+          </div>
+        );
+        for (var i = 0; i < commits.length; i++) {
+          if (!names.includes(commits[i].commit.author.name)) {
+            const name = commits[i].commit.author.name
+            names.push(name);
+            const author = "@" + name
+            authorComponent.push(
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={"https://github.com/" + name}
+              >
+                {author}
+              </a>
+            );
+          }
+        }
+        setAuthors(authorComponent)
+        // console.log(names.join("\n"));
+      })
+  }, []);
+
 
   // - Update scene with theme
   useEffect(() => {
@@ -1031,6 +1084,46 @@ const GenericView = ({
             >
               {<CodeIcon />}
             </IconButton>
+          </div>
+          <div
+            style={{
+              paddingBottom: 80,
+              position: 'absolute',
+              bottom: '120px',
+              left: '10px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%'
+            }}
+          >
+          <Tooltip
+            id="tooltip"
+            arrow
+            open={authorsTooltip}
+            disableFocusListener
+            disableHoverListener
+            disableTouchListener
+            placement="right-start"
+            title={authors}
+            classes={{
+              popper: classes.tooltip
+            }}
+          >
+            <IconButton
+              title="Show contributors"
+              id="authors"
+              edge={false}
+              style={{
+                border: "5px",
+                outline: "5px",
+                color: mainSecondaryColor
+              }}
+              aria-label="mode"
+              onClick={toogleTooltip}
+            >
+              {<GroupsIcon />}
+            </IconButton>
+          </Tooltip>
           </div>
             <div
               style={{
