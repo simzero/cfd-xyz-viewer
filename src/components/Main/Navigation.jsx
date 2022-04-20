@@ -80,10 +80,12 @@ function Navigation(element) {
   var title = [];
   var link = [];
 
-  for (let i = 1; i < split.length; i++) {
-    link += "/" + split[i];
-    if (!isMobile) {
-      title.push(<Link to={link} key={i} className={classes.links} style={{color: mainSecondaryColor}}>/{split[i]}</Link>);
+  if ((location_path.length > 1) && (location_path != "/About")) {
+    for (let i = 1; i < split.length; i++) {
+      link += "/" + split[i];
+      if (!isMobile) {
+        title.push(<Link to={link} key={i} className={classes.links} style={{color: mainSecondaryColor}}>/{split[i]}</Link>);
+      }
     }
   }
 
@@ -95,10 +97,10 @@ function Navigation(element) {
             <Link to="/">
 	      <img alt="cfd.xyz" src={logo} className={classes.logo} />
             </Link>
-            <div style={{ paddingTop: 1, flexGrow: 1}}>
+            <div style={{paddingTop: 3, flexGrow: 1}}>
               { title }
 	    </div>
-            <div className={classes.root} style={{paddingRight: 5}}>
+            <div className={classes.root} style={{paddingTop: 3, paddingRight: 5}}>
               <NavLink to="/About" className={classes.links} style={{color: mainSecondaryColor}}>
                 <div>
                   {"About"}
