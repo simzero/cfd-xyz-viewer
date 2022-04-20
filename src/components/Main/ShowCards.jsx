@@ -17,6 +17,9 @@ import SwipeIcon from '@mui/icons-material/Swipe';
 import {isMobile} from 'react-device-detect';
 import Box from '@mui/material/Box';
 import { createTheme } from '@mui/material/styles';
+import Linkify from 'linkify-react';
+import {Img} from 'react-image'
+import VisibilitySensor from 'react-visibility-sensor'
 
 const ShowCards = ({post}) => {
   const localTheme = window.localStorage.getItem('theme') || "light"
@@ -26,19 +29,6 @@ const ShowCards = ({post}) => {
   const mainPrimaryColor = theme.palette.primary1Color;
 
   const inputRef = useRef([]);
-  //theme = responsiveFontSizes(theme);
-	//
-const theme2 = createTheme();
-//	theme2 = responsiveFontSizes(theme2);
-theme2.typography.h6 = {
-  fontSize: '0.1rem',
-  '@media (min-width:300px)': {
-    fontSize: '0.6rem',
-  },
-  [theme2.breakpoints.up('md')]: {
-    fontSize: '0.3rem',
-  },
-};
 
   const handlers = useSwipeable({
     onSwipedLeft: () => inputRef.current[post.title].toggle(),
@@ -47,102 +37,106 @@ theme2.typography.h6 = {
     trackMouse: true
   });
 
-function ShowBody() {
-  return (
-        <Flippy
-          flipOnClick={false}
-          isFlipped={false}
-          ref={el => inputRef.current[post.title] = el}
-        >
-          <FrontSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
-            {post.ready
-              ? <NavLink to={post.link} className={classes.link}>
-                  <CardMedia
-		    className={classes.cardMedia}
-                    component="img"
-                    image={post.image + '.png'}
-                    title={post.title}
+  function ShowBody() {
+    return (
+      <Flippy
+        flipOnClick={false}
+        isFlipped={false}
+        ref={el => inputRef.current[post.title] = el}
+      >
+        <FrontSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
+          {post.ready
+            ? <NavLink to={post.link} className={classes.link}>
+                <VisibilitySensor>
+                  <Img className={classes.cardMedia} src={post.image + '.png'}/>
+                </VisibilitySensor>
+              </NavLink>
+            :
+              <VisibilitySensor>
+                <Img className={classes.cardMedia} src={post.image + '.png'}/>
+              </VisibilitySensor>
+          }
+          {post.surrogate &&
+            <div>
+              <FontAwesomeIcon
+                style={{
+                  position: 'absolute', left: isMobile ? '10%' : '8%', top: isMobile ? '12%' : '8%',
+                  transform: 'translate(-100%, -50%)'
+                }}
+                className={classes.cardIcon}
+                icon={solid('database')}
+                title={"Surrogate model available"}
+              />
+            </div>
+          }
+          {post.ready
+            ? <div
+                onClick={() => inputRef.current[post.title].toggle() }
+              >
+                {(inputRef.current && !isMobile ) &&
+                  <FontAwesomeIcon
+                    style={{
+                      position: 'absolute', left: '96%', top: '8%',
+                      transform: 'translate(-100%, -50%)'
+                    }}
+                    className={classes.cardIcon}
+                    icon={solid('circle-info')}
+                    title={"Show info"}
                   />
-                </NavLink>
-              :
-                  <CardMedia
-                    component="img"
-                    image={post.image + '.png'}
-                    title={post.title}
-                  />
-            }
-            {post.surrogate &&
-              <div>
-                <FontAwesomeIcon
-                  style={{
-                    position: 'absolute', left: '8%', top: '8%',
+                }
+                {(inputRef.current && isMobile) &&
+                  <SwipeIcon
+                    style={{
+                    position: 'absolute', left: '96%', top: '12%',
                     transform: 'translate(-100%, -50%)'
-                  }}
-                  className={classes.cardIcon}
-                  icon={solid('database')}
-                  title={"Surrogate model available"}
-                />
+                    }}
+                    className={classes.cardIcon}
+                  />
+                }
               </div>
-            }
-            {post.ready
-              ? <div
-                  onClick={() => inputRef.current[post.title].toggle() }
-                >
-                  {(inputRef.current && !isMobile ) &&
-                    <FontAwesomeIcon
-                      style={{
-                        position: 'absolute', left: '96%', top: '8%',
-                        transform: 'translate(-100%, -50%)'
-                      }}
-                      className={classes.cardIcon}
-                      icon={solid('circle-info')}
-                      title={"Show info"}
-                    />
-                  }
-                  {(inputRef.current && isMobile) &&
-		    <SwipeIcon 
-                      style={{
-                        position: 'absolute', left: '96%', top: '12%',
-                        transform: 'translate(-100%, -50%)'
-                      }}
-                      className={classes.cardIcon}
-                    />
-                  }
-                </div>
-              :
-                <div 
-                  style={{
-                    position: 'absolute', left: '96%', top: '8%',
-                    transform: 'translate(-100%, -50%)'
-                  }}
-                  onClick={() => inputRef.current[post.title].preventDefault() }
-                >
-	        {(!isMobile) &&
+            :
+              <div
+                style={{
+                  position: 'absolute', left: '96%', top: '8%',
+                  transform: 'translate(-100%, -50%)'
+                }}
+                onClick={() => inputRef.current[post.title].preventDefault() }
+              >
+                {(!isMobile) &&
                   <FontAwesomeIcon
                     className={classes.cardIcon}
                     icon={solid('triangle-exclamation')}
                     title="On the backlog..."
                   />
-		}
-                </div>
+                }
+              </div>
+          }
+        </FrontSide>
+        {post.ready &&
+          <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
+            {post.ready
+            ?  <div className={classes.cardDescription} >
+                 <Linkify
+                   options={{
+                     attributes:
+                       { title: "Link to paper"},
+                     className: classes.link,
+                     target: "_blank"
+                   }}
+                 >
+                   {post.description}
+                 </Linkify>
+               </div>
+            :  <NavLink to={post.link} onClick={e => e.preventDefault()}>
+                 <div className={classes.cardDescription} >
+                   {post.description}
+                 </div>
+               </NavLink>
             }
-          </FrontSide>
-          {post.ready &&
-              <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
-                {post.ready
-                  ?  <div className={classes.cardDescription} >
-                       {post.description}
-                     </div>
-                : <NavLink to={post.link} onClick={e => e.preventDefault()}>
-                    <div className={classes.cardDescription} >
-                      {post.description}
-                    </div>
-                  </NavLink>
-              }
-              <div 
-                onClick={() => inputRef.current[post.title].toggle() }
-              >
-	        {(!isMobile) &&
+            <div
+              onClick={() => inputRef.current[post.title].toggle() }
+            >
+              {(!isMobile) &&
                 <FontAwesomeIcon
                   style={{
                     position: 'absolute', left: '96%', top: '8%',
@@ -151,11 +145,11 @@ function ShowBody() {
                   className={classes.cardIcon}
                   icon={solid('circle-arrow-left')}
                 />
-                }
-              </div>
-            </BackSide>
-          }
-        </Flippy>
+              }
+            </div>
+          </BackSide>
+        }
+      </Flippy>
   );
 }
 
@@ -165,24 +159,24 @@ function ShowBody() {
       <Card className={classes.cardMedia} style={{ background: mainPrimaryColor }}>
         {post.ready
           ? <div {...handlers}>
-	      <ShowBody/>
+              <ShowBody/>
             </div>
           : <div>
-	      <ShowBody/>
+              <ShowBody/>
             </div>
-	}
+        }
         {post.ready
           ? <NavLink to={post.link} className={classes.link}>
               <div className={classes.cardTitle}>
-	        {post.title}
+                {post.title}
               </div>
             </NavLink>
           : <div className={classes.link}>
-	      <Box className={classes.cardTitle}>
-	        {post.title}
+              <Box className={classes.cardTitle}>
+                {post.title}
               </Box>
             </div>
-	}
+        }
       </Card>
     </Grid>
   )
