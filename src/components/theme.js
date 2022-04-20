@@ -12,15 +12,15 @@ const backgroundColorImageDisabled1 = '#325354'
 const backgroundColorImage2 = '#708090'
 const backgroundColorImageDisabled2 = '#384048'
 
-const globalFont = 'IBM Plex Sans';
+const globalFont = 'Varela';
 const cardBorder = 0;
-const cardWeight = '550';
-const cardTitleWeight =' 600';
+const cardWeight = '500';
+const cardTitleWeight =' 500';
 const toolsSize = 16;
 const vtkFontSize = 14;
 const cardDescriptionSize = 14;
 const bodySize = 16;
-const titleSize = 18;
+const titleSize = 23;
 
 export const global = {
   root: {
@@ -66,8 +66,8 @@ export const lightTheme = {
   },
   titleText: {
     display: "flex",
-    marginTop: 0,
-    marginLeft: 60,
+    marginTop: 20,
+    marginLeft: 0,
     marginRight: 0,
     marginBottom: 10,
     color: backgroundColor2,
@@ -182,15 +182,19 @@ export const lightTheme = {
     minHeight: '100vh'
   },
   slider: {
-      '& .MuiSlider-thumb': {
-         color: color2
-      },
-      '& .MuiSlider-track': {
-         color: color2
-      },
-      '& .MuiSlider-rail': {
-         color: backgroundColor2
-      }
+    '& .MuiSlider-valueLabel': {
+      fontFamily: globalFont,
+      fontSize: 12,
+    },
+    '& .MuiSlider-thumb': {
+      color: color2
+    },
+    '& .MuiSlider-track': {
+      color: color2
+    },
+    '& .MuiSlider-rail': {
+      color: backgroundColor2
+    }
   },
   footer: {
     position: 'relative',
@@ -231,7 +235,7 @@ export const lightTheme = {
   },
   cardDescription: {
     color: color2,
-    paddingTop: 50,
+    paddingTop: 40,
     paddingRight: 20,
     paddingLeft: 20,
     float: 'left',
@@ -247,11 +251,12 @@ export const lightTheme = {
     primary2Color: color2
   },
   cardMedia: {
-    maxWidth: "500px"
+    maxWidth: 1200,
+    width: '100%'
   },
   cardIcon: {
     opacity: '0.8',
-    fontSize: "24px",
+    fontSize: "20px",
     color: color2
   },
   cardMain: {
@@ -269,7 +274,7 @@ export const lightTheme = {
     paddingRight:0,
     paddingTop:0,
     paddingBottom: 0,
-    maxWidth: 500,
+    maxWidth: 1200
   },
   cardDisabled: {
     boxShadow: 'none',
@@ -283,7 +288,19 @@ export const lightTheme = {
     paddingRight:0,
     paddingTop:0,
     paddingBottom: 0,
-    maxWidth: 500,
+    maxWidth: 1200
+  },
+  tooltip: {
+    "& .MuiTooltip-tooltip": {
+      padding: 8,
+      backgroundColor: color1,
+      background: backgroundColor1,
+      boxShadow: "1px 2px 1px #9E9E9E",
+      maxWidth: 150,
+    },
+    "& .MuiTooltip-arrow": {
+      color: color1
+    }
   },
   link: {
     fontFamily: globalFont,
@@ -332,8 +349,8 @@ export const darkTheme = {
   },
   titleText: {
     display: "flex",
-    marginTop: 0,
-    marginLeft: 60,
+    marginTop: 20,
+    marginLeft: 0,
     marginRight: 0,
     marginBottom: 10,
     color: color1,
@@ -456,15 +473,19 @@ export const darkTheme = {
     minHeight: '100vh'
   },
   slider: {
-      '& .MuiSlider-thumb': {
-         color: color1
-      },
-      '& .MuiSlider-track': {
-         color: color1
-      },
-      '& .MuiSlider-rail': {
-         color: backgroundColor1
-      }
+    '& .MuiSlider-valueLabel': {
+      fontFamily: globalFont,
+      fontSize: 12,
+    },
+    '& .MuiSlider-thumb': {
+      color: color1
+    },
+    '& .MuiSlider-track': {
+      color: color1
+    },
+    '& .MuiSlider-rail': {
+      color: backgroundColor1
+    }
   },
   footer: {
     position: 'relative',
@@ -505,29 +526,28 @@ export const darkTheme = {
   },
   cardDescription: {
     color: color1,
-    paddingTop: 60,
-    paddingRight: 40,
-    paddingLeft: 40,
+    paddingTop: 40,
+    paddingRight: 20,
+    paddingLeft: 20,
     float: 'left',
-    textAlign: 'justify',	  
+    textAlign: 'left',
     whiteSpace: 'pre-line',
     backgroundColor: backgroundColorImage2,
     fontWeight: 400,
     fontSize: cardDescriptionSize,
-    fontFamily: globalFont,
+    fontFamily: globalFont
   },
   palette: {
     primary1Color: color2,
     primary2Color: color1
   },
   cardMedia: {
-    minHeight: 112.5,
-    minWidth: 150,
-    maxWidth: 800,
+    maxWidth: 1200,
+    width: '100%'
   },
   cardIcon: {
     opacity: '0.8',
-    fontSize: "24px",
+    fontSize: "20px",
     color: color2
   },
   cardMain: {
@@ -561,6 +581,17 @@ export const darkTheme = {
     paddingBottom: 0,
     maxWidth: 500,
   },
+  tooltip: {
+    "& .MuiTooltip-tooltip": {
+      padding: 8,
+      backgroundColor: color2,
+      background: backgroundColor2,
+      maxWidth: 150,
+    },
+    "& .MuiTooltip-arrow": {
+      color: color2
+    }
+  },
   link: {
     fontFamily: globalFont,
     fontWeight: cardTitleWeight,
@@ -580,7 +611,7 @@ export const navTheme = {
     textDecoration: 'none!important',
     fontFamily: globalFont,
     fontSize: 15,
-    fontWeight: 600,
+    fontWeight: 500,
     letterSpacing: '0.5',
     '&:hover': {
        color: color2,
@@ -592,8 +623,7 @@ export const navTheme = {
     margin: "0px",
   },
   logo: {
-    maxWidth: 60,
-    marginRight: '2px',
+    maxWidth: 110,
     paddingLeft: 0,
     paddingRight:0,
     paddingTop:0,
