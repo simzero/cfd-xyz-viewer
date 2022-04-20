@@ -19,6 +19,7 @@ import LayersIcon from '@mui/icons-material/Layers';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CodeIcon from '@mui/icons-material/Code';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
 import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
@@ -104,7 +105,8 @@ const GenericView = ({
 
   let textColorLight = lightTheme.vtkText.color;
   let textColorDark = darkTheme.vtkText.color;
-  const textColorLoader = localTheme === 'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
+  const textColorLoader = localTheme === 'light'
+    ? lightTheme.bodyText.color : darkTheme.bodyText.color;
 
   let background = hexRgb(theme.body, {format: 'array'});
   background = background.map(x => x / 255);
@@ -267,7 +269,13 @@ const GenericView = ({
   const handleSetShowPlanes = () => {
     setShowPlanes(!showPlanes);
     if (context.current) {
-      const { scalarBarActor, actorPlaneX, actorPlaneY, actorPlaneZ, mapper, scalarBarActorPlaneX } = context.current;
+      const {
+        scalarBarActor,
+        actorPlaneX,
+        actorPlaneY,
+        actorPlaneZ,
+        mapper,
+        scalarBarActorPlaneX } = context.current;
       if (showPlanes) {
         actorPlaneX.setVisibility(false);
         actorPlaneY.setVisibility(false);
@@ -554,10 +562,18 @@ const GenericView = ({
   // - Update scene with theme
   useEffect(() => {
     if (context.current) {
-      const { mapper, renderer, renderWindow, scalarBarActor, scalarBarActorPlaneX, actorOutline } = context.current;
+      const {
+        mapper,
+        renderer,
+        renderWindow,
+        scalarBarActor,
+        scalarBarActorPlaneX,
+        actorOutline } = context.current;
       if (renderWindow) {
-        const background = localTheme === 'light' ? backgroundLight : backgroundDark;
-        const textColor = localTheme === 'light' ? textColorLight : textColorDark;
+        const background = localTheme === 'light'
+          ? backgroundLight : backgroundDark;
+        const textColor = localTheme === 'light'
+          ? textColorLight : textColorDark;
         let textColorNorm = hexRgb(textColor, {format: 'array'});
         textColorNorm = textColorNorm.map(x => x / 255);
         textColorNorm.pop();
@@ -583,7 +599,16 @@ const GenericView = ({
         renderWindow.render();
       }
     }
-  }, [trackTheme, localTheme, textColorLight, textColorDark, backgroundLight, backgroundDark, theme.vtkText.fontFamily]);
+  }, [
+       trackTheme,
+       localTheme,
+       textColorLight,
+       textColorDark,
+       backgroundLight,
+       backgroundDark,
+       theme.vtkText.fontFamily
+     ]
+  );
 
   useEffect(() => {
     if (context.current && ready) {
@@ -605,7 +630,14 @@ const GenericView = ({
       reader
         .setUrl(vtpPath, {loadData: true } )
         .then(() => {
-            setScene(initialPortrait, VTK, reader, context, vtkContainerRef, localTheme);
+            setScene(
+              initialPortrait,
+              VTK,
+              reader,
+              context,
+              vtkContainerRef,
+              localTheme
+            );
             setSceneLoaded(true);
         });
     }
@@ -659,10 +691,21 @@ const GenericView = ({
   const resetCamera = useCallback(
     () => {
       if (context.current) {
-       const { fullScreenRenderer, focalPoint, cameraPosition, renderer, renderWindow } = context.current;
+       const {
+         fullScreenRenderer,
+         focalPoint,
+         cameraPosition,
+         renderer,
+         renderWindow } = context.current;
        renderer.getActiveCamera().setProjectionMatrix(null);
-       const offset = Math.sqrt( (cameraPosition[0]-focalPoint[0])**2 + (cameraPosition[1]-focalPoint[1])**2 + (cameraPosition[2]-focalPoint[2])**2 )
-       renderer.getActiveCamera().setPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2] + offset);
+       const offset = Math.sqrt( (cameraPosition[0]-focalPoint[0])**2 +
+         (cameraPosition[1]-focalPoint[1])**2 +
+         (cameraPosition[2]-focalPoint[2])**2 )
+       renderer.getActiveCamera().setPosition(
+         cameraPosition[0],
+         cameraPosition[1],
+         cameraPosition[2] + offset
+       );
        renderer.getActiveCamera().setPosition(-1.0, 0, 0.0);
        renderer.getActiveCamera().setViewUp(0.0, 0.0, 1.0)
        renderer.resetCamera();
@@ -680,14 +723,27 @@ const GenericView = ({
   useEffect(() => {
     if (context.current) {
      //var start = new Date().getTime();	    
-     const { planeX, planeY, planeZ, lookupTablePlaneX, mapperPlaneX, lookupTablePlaneY, mapperPlaneY, lookupTablePlaneZ, mapperPlaneZ, renderWindow, scalarBarActorPlaneX } = context.current;
-
+     const {
+       planeX,
+       planeY,
+       planeZ,
+       lookupTablePlaneX,
+       mapperPlaneX,
+       lookupTablePlaneY,
+       mapperPlaneY,
+       lookupTablePlaneZ,
+       mapperPlaneZ,
+       renderWindow,
+       scalarBarActorPlaneX } = context.current;
      const activeArrayX = planeX.getPointData().getArray(vtuVariable);
-     const dataRangeX = [].concat(activeArrayX ? activeArrayX.getRange() : [0, 1]);
+     const dataRangeX = [].concat(activeArrayX ?
+       activeArrayX.getRange() : [0, 1]);
      const activeArrayY = planeY.getPointData().getArray(vtuVariable);
-     const dataRangeY = [].concat(activeArrayY ? activeArrayY.getRange() : [0, 1]);
+     const dataRangeY = [].concat(activeArrayY ?
+       activeArrayY.getRange() : [0, 1]);
      const activeArrayZ = planeZ.getPointData().getArray(vtuVariable);
-     const dataRangeZ = [].concat(activeArrayZ ? activeArrayZ.getRange() : [0, 1]);
+     const dataRangeZ = [].concat(activeArrayZ ?
+       activeArrayZ.getRange() : [0, 1]);
 
      planeX.getPointData().setActiveScalars(vtuVariable);
      planeY.getPointData().setActiveScalars(vtuVariable);
@@ -744,7 +800,13 @@ const GenericView = ({
 
   const calculateNewFieldX = () => {
     if (context.current) {
-      const { planeX, actorPlaneX, lookupTablePlaneX, mapperPlaneX, planeReader, VTK } = context.current;
+      const {
+        planeX,
+        actorPlaneX,
+        lookupTablePlaneX,
+        mapperPlaneX,
+        planeReader,
+        VTK } = context.current;
       const polydata_string = VTK.planeX(planeXValue);
       const buf = Buffer.from(polydata_string, 'utf-8');
       planeReader.parseAsArrayBuffer(buf);
@@ -759,7 +821,11 @@ const GenericView = ({
 
   const calculateNewFieldY = () => {
     if (context.current) {
-     const { planeY, actorPlaneY, lookupTablePlaneY, mapperPlaneY, VTK } = context.current;
+     const {
+       planeY,
+       actorPlaneY,
+       lookupTablePlaneY,
+       mapperPlaneY, VTK } = context.current;
      const planeReader = vtkXMLPolyDataReader.newInstance();
      const polydata_string = VTK.planeY(planeYValue);
      const buf = Buffer.from(polydata_string, 'utf-8');
@@ -775,7 +841,12 @@ const GenericView = ({
 
   const calculateNewFieldZ = () => {
     if (context.current) {
-     const { planeZ, actorPlaneZ, lookupTablePlaneZ, mapperPlaneZ, VTK } = context.current;
+     const {
+       planeZ,
+       actorPlaneZ,
+       lookupTablePlaneZ,
+       mapperPlaneZ,
+       VTK } = context.current;
      const planeReader = vtkXMLPolyDataReader.newInstance();
      const polydata_string = VTK.planeZ(planeZValue);
      const buf = Buffer.from(polydata_string, 'utf-8');
@@ -876,7 +947,8 @@ const GenericView = ({
             <div
               style={{
                 position: 'absolute', left: '50%', top: '45%',
-                transform: 'translate(-50%, -50%)'
+                transform: 'translate(-50%, -50%)',
+                width: '100%'
               }}
               className={classes.bodyText}
             >
@@ -898,26 +970,38 @@ const GenericView = ({
             </div>
 	}
         {(!sceneLoaded && !isMobile) &&
-            <div
-              style={{
-                position: 'absolute', left: '50%', top: '70%',
-                transform: 'translate(-50%, -50%)'
-              }}
-              className={classes.bodyText}
-            >
-              <div
+        <div
+          style={{
+            position: 'absolute', left: '50%', top: '70%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            justifyContent: 'center',
+            textAlign: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
+          className={classes.bodyText}
+        >
+          <div>
+            <div>
+              <IconButton
+                edge={false}
                 style={{
-                  textAlign: 'left',
-                  paddingBottom: 20,
+                  paddingLeft: 0,
+                  paddingRight: 8,
+                  color: mainSecondaryColor
                 }}
+                aria-label="mode"
               >
-                <div>Control view tips</div>
-                <div> * Rotate: left mouse</div>
-                <div> * Pan: left mouse + shift</div>
-                <div> * Spin: left mouse + crtl/alt</div>
-                <div> * Zoom: mouse wheel</div>
-              </div>
+                {<AutoAwesomeIcon />}
+              </IconButton>
             </div>
+            <div>Rotate: left mouse</div>
+            <div>Pan: left mouse + shift</div>
+            <div>Spin: left mouse + ctrl/alt</div>
+            <div>Zoom: mouse wheel</div>
+          </div>
+        </div>
         }
         {(sceneLoaded) &&
           <div>
@@ -934,7 +1018,11 @@ const GenericView = ({
           >
             <IconButton
               edge={false}
-              style={{ border: "5px", outline: "5px", color: mainSecondaryColor }}
+              style={{
+                border: "5px",
+                outline: "5px",
+                color: mainSecondaryColor
+              }}
               aria-label="mode"
               href={link}
               target="_blank"
@@ -956,7 +1044,11 @@ const GenericView = ({
                 border: '1px solid rgba(125, 125, 125)',
               }}
             >
-              <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={takeScreenshot}>
+              <Box
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={takeScreenshot}
+              >
                 <FontAwesomeIcon
                   style={{width: '32px', height: '32px'}}
                   icon={solid('camera-retro')}
@@ -975,7 +1067,11 @@ const GenericView = ({
                 border: '1px solid rgba(125, 125, 125)',
               }}
             >
-              <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={resetCamera}>
+              <Box
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={resetCamera}
+              >
                 <FontAwesomeIcon
                   style={{width: '32px', height: '32px'}}
                   icon={solid('undo-alt')}
@@ -995,7 +1091,10 @@ const GenericView = ({
               }}
               className={showPlanes ? classes.viewButtonsPressed : null}
             >
-              <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={handleSetShowPlanes}>
+              <Box
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={handleSetShowPlanes}>
                 <LayersIcon
                   style={{width: '32px', height: '32px'}}
                 />
@@ -1012,7 +1111,17 @@ const GenericView = ({
             backgroundColor: background
           }}
         >
-          <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '300px', width: '300px' }} onClick={handlePlaneX}>
+          <span
+            style={{
+              paddingRight: 5
+            }}
+            className={classes.link}
+            sx={{
+              height: '300px',
+              width: '300px'
+            }}
+            onClick={handlePlaneX}
+          >
           {showPlaneX
             ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
             : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
@@ -1037,7 +1146,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyIncrementX ? classes.link : classes.viewButtonsPressed}
+            className={!busyIncrementX ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1106,7 +1216,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyDecrementX ? classes.link : classes.viewButtonsPressed}
+            className={!busyDecrementX ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1144,7 +1255,17 @@ const GenericView = ({
             backgroundColor: background
           }}
         >
-          <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '300px', width: '300px' }} onClick={handlePlaneY}>
+          <span
+            style={{
+              paddingRight: 5
+            }}
+            className={classes.link}
+            sx={{
+              height: '300px',
+              width: '300px'
+            }}
+            onClick={handlePlaneY}
+          >
           {showPlaneY
             ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
             : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
@@ -1169,7 +1290,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyIncrementY ? classes.link : classes.viewButtonsPressed}
+            className={!busyIncrementY ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1238,7 +1360,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyDecrementY ? classes.link : classes.viewButtonsPressed}
+            className={!busyDecrementY ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1276,7 +1399,15 @@ const GenericView = ({
             backgroundColor: background
           }}
         >
-          <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '300px', width: '300px' }} onClick={handlePlaneZ}>
+          <span
+            style={{paddingRight: 5}}
+            className={classes.link}
+            sx={{
+              height: '300px',
+              width: '300px'
+            }}
+            onClick={handlePlaneZ}
+          >
           {showPlaneZ
             ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
             : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
@@ -1301,7 +1432,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyIncrementZ ? classes.link : classes.viewButtonsPressed}
+            className={!busyIncrementZ ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1370,7 +1502,8 @@ const GenericView = ({
               padding: '5px',
               border: '1px solid',
             }}
-            className={!busyDecrementZ ? classes.link : classes.viewButtonsPressed}
+            className={!busyDecrementZ ?
+              classes.link : classes.viewButtonsPressed}
           >
             <Box
               style={{
@@ -1427,7 +1560,17 @@ const GenericView = ({
                 </Box>
               </div>
             <div>
-              <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '200px', width: '200px' }} onClick={handlePlaneX}>
+              <span
+                style={{
+                  paddingRight: 5
+                }}
+                className={classes.link}
+                sx={{
+                  height: '200px',
+                  width: '200px'
+                }}
+                onClick={handlePlaneX}
+              >
                 {showPlaneX
                   ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
                   : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
@@ -1437,7 +1580,7 @@ const GenericView = ({
                 Plane X (m)
               </span>
             </div>
-              <div style={{marginTop: '10%'}}>
+              <div style={{marginTop: '8%'}}>
                 <Box sx={{ width: 300 }}>
                   <Slider
                     className={classes.slider}
@@ -1451,7 +1594,17 @@ const GenericView = ({
                 </Box>
               </div>
             <div>
-              <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '200px', width: '200px' }} onClick={handlePlaneY}>
+              <span
+                style={{
+                  paddingRight: 5
+                }}
+                className={classes.link}
+                sx={{
+                  height: '200px',
+                  width: '200px'
+                }}
+                onClick={handlePlaneY}
+              >
                 {showPlaneY
                   ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
                   : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
@@ -1461,7 +1614,7 @@ const GenericView = ({
                 Plane Y (m)
               </span>
             </div>
-              <div style={{marginTop: '18%'}}>
+              <div style={{marginTop: '8%'}}>
                 <Box sx={{ width: 300 }}>
                   <Slider
                     className={classes.slider}
@@ -1475,7 +1628,16 @@ const GenericView = ({
                 </Box>
               </div>
             <div>
-              <span style={{paddingRight: 5}} className={classes.link} sx={{ height: '200px', width: '200px' }} onClick={handlePlaneZ}>
+              <span
+                style={{
+                  paddingRight: 5
+                }} className={classes.link}
+                sx={{
+                  height: '200px',
+                  width: '200px'
+                }}
+                onClick={handlePlaneZ}
+              >
                 {showPlaneZ
                   ? <VisibilityIcon style={{width: '24px', height: '24px'}}/>
                   : <VisibilityOffIcon style={{width: '24px', height: '24px'}}/>
