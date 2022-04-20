@@ -7,6 +7,7 @@ import Slider from '@mui/material/Slider';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
 
 import { makeStyles } from '@mui/styles';
 
@@ -29,6 +30,8 @@ import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 import CodeIcon from '@mui/icons-material/Code';
+import GroupsIcon from '@mui/icons-material/Groups';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 import useWindowOrientation from "use-window-orientation";
 import {isMobile} from 'react-device-detect';
@@ -92,6 +95,9 @@ const ROMView = ({
     rootPath,
     MB,
     codeLink,
+    initialZoomLandscape,
+    initialZoomPortrait,
+    offsetY,
     initialTemperature,
     minTemperature,
     maxTemperature,
@@ -106,6 +112,8 @@ const ROMView = ({
   const initialPortrait = portrait;
   const vtkContainerRef = useRef(null);
   const context = useRef(null);
+  const [authorsTooltip, setAuthorsTooltipOpen] = useState(false);
+  const [authors, setAuthors] = useState("");
   const [temperatureValue, setTemperatureValue] = useState(null);
   const [ready, setIsReady] = useState(false);
   const [busyIncrement, setBusyIncrement] = useState(false);
@@ -145,7 +153,8 @@ const ROMView = ({
 
   let textColorLight = lightTheme.vtkText.color;
   let textColorDark = darkTheme.vtkText.color;
-  const textColorLoader = localTheme === 'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
+  const textColorLoader = localTheme ===
+    'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
 
   let background = hexRgb(theme.body, {format: 'array'});
   background = background.map(x => x / 255);
@@ -179,7 +188,7 @@ const ROMView = ({
       const Nphi_u = B[1];
       const Nphi_p = K[2];
       const Nphi_nut = coeffL2[1];
-      const N_BC = 1;
+      const N_BC = 2;
 
       const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
@@ -236,17 +245,32 @@ const ROMView = ({
 
   const resetCamera = () => {
     if (context.current) {
-     const { fullScreenRenderer, focalPoint, cameraPosition, renderer, renderWindow } = context.current;
+     const {
+       fullScreenRenderer,
+       focalPoint,
+       cameraPosition,
+       renderer,
+       renderWindow } = context.current;
      renderer.getActiveCamera().setProjectionMatrix(null);
-     const offset = Math.sqrt( (cameraPosition[0]-focalPoint[0])**2 + (cameraPosition[1]-focalPoint[1])**2 + (cameraPosition[2]-focalPoint[2])**2 )
-     renderer.getActiveCamera().setPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2] + offset);
-     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
      renderer.resetCamera();
+     renderer.getActiveCamera().setPosition
+     (
+       cameraPosition[0],
+       cameraPosition[1],
+       cameraPosition[2]
+     );
+     renderer.getActiveCamera().setFocalPoint
+     (
+       focalPoint[0],
+       focalPoint[1],
+       focalPoint[2]
+     );
+     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
      fullScreenRenderer.resize();
      if (portrait)
-       renderer.getActiveCamera().zoom(0.55);
+       renderer.getActiveCamera().zoom(initialZoomPortrait);
      else
-       renderer.getActiveCamera().zoom(1.3);
+       renderer.getActiveCamera().zoom(initialZoomLandscape);
      renderWindow.render();
     }
   }
@@ -298,7 +322,7 @@ const ROMView = ({
       fontStyle: 'normal',
       fontFamily: theme.vtkText.fontFamily
     };
-    reduced.solveOnline(initialVelocity);
+    reduced.solveOnline(initialVelocity, 0.0);
     const polydata_string = reduced.unstructuredGridToPolyData();
     // TODO: parse directly as buffer or parse as a string...
     var buf = Buffer.from(polydata_string, 'utf-8');
@@ -314,11 +338,18 @@ const ROMView = ({
     var nCells = polydata.getNumberOfPoints();
     polydata.getPointData().setActiveScalars("uRec");
 
-    const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
+    const array = vtkDataArray.newInstance({
+      name: 'uRec',
+      size: nCells*3,
+      numberOfComponents: 3,
+      dataType: 'Float32Array'
+    });
+
     for (let i = 0; i < nCells; i++) {
       let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
       array.setTuple(i, v)
     }
+
     array.modified();
     array.modified();
 
@@ -339,9 +370,9 @@ const ROMView = ({
     renderer.resetCamera();
 
     if (portrait)
-      renderer.getActiveCamera().zoom(0.55);
+      renderer.getActiveCamera().zoom(initialZoomPortrait);
     else
-      renderer.getActiveCamera().zoom(1.3);
+      renderer.getActiveCamera().zoom(initialZoomLandscape);
 
     scalarBarActor.setVisibility(false);
 
@@ -349,12 +380,28 @@ const ROMView = ({
     scalarBarActor.setTickTextStyle(scalarBarActorStyle);
     scalarBarActor.modified();
     scalarBarActor.setVisibility(true);
-    renderWindow.modified();
-    renderWindow.render();
 
     const camera = renderer.getActiveCamera();
-    const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
-    const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+    let focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
+    let cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+
+    cameraPosition[1] += offsetY;
+    focalPoint[1] += offsetY;
+
+    renderer.getActiveCamera().setPosition
+    (
+      cameraPosition[0],
+      cameraPosition[1],
+      cameraPosition[2]
+    );
+    renderer.getActiveCamera().setFocalPoint
+    (
+      focalPoint[0],
+      focalPoint[1],
+      focalPoint[2]
+    );
+    renderWindow.modified();
+    renderWindow.render();
 
     context.current = {
       focalPoint,
@@ -383,7 +430,8 @@ const ROMView = ({
            var a = document.createElement("a");
            a.innerHTML = 'download';
            a.href = URL.createObjectURL(blob);
-           a.download = caseName + "_T_" + temperatureValue + "_U_" + velocityValue + ".png";
+           a.download = caseName + "_T_" + temperatureValue + "_U_" +
+             velocityValue + ".png";
            a.click();
          })();
        }
@@ -401,20 +449,31 @@ const ROMView = ({
        var a = document.createElement("a");
        a.innerHTML = 'download';
        a.href = URL.createObjectURL(blob);
-       a.download = caseName + "_T_" + temperatureValue + "_U_" + velocityValue + ".vtu";
+       a.download = caseName + "_T_" + temperatureValue + "_U_" +
+         velocityValue + ".vtu";
        a.click();
     }
   }
 
   const calculateNewField = () => {
     if (context.current) {
-      const { lookupTable, mapper, polydata, reduced, renderWindow } = context.current;
+      const {
+        lookupTable,
+        mapper,
+        polydata,
+        reduced,
+        renderWindow } = context.current;
       reduced.nu(temperatureToViscosity(temperatureValue)*1e-05);
-      reduced.solveOnline(velocityValue);
+      reduced.solveOnline(velocityValue, 0.0);
       const newU = reduced.reconstruct();
       polydata.getPointData().removeArray('uRec');
       var nCells = polydata.getNumberOfPoints();
-      const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
+      const array = vtkDataArray.newInstance({
+        name: 'uRec',
+        size: nCells*3,
+        numberOfComponents: 3,
+        dataType: 'Float32Array'
+      });
       for (let i = 0; i < nCells; i++) {
         let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
         array.setTuple(i, v)
@@ -434,6 +493,10 @@ const ROMView = ({
 
   const myFunction = (eventSrcDesc, newValue) => {
     // console.log({ eventSrcDesc, newValue });
+  };
+
+  const toogleTooltip= () => {
+    setAuthorsTooltipOpen(!authorsTooltip);
   };
 
   const handleSetShowU = () => {
@@ -509,6 +572,51 @@ const ROMView = ({
 
   useEffect(() => {
     initialize();
+  }, []);
+
+
+  useEffect(() => {
+    const githubAPI = "https://api.github.com"
+    const repoURL = "/repos/simzero-oss/cfd-xyz/"
+    const commitsEndpoint = repoURL + "commits"
+    const commitsURL = githubAPI + commitsEndpoint
+    const filepath = "/src/components/OF/Incompressible/SimpleFoam/PitzDaily.jsx"
+    fetch(commitsURL + "?path=" + codeLink)
+      .then(response => response.json())
+      .then(commits => {
+        const names = [];
+        const authorComponent = [];
+        authorComponent.push(
+          <div
+            style={{
+              color: "#777",
+              fontFamily: theme.vtkText.fontFamily,
+              //textDecoration: 'underline',
+              paddingiBottom: 4
+	    }}
+          >
+            Contributors:
+          </div>
+        );
+        for (var i = 0; i < commits.length; i++) {
+          if (!names.includes(commits[i].commit.author.name)) {
+            const name = commits[i].commit.author.name
+            names.push(name);
+            const author = "@" + name
+            authorComponent.push(
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={"https://github.com/" + name}
+              >
+                {author}
+              </a>
+            );
+          }
+        }
+        setAuthors(authorComponent)
+        // console.log(names.join("\n"));
+      })
   }, []);
 
   useEffect(() => {
@@ -609,8 +717,10 @@ const ROMView = ({
     if (context.current) {
       const { mapper, renderer, renderWindow, scalarBarActor } = context.current;
       if (renderWindow) {
-        const background = localTheme === 'light' ? backgroundLight : backgroundDark;
-        const textColor = localTheme === 'light' ? textColorLight : textColorDark;
+        const background = localTheme === 'light'
+          ? backgroundLight : backgroundDark;
+        const textColor = localTheme === 'light'
+          ? textColorLight : textColorDark;
 
         const scalarBarActorStyle1 = {
           paddingBottom: 30,
@@ -628,12 +738,31 @@ const ROMView = ({
         renderWindow.render();
       }
     }
-  }, [trackTheme, localTheme, textColorLight, textColorDark, backgroundLight, backgroundDark, theme.vtkText.fontFamily]);
+  },
+  [
+    trackTheme,
+    localTheme,
+    textColorLight,
+    textColorDark,
+    backgroundLight,
+    backgroundDark,
+    theme.vtkText.fontFamily
+  ]);
 
   useEffect(() => {
     return () => {
       if (context.current) {
-        const { actor, reader, reduced, renderer, renderWindow, fullScreenRenderer, lookupTable, polydata, scalarBarActor, mapper } = context.current;
+        const {
+          actor,
+          reader,
+          reduced,
+          renderer,
+          renderWindow,
+          fullScreenRenderer,
+          lookupTable,
+          polydata,
+          scalarBarActor,
+          mapper } = context.current;
         actor.delete();
         fullScreenRenderer.delete();
         lookupTable.delete();
@@ -655,14 +784,15 @@ const ROMView = ({
           ? <div
               style={{
                 position: 'absolute', left: '50%', top: '35%',
-                transform: 'translate(-50%, -35%)'
+                transform: 'translate(-50%, -35%)',
+                width: '100%'
               }}
               className={classes.bodyText}
             >
               <div
                 style={{
                   textAlign: 'center',
-                  paddingBottom: 20,
+                  paddingBottom: 20
                 }}
               >
                 Loading and reading data {process} %
@@ -703,24 +833,69 @@ const ROMView = ({
         <div
           style={{
             position: 'absolute', left: '50%', top: '70%',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            justifyContent: 'center',
+            textAlign: 'center',
+            alignItems: 'center',
+            display: 'flex',
+          }}
+          className={classes.bodyText}
+        >
+          <div>
+            <div>
+              <IconButton
+                edge={false}
+                style={{
+                  paddingLeft: 0,
+                  paddingRight: 8,
+                  color: mainSecondaryColor
+                }}
+                aria-label="mode"
+              >
+                {<AutoAwesomeIcon />}
+              </IconButton>
+            </div>
+            <div>Rotate: left mouse</div>
+            <div>Pan: left mouse + shift</div>
+            <div>Spin: left mouse + ctrl/alt</div>
+            <div>Zoom: mouse wheel</div>
+          </div>
+        </div>
+      }
+      {(!sceneLoaded && isMobile) &&
+        <div
+          style={{
+            position: 'absolute', left: '50%', top: '70%', right: 0,
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            textAlign: 'center',
+            alignItems: 'center',
+            dispplay: 'flex',
+            padding: 16
           }}
           className={classes.bodyText}
         >
           <div
             style={{
-              textAlign: 'left',
-              paddingBottom: 0,
-              paddingRight: 0,
-              paddingTop: 0,
-              paddingLeft: 0,
+              justifyContent: 'center'
             }}
           >
-            <div>Control view tips:</div>
-            <div> * Rotate: left mouse</div>
-            <div> * Pan: left mouse + shift</div>
-            <div> * Spin: left mouse + ctrl/alt</div>
-            <div> * Zoom: mouse wheel</div>
+            <div>
+              <div>
+                <IconButton
+                  edge={false}
+                  style={{ fontSize: '12px', color: mainSecondaryColor }}
+                  aria-label="mode"
+                >
+                  {<AutoAwesomeIcon />}
+                </IconButton>
+              </div>
+              <div>
+                Try this web app on a desktop computer for a better performance
+                and user experience.
+              </div>
+            </div>
           </div>
         </div>
       }
@@ -738,16 +913,61 @@ const ROMView = ({
             }}
           >
             <IconButton
+              id="code"
               edge={false}
-              style={{ border: "5px", outline: "5px", color: mainSecondaryColor }}
+              style={{
+                border: "5px",
+                outline: "5px",
+                color: mainSecondaryColor
+              }}
               aria-label="mode"
               href={link}
               target="_blank"
               rel="noreferrer"
-              title={'Code'}
+              title={'Link to code'}
             >
               {<CodeIcon />}
             </IconButton>
+          </div>
+          <div
+            style={{
+              paddingBottom: 80,
+              position: 'absolute',
+              bottom: '120px',
+              left: '10px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%'
+            }}
+          >
+          <Tooltip
+            id="tooltip"
+            arrow
+            open={authorsTooltip}
+            disableFocusListener
+            disableHoverListener
+            disableTouchListener
+            placement="right-start"
+            title={authors}
+            classes={{
+              popper: classes.tooltip
+            }}
+          >
+            <IconButton
+              title="Show contributors"
+              id="authors"
+              edge={false}
+              style={{
+                border: "5px",
+                outline: "5px",
+                color: mainSecondaryColor
+              }}
+              aria-label="mode"
+              onClick={toogleTooltip}
+            >
+              {<GroupsIcon />}
+            </IconButton>
+          </Tooltip>
           </div>
           <div
             style={{
@@ -761,7 +981,11 @@ const ROMView = ({
               border: '1px solid rgba(125, 125, 125)',
             }}
           >
-            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={downloadData}>
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={downloadData}
+            >
               <FontAwesomeIcon
                 style={{width: '32px', height: '32px'}}
                 icon={solid('download')}
@@ -780,7 +1004,11 @@ const ROMView = ({
               border: '1px solid rgba(125, 125, 125)',
             }}
           >
-            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={takeScreenshot}>
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={takeScreenshot}
+            >
               <FontAwesomeIcon
                 style={{width: '32px', height: '32px'}}
                 icon={solid('camera-retro')}
@@ -799,7 +1027,11 @@ const ROMView = ({
               border: '1px solid rgba(125, 125, 125)',
             }}
           >
-            <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={resetCamera}>
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={resetCamera}
+            >
               <FontAwesomeIcon
                 style={{width: '32px', height: '32px'}}
                 icon={solid('undo-alt')}
@@ -1395,7 +1627,7 @@ const ROMView = ({
                 className={classes.slider}
                 defaultValue={initialTemperature}
                 onChange={handleTemperatureChange}
-                step={1}
+                step={stepTemperature}
                 min={minTemperature}
                 max={maxTemperature}
                 valueLabelDisplay="on"
@@ -1411,9 +1643,9 @@ const ROMView = ({
                 className={classes.slider}
                 defaultValue={initialVelocity}
                 onChange={handleVelocityChange}
-                step={0.1}
-                min={1}
-                max={20.0}
+                step={stepVelocity}
+                min={minVelocity}
+                max={maxVelocity}
                 valueLabelDisplay="on"
               />
             </Box>
