@@ -11,7 +11,7 @@ import { lightTheme, darkTheme } from './../theme';
 function Tools() {
 
   useEffect(() => {
-   document.title = "cfd.xyz | Tools"
+   document.title = "Tools"
   }, []);
 
   //const classes = useStyles();

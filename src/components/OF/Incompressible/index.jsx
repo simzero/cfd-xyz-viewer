@@ -11,7 +11,7 @@ import { global } from './../../theme';
 
 function Incompressible() {
   useEffect(() => {
-   document.title = "cfd.xyz"
+   document.title = "/OF/incompressible"
   }, []);
 
   const useStyles = makeStyles(global);

@@ -11,7 +11,7 @@ import { global } from './../theme';
 
 function OF() {
   useEffect(() => {
-   document.title = "cfd.xyz | OF"
+   document.title = "/OF"
   }, []);
 
   const useStyles = makeStyles(global);

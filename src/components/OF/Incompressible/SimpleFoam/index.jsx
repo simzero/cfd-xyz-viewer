@@ -11,7 +11,7 @@ import { global } from './../../../theme';
 
 function SimpleFoam() {
   useEffect(() => {
-    document.title = "cfd.xyz | OF/incompressible/simpleFoam"
+    document.title = "/OF/incompressible/simpleFoam"
    }, []);
 
   const useStyles = makeStyles(global);
