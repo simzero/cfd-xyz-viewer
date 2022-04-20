@@ -5,13 +5,12 @@
 import { useEffect } from 'react';
 import ROMView  from './../../ROMView';
 
-// TODO: redundand instances of vtkScalarBarActor to be removed
-// when issue https://github.com/Kitware/vtk-js/issues/2111
-// is fixed.
-
 const surrogatesPath = '/surrogates';
 
 // - Define case custom data
+const initialZoomPortrait = 0.55;
+const initialZoomLandscape = 1.3;
+const offsetY = 0.0;
 const initialTemperature = 20; // 1e-05
 const minTemperature = -100;
 const maxTemperature = 1000;
@@ -30,7 +29,7 @@ function PitzDaily() {
   const rootPath = surrogatesPath + casePath + "/"
 
   useEffect(() => {
-    document.title = "cfd.xyz | " + rootPath;
+    document.title = casePath;
   }, []);
 
   return (
@@ -40,6 +39,9 @@ function PitzDaily() {
         rootPath={rootPath}
         MB={MB}
         codeLink={codeLink}
+        initialZoomPortrait={initialZoomPortrait}
+        initialZoomLandscape={initialZoomLandscape}
+        offsetY={offsetY}
         initialTemperature={initialTemperature}
         minTemperature={minTemperature}
         maxTemperature={maxTemperature}
