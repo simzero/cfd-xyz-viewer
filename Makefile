@@ -4,11 +4,12 @@
 
 SHELL := /bin/bash
 
-version := v1.0.0-rc.4
-cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:$(version)
+cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:${VERSION}
 cfd-xyz := docker run --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
-data-version := surrogates_$(version)
-data-url := https://github.com/simzero-oss/rom-js-data/raw/main/$(data-version).tar.gz
+surrogates-data := surrogates_${VERSION}
+simulations-data := surrogates_${VERSION}
+surrogates-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(surrogates-data).tar.gz
+simulations-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(simulations-data).tar.gz
 
 all: install run-build data start
 all-docker: install-docker run-build-docker data-docker start-docker
@@ -20,8 +21,10 @@ run-build:
 start:
 	npm start
 data:
-	curl -L $(data-url) -o surrogates.tar.gz
+	curl -L $(surrogates-url) -o surrogates.tar.gz
+	curl -L $(simulations-url) -o simulations.tar.gz
 	tar -zxvf surrogates.tar.gz -C public/
+	tar -zxvf simulations.tar.gz -C public/
 
 install-docker:
 	$(cfd-xyz) npm install
@@ -30,5 +33,7 @@ run-build-docker:
 start-docker:
 	$(cfd-xyz) npm start
 data-docker:
-	$(cfd-xyz) curl -LJ0 $(data-url) -o surrogates.tar.gz
+	$(cfd-xyz) curl -LJ0 $(surrogates-url) -o surrogates.tar.gz
+	$(cfd-xyz) curl -LJ0 $(simulations-url) -o simulations.tar.gz
 	tar -zxvf surrogates.tar.gz -C public/
+	tar -zxvf simulations.tar.gz -C public/
