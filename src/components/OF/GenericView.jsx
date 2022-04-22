@@ -1035,7 +1035,7 @@ const GenericView = ({
           }}
           className={classes.bodyText}
         >
-          <div>
+          <div style={{fontStyle: 'italic'}}>
             <div>
               <IconButton
                 edge={false}
@@ -1055,6 +1055,42 @@ const GenericView = ({
             <div>Zoom: mouse wheel</div>
           </div>
         </div>
+        }
+        {(!sceneLoaded && isMobile) &&
+          <div
+            style={{
+              position: 'absolute', left: '50%', top: '70%', right: 0,
+              transform: 'translate(-50%, -50%)',
+              width: '100%',
+              textAlign: 'center',
+              alignItems: 'center',
+              dispplay: 'flex',
+              padding: 16
+            }}
+            className={classes.bodyText}
+          >
+            <div
+              style={{
+                justifyContent: 'center'
+              }}
+            >
+              <div>
+                <div>
+                  <IconButton
+                    edge={false}
+                    style={{ fontSize: '12px', color: mainSecondaryColor }}
+                    aria-label="mode"
+                  >
+                    {<AutoAwesomeIcon />}
+                  </IconButton>
+                </div>
+                <div style={{fontStyle: 'italic'}}>
+                  Try cfd.xyz on a desktop computer for a better performance
+                  and user experience.
+                </div>
+              </div>
+            </div>
+          </div>
         }
         {(sceneLoaded) &&
           <div>

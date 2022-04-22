@@ -62,12 +62,13 @@ function About() {
             }}
           >
              We aim with this development to create a common place where
-             canonical and industrial CFD problems can be visualized and
-             analyzed without carrying out a simulation, or as a preliminary
-             step for optimizing parameters of new simulations. Having an
-             open-source centralized service has several advantages from
-             educational, optimization and reproducibility point of views. But
-             also from a CO2 footprint perspective.
+             canonical and industrial computational fluid dynamics (CFD)
+             problems can be visualized and analyzed without carrying out a
+             simulation, or as a preliminary step for optimizing parameters of
+             new simulations. Having an open-source centralized service has
+             several advantages from educational, optimization and
+             reproducibility point of views. But also from a CO2 footprint
+             perspective.
           </div>
           <div
             className={classes.bodyText}

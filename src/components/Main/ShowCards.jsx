@@ -113,9 +113,11 @@ const ShowCards = ({post}) => {
           }
         </FrontSide>
         {post.ready &&
-          <BackSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
+          <BackSide className={post.ready ?
+            classes.cardActive : classes.cardDisabled}>
             {post.ready
-            ?  <div className={classes.cardDescription} >
+            ?  <div className={isMobile ?
+                 classes.cardDescriptionMobile : classes.cardDescription } >
                  <Linkify
                    options={{
                      attributes:
@@ -128,7 +130,8 @@ const ShowCards = ({post}) => {
                  </Linkify>
                </div>
             :  <NavLink to={post.link} onClick={e => e.preventDefault()}>
-                 <div className={classes.cardDescription} >
+                 <div className={isMobile ?
+                   classes.cardDescriptionMobile : classes.cardDescription} >
                    {post.description}
                  </div>
                </NavLink>

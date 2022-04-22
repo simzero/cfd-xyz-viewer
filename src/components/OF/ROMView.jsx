@@ -114,6 +114,8 @@ const ROMView = ({
   const context = useRef(null);
   const [authorsTooltip, setAuthorsTooltipOpen] = useState(false);
   const [authors, setAuthors] = useState("");
+  const [rangeErrorT, setRangeErrorT] = useState(false);
+  const [rangeErrorU, setRangeErrorU] = useState(false);
   const [temperatureValue, setTemperatureValue] = useState(null);
   const [ready, setIsReady] = useState(false);
   const [busyIncrement, setBusyIncrement] = useState(false);
@@ -517,11 +519,19 @@ const ROMView = ({
   };
 
   const handleTemperatureInput = (event, newValue) => {
+    if ((newValue > maxTemperature) || (newValue < minTemperature))
+      setRangeErrorT(true);
+    else
+      setRangeErrorT(false);
     newValue = Math.min(Math.max(newValue, minTemperature), maxTemperature);
     setTemperatureValue(newValue);
   };
 
   const handleVelocityInput = (event, newValue) => {
+    if ((newValue > maxVelocity) || (newValue < minVelocity))
+      setRangeErrorU(true);
+    else
+      setRangeErrorU(false);
     newValue = Math.min(Math.max(newValue, minVelocity), maxVelocity);
     setVelocityValue(newValue);
   };
@@ -533,6 +543,10 @@ const ROMView = ({
 
   const handleIncrement = () => {
     let newValue = temperatureValue + stepTemperature;
+    if (newValue > maxTemperature)
+      setRangeErrorT(true);
+    else
+      setRangeErrorT(false);
     newValue = Math.min(Math.max(newValue, minTemperature), maxTemperature);
     setTemperatureValue(newValue);
     calculateNewField();
@@ -541,6 +555,10 @@ const ROMView = ({
 
   const handleDecrement = () => {
     let newValue = temperatureValue - stepTemperature;
+    if (newValue < minTemperature)
+      setRangeErrorT(true);
+    else
+      setRangeErrorT(false);
     newValue = Math.min(Math.max(newValue, minTemperature), maxTemperature);
     setTemperatureValue(newValue);
     calculateNewField();
@@ -549,6 +567,10 @@ const ROMView = ({
 
   const handleIncrementU = () => {
     let newValue = velocityValue + stepVelocity;
+    if (newValue > maxVelocity)
+      setRangeErrorU(true);
+    else
+      setRangeErrorU(false);
     newValue = Math.min(Math.max(newValue, minVelocity), maxVelocity);
     setVelocityValue(newValue);
     calculateNewField();
@@ -557,6 +579,10 @@ const ROMView = ({
 
   const handleDecrementU = () => {
     let newValue = velocityValue - stepVelocity;
+    if (newValue < minVelocity)
+      setRangeErrorU(true);
+    else
+      setRangeErrorU(false);
     newValue = Math.min(Math.max(newValue, minVelocity), maxVelocity);
     setVelocityValue(newValue);
     calculateNewField();
@@ -580,7 +606,6 @@ const ROMView = ({
     const repoURL = "/repos/simzero-oss/cfd-xyz/"
     const commitsEndpoint = repoURL + "commits"
     const commitsURL = githubAPI + commitsEndpoint
-    const filepath = "/src/components/OF/Incompressible/SimpleFoam/PitzDaily.jsx"
     fetch(commitsURL + "?path=" + codeLink)
       .then(response => response.json())
       .then(commits => {
@@ -842,7 +867,7 @@ const ROMView = ({
           }}
           className={classes.bodyText}
         >
-          <div>
+          <div style={{fontStyle: 'italic'}}>
             <div>
               <IconButton
                 edge={false}
@@ -891,8 +916,8 @@ const ROMView = ({
                   {<AutoAwesomeIcon />}
                 </IconButton>
               </div>
-              <div>
-                Try this web app on a desktop computer for a better performance
+              <div style={{fontStyle: 'italic'}}>
+                Try cfd.xyz on a desktop computer for a better performance
                 and user experience.
               </div>
             </div>
@@ -942,6 +967,7 @@ const ROMView = ({
           >
           <Tooltip
             id="tooltip"
+            title="Show contributors"
             arrow
             open={authorsTooltip}
             disableFocusListener
@@ -954,7 +980,6 @@ const ROMView = ({
             }}
           >
             <IconButton
-              title="Show contributors"
               id="authors"
               edge={false}
               style={{
@@ -1222,7 +1247,6 @@ const ROMView = ({
             inputMode: 'decimal',
             pattern: '[0-9]*'
           }}
-          // helperText={temperatureValue > 100 ? "Out of range." : " "}
           value={temperatureValue}
           onChange={(event) => {
             handleTemperatureInput(event,event.target.value);
@@ -1334,7 +1358,6 @@ const ROMView = ({
             inputMode: 'decimal',
             pattern: '[0-9]*'
           }}
-          // helperText={temperatureValue > 100 ? "Out of range." : " "}
           value={velocityValue}
           onChange={(event) => {
             handleVelocityInput(event,event.target.value);
@@ -1377,6 +1400,34 @@ const ROMView = ({
             +
           </Box>
         </div>
+      </div>
+      }
+      {(showT && rangeErrorT) &&
+      <div
+        style={{
+          position: 'absolute',
+          top: portrait ? '160px': '110px',
+          left: portrait ? '' : '20px',
+          right: portrait ? '20px' : '',
+          color: 'red',
+          fontSize: '12px'
+        }}
+      >
+        Out of range: {minTemperature}{"<T<"}{maxTemperature}
+      </div>
+      }
+      {(showU && rangeErrorU) &&
+      <div
+        style={{
+          position: 'absolute',
+          top: portrait ? '160px': '110px',
+          left: portrait ? '' : '20px',
+          right: portrait ? '20px' : '',
+          color: 'red',
+          fontSize: '12px'
+        }}
+      >
+        Out of range: {minVelocity}{"<U<"}{maxVelocity}
       </div>
       }
       {(isMobile && showT && portrait) &&
@@ -1449,7 +1500,6 @@ const ROMView = ({
             inputMode: 'decimal',
             pattern: '[0-9]*'
           }}
-          // helperText={temperatureValue > 100 ? "Out of range." : " "}
           value={temperatureValue}
           onChange={(event) => {
             handleTemperatureInput(event,event.target.value);
@@ -1563,7 +1613,6 @@ const ROMView = ({
             inputMode: 'decimal',
             pattern: '[0-9]*'
           }}
-          // helperText={temperatureValue > 100 ? "Out of range." : " "}
           value={velocityValue}
           onChange={(event) => {
             handleVelocityInput(event,event.target.value);

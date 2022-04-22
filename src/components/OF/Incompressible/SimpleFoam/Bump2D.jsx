@@ -14,11 +14,11 @@ const offsetY = -2.4;
 const initialTemperature = 0; // 1e-05
 const minTemperature = -50;
 const maxTemperature = 50;
-const stepTemperature = 1.0;
+const stepTemperature = 5.0;
 const initialVelocity = 40.0;
 const minVelocity = 5.0;
 const maxVelocity = 90.0;
-const stepVelocity = 1.0;
+const stepVelocity = 5.0;
 const MB=19.6;
 const codeLink = "/src/components/OF/Incompressible/SimpleFoam/Bump2D.jsx";
 //

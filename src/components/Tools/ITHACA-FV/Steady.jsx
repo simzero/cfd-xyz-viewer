@@ -16,7 +16,6 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 
 import { DropzoneAreaBase } from "react-mui-dropzone";
 
-import { createTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 
 import hexRgb from 'hex-rgb';
@@ -633,138 +632,138 @@ const readMatrixFile = async (data) => {
                     id="U-min"
                     variant="outlined"
                     className={classes.textField}
-          label=" min"
-          type="number"
-          defaultValue="1.0"
-          onChange={(event) => {setUMin(event.target.value)}}
-        />
-        <TextField
-          id="U-max"
-          variant="outlined"
-          className={classes.textField}
-	            style={{ marginLeft: 15 }}
-          label=" max"
-          type="number"
-          defaultValue="10.0"
-          disabled={UFixed}
-          onChange={(event) => {setUMax(event.target.value)}}
-        />
-  <FormControlLabel
-    control={
-      <Checkbox
-            style ={{
-              color: mainColor,
-              marginLeft: 8
-            }}
-            checked={UFixed}
-            onChange={handleUFixed}
-      />
-    }
-    className={classes.bodyText}
-    labelPlacement="end"
-    label={<div className={classes.controlLabel}>Fixed?</div>}
-  />
-</FormGroup>
-</Box>
-          <div>
-    <Box>
-       <div className={classes.bodyText} style={{ marginBottom: 10, marginTop: 15 }}>
-        Kinematic viscosity
-       </div>
-    </Box>
-    <FormGroup margin='20px' row={true}>
-        <TextField
-          id="nu-min"
-          variant="outlined"
-          className={classes.textField}
-          //InputProps={{
-          //classes: {
-          //  root: classes.cssOutlinedInput,
-          //  focused: classes.cssFocused,
-          //  notchedOutline: classes.notchedOutline
-          //}
-          // className: classes.input,
-          //}}
-          /*InputLabelProps={{
-          classes: {
-            root: classes.cssLabel,
-            focused: classes.cssFocused,
-          },
-          }}*/
-          label="min"
-          type="number"
-          defaultValue="1e-04"
-          inputProps={{ inputMode: 'decimal', pattern: '[0-9]*' }}
-          onChange={(event) => {setNuMin(event.target.value)}}
-        />
-        <TextField
-          id="nu-max"
-          variant="outlined"
-          className={classes.textField}
-	            style={{ marginLeft: 15 }}
-          //InputProps={{
-          //classes: {
-          //  root: classes.cssOutlinedInput,
-          //  focused: classes.cssFocused,
-           // notchedOutline: classes.notchedOutline
-          //}
-          // className: classes.input,
-          //}}
-          /*InputLabelProps={{
-          classes: {
-            root: classes.cssLabel,
-            focused: classes.cssFocused,
-          },
-          }}*/
-          label="max"
-          type="number"
-          defaultValue="1e-06"
-          disabled={nuFixed}
-          inputProps={{ inputMode: 'decimal', pattern: '[0-9]*' }}
-          onChange={(event) => {setNuMax(event.target.value)}}
-        />
-  <FormControlLabel
-    control={
-      <Checkbox
-            style ={{
-              color: mainColor,
-              marginLeft: 8
-            }}
-            checked={nuFixed}
-            onChange={handleNuFixed}
-      />
-    }
-    className={classes.bodyText}
-    labelPlacement="end"
-    label={<div className={classes.controlLabel}>Fixed?</div>}
-  />
-</FormGroup>
-<div spacing={50}>
-    <button
-      style={{ marginTop: 20, marginLeft: 22, marginRight: 10}}
-      type="button"
-      className={classes.buttons}
-      onClick={clear}>
-        Clear
-    </button>
-       <button
-        type="button"
-      //  className="btn btn-success mr-3"
-        className={classes.buttons}
-        onClick={confirmed}>
-        Confirm
-       </button>
-</div>
-</div>
-
-</Grid>
-</Grid>
-</Box>
-}
-{ isConfirmed &&
-<div> 
-      <div style={{ paddingBottom: 60}} ref={vtkContainerRef}>
-      </div>
+                    label=" min"
+                    type="number"
+                    defaultValue="1.0"
+                    onChange={(event) => {setUMin(event.target.value)}}
+                  />
+                  <TextField
+                    id="U-max"
+                    variant="outlined"
+                    className={classes.textField}
+                    style={{ marginLeft: 15 }}
+                    label=" max"
+                    type="number"
+                    defaultValue="10.0"
+                    disabled={UFixed}
+                    onChange={(event) => {setUMax(event.target.value)}}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        style ={{
+                          color: mainColor,
+                          marginLeft: 8
+                        }}
+                        checked={UFixed}
+                        onChange={handleUFixed}
+                      />
+                    }
+                    className={classes.bodyText}
+                    labelPlacement="end"
+                    label={<div className={classes.controlLabel}>Fixed?</div>}
+                  />
+                </FormGroup>
+              </Box>
+              <div>
+                <Box>
+                  <div className={classes.bodyText} style={{ marginBottom: 10, marginTop: 15 }}>
+                    Kinematic viscosity
+                  </div>
+                </Box>
+                <FormGroup margin='20px' row={true}>
+                  <TextField
+                    id="nu-min"
+                    variant="outlined"
+                    className={classes.textField}
+                    //InputProps={{
+                    //classes: {
+                    //  root: classes.cssOutlinedInput,
+                    //  focused: classes.cssFocused,
+                    //  notchedOutline: classes.notchedOutline
+                    //}
+                    // className: classes.input,
+                    //}}
+                    /*InputLabelProps={{
+                      classes: {
+                        root: classes.cssLabel,
+                        focused: classes.cssFocused,
+                      },
+                    }}*/
+                    label="min"
+                    type="number"
+                    defaultValue="1e-04"
+                    inputProps={{ inputMode: 'decimal', pattern: '[0-9]*' }}
+                    onChange={(event) => {setNuMin(event.target.value)}}
+                  />
+                  <TextField
+                    id="nu-max"
+                    variant="outlined"
+                    className={classes.textField}
+                    style={{ marginLeft: 15 }}
+                    //InputProps={{
+                     //classes: {
+                       //  root: classes.cssOutlinedInput,
+                       //  focused: classes.cssFocused,
+                       // notchedOutline: classes.notchedOutline
+                     //}
+                     // className: classes.input,
+                     //}}
+                     /*InputLabelProps={{
+                      classes: {
+                        root: classes.cssLabel,
+                        focused: classes.cssFocused,
+                      },
+                     }}*/
+                    label="max"
+                    type="number"
+                    defaultValue="1e-06"
+                    disabled={nuFixed}
+                    inputProps={{ inputMode: 'decimal', pattern: '[0-9]*' }}
+                    onChange={(event) => {setNuMax(event.target.value)}}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        style ={{
+                          color: mainColor,
+                          marginLeft: 8
+                        }}
+                        checked={nuFixed}
+                        onChange={handleNuFixed}
+                      />
+                    }
+                    className={classes.bodyText}
+                    labelPlacement="end"
+                    label={<div className={classes.controlLabel}>Fixed?</div>}
+                  />
+                </FormGroup>
+                <div spacing={50}>
+                  <button
+                    style={{ marginTop: 20, marginLeft: 22, marginRight: 10}}
+                    type="button"
+                    className={classes.buttons}
+                    onClick={clear}
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    // className="btn btn-success mr-3"
+                    className={classes.buttons}
+                    onClick={confirmed}>
+                      Confirm
+                  </button>
+                </div>
+              </div>
+            </Grid>
+          </Grid>
+        </Box>
+      }
+      { isConfirmed &&
+      <div>
+        <div style={{ paddingBottom: 60}} ref={vtkContainerRef}>
+        </div>
         <div
           style={{
             paddingBottom: 80,
@@ -917,8 +916,8 @@ const readMatrixFile = async (data) => {
             </div>}
           </div>
       </div>
-</div> 
-}
+    </div>
+  }
   </div>
   );
 }
