@@ -246,6 +246,19 @@ export const lightTheme = {
     fontSize: cardDescriptionSize,
     fontFamily: globalFont,
   },
+  cardDescriptionMobile: {
+    color: color2,
+    paddingTop: 15,
+    paddingRight: 20,
+    paddingLeft: 20,
+    float: 'left',
+    textAlign: 'left',
+    whiteSpace: 'pre-line',
+    backgroundColor: backgroundColorImage1,
+    fontWeight: 400,
+    fontSize: cardDescriptionSize-2,
+    fontFamily: globalFont,
+  },
   palette: {
     primary1Color: color1,
     primary2Color: color2
@@ -537,6 +550,19 @@ export const darkTheme = {
     fontSize: cardDescriptionSize,
     fontFamily: globalFont
   },
+  cardDescriptionMobile: {
+    color: color2,
+    paddingTop: 15,
+    paddingRight: 20,
+    paddingLeft: 20,
+    float: 'left',
+    textAlign: 'left',
+    whiteSpace: 'pre-line',
+    backgroundColor: backgroundColorImage1,
+    fontWeight: 400,
+    fontSize: cardDescriptionSize-2,
+    fontFamily: globalFont,
+  },
   palette: {
     primary1Color: color2,
     primary2Color: color1
@@ -565,7 +591,7 @@ export const darkTheme = {
     paddingRight:0,
     paddingTop:0,
     paddingBottom: 0,
-    maxWidth: 500,
+    maxWidth: 1200,
   },
   cardDisabled: {
     boxShadow: 'none',
@@ -579,7 +605,7 @@ export const darkTheme = {
     paddingRight:0,
     paddingTop:0,
     paddingBottom: 0,
-    maxWidth: 500,
+    maxWidth: 1200,
   },
   tooltip: {
     "& .MuiTooltip-tooltip": {
