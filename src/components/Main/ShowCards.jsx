@@ -19,7 +19,7 @@ import Box from '@mui/material/Box';
 import { createTheme } from '@mui/material/styles';
 import Linkify from 'linkify-react';
 import {Img} from 'react-image'
-import VisibilitySensor from 'react-visibility-sensor'
+import placeholder from './placeholder.png'
 
 const ShowCards = ({post}) => {
   const localTheme = window.localStorage.getItem('theme') || "light"
@@ -46,15 +46,30 @@ const ShowCards = ({post}) => {
       >
         <FrontSide className={post.ready ? classes.cardActive : classes.cardDisabled}>
           {post.ready
-            ? <NavLink to={post.link} className={classes.link}>
-                <VisibilitySensor>
-                  <Img className={classes.cardMedia} src={post.image + '.png'}/>
-                </VisibilitySensor>
+            ?
+              <NavLink to={post.link} className={classes.link}>
+                <Img
+                  loader={
+                    <img
+                      className={classes.cardMedia}
+                      src={placeholder}
+                    />
+                  }
+                  className={classes.cardMedia}
+                  src={post.image + '.png'}
+                />
               </NavLink>
             :
-              <VisibilitySensor>
-                <Img className={classes.cardMedia} src={post.image + '.png'}/>
-              </VisibilitySensor>
+              <Img
+                loader={
+                  <img
+                    className={classes.cardMedia}
+                    src={placeholder}
+                  />
+                }
+                className={classes.cardMedia}
+                src={post.image + '.png'}
+              />
           }
           {post.surrogate &&
             <div>
