@@ -34,9 +34,10 @@ import { lightTheme, darkTheme } from './../../theme';
 import rom from '@simzero/rom'
 import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
-//import { faUpload, faTrash, faUndoAlt, faCameraRetro, faDownload } from '@fortawesome/fontawesome-free-solid';
+import PropagateLoader from "react-spinners/PropagateLoader";
+
+const initialZoom = 1.3;
 
 const { ColorMode } = vtkMapper;
 
@@ -60,6 +61,8 @@ function Steady() {
   const classes = useStyles();
 
   const mainColor = theme.checkbox.color;
+  const textColorLoader = localTheme ===
+    'light' ? lightTheme.bodyText.color : darkTheme.bodyText.color;
 
   let backgroundLight = hexRgb(lightTheme.body, {format: 'array'});
   let backgroundDark = hexRgb(darkTheme.body, {format: 'array'});
@@ -101,10 +104,6 @@ function Steady() {
         renderer.setBackground(background);
         scalarBarActor.setAxisTextStyle(scalarBarActorStyle1);
         scalarBarActor.setTickTextStyle(scalarBarActorStyle1);
-        scalarBarActor.updateTextureAtlas();
-        scalarBarActor.updatePolyDataForLabels();               
-        scalarBarActor.completedImage();
-        scalarBarActor.update();
         scalarBarActor.modified();
         renderWindow.modified();
         renderWindow.render();
@@ -167,7 +166,7 @@ function Steady() {
         const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
           reduced.readUnstructuredGrid(atob(grid_data));
           reduced.nu(nuIni*1e-05);
-          reduced.solveOnline(new rom.Matrix([UIni]));
+         reduced.solveOnline(UIni, 0.0);
           //reduced.solveOnline(initialVelocity);
           const polydata_string = reduced.unstructuredGridToPolyData();
           // TODO: parse directly as buffer or parse as a string...
@@ -208,9 +207,8 @@ function Steady() {
           scalarBarActor.setTickTextStyle(scalarBarActorStyle);
           lookupTable.updateRange();
           scalarBarActor.modified();
-          scalarBarActor.completedImage();
           renderer.resetCamera();
-          renderer.getActiveCamera().zoom(1.3);
+          renderer.getActiveCamera().zoom(initialZoom);
           renderWindow.render();
           renderer.resetCameraClippingRange();
           scalarBarActor.modified();
@@ -218,16 +216,27 @@ function Steady() {
           renderWindow.render();
           renderWindow.modified();
           scalarBarActor.modified();
-          scalarBarActor.update();
-          scalarBarActor.updatePolyDataForLabels();
-          scalarBarActor.updateTextureAtlas();
-          scalarBarActor.completedImage();
           scalarBarActor.setVisibility(true);
-          renderWindow.render();
+
           const camera = renderer.getActiveCamera();
-          const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
-          const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
-          scalarBarActor.completedImage();
+          let focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
+          let cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+
+          renderer.getActiveCamera().setPosition
+          (
+            cameraPosition[0],
+            cameraPosition[1],
+            cameraPosition[2]
+          );
+          renderer.getActiveCamera().setFocalPoint
+          (
+            focalPoint[0],
+            focalPoint[1],
+            focalPoint[2]
+          );
+
+          renderWindow.modified();
+          renderWindow.render();
 
           context.current = {
             focalPoint,
@@ -255,7 +264,7 @@ function Steady() {
     'P_mat.txt',
     'EigenModes_U_mat.txt',
     'coeffL2_mat.txt',
-    'par'
+    'par.txt'
   ];
 
   const patterns = [
@@ -277,28 +286,60 @@ function Steady() {
     setFiles([]);
   }
 
-
-const readMatrixFile = async (data) => {
-  return new Promise(resolve => {
-    data = data.replace('data:text/plain;base64,', '')
-    data = data.replace('data:application/octet-stream;base64,', '')
-    Papa.parse(atob(data), {
-      download: false,
-      delimiter: " ",
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      header: false,
-      complete: results => {
-        resolve(results.data);
-      }
+  const dataToVector = (data) => {
+    const vecVec = new rom.VectorVector();
+    let rows = 0;
+    let cols = 0;
+    data.forEach(row => {
+      const vec = new rom.Vector();
+      row.forEach(value => {
+        vec.push_back(value)
+        if (rows === 0)
+          cols++;
+      });
+      vecVec.push_back(vec)
+      vec.delete()
+      rows++;
     })
-  })
-};
+    return [vecVec, rows, cols];
+  }
+
+  const readFile = async (filePath) => {
+    return new Promise(resolve => {
+      fetch(filePath).then(res => res.text())
+      .then((data) => {
+        Papa.parse(data, {
+          download: false,
+          delimiter: " ",
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          header: false,
+          complete: results => {
+            resolve(results.data);
+          }
+        })
+      })
+    })
+  };
+
+  const loadData = async (dataPath) => {
+    const data = await readFile(dataPath)
+    const vector = dataToVector(data);
+
+    return vector;
+  }
 
   useEffect(() => {
     return () => {
       if (context.current) {
-        const { reduced, fullScreenRenderer, polydata, actor, scalarBarActor, mapper } = context.current;
+        const {
+          reduced,
+          fullScreenRenderer,
+          polydata,
+          actor,
+          scalarBarActor,
+          mapper
+        } = context.current;
         reduced.delete();
         actor.delete();
         scalarBarActor.delete();
@@ -354,30 +395,26 @@ const readMatrixFile = async (data) => {
 
     await rom.ready
 
-    const B = new rom.Matrix(await readMatrixFile(getData("B_mat.txt")));
-    const P = new rom.Matrix(await readMatrixFile(getData("P_mat.txt")));
-    const M = new rom.Matrix(await readMatrixFile(getData("M_mat.txt")));
-    const K = new rom.Matrix(await readMatrixFile(getData("K_mat.txt")));
-    const modes = new rom.Matrix(await readMatrixFile(getData("EigenModes_U_mat.txt")));
+    const P = await loadData(getData("P_mat.txt"));
+    const M = await loadData(getData("M_mat.txt"));
+    const K = await loadData(getData("K_mat.txt"));
+    const B = await loadData(getData("B_mat.txt"));
 
-    const mu = new rom.Matrix(await readMatrixFile(getData('par')));
-    const Nphi_u = B.rows();
-    const Nphi_p = K.cols();
-    const N_BC = 1;
+    const modes = await loadData(getData('EigenModes_U_mat.txt'));
+    const coeffL2 = await loadData(getData('coeffL2_mat.txt'));
+    const mu = await loadData(getData('par.txt'));
 
-    const reduced = new rom.ReducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
+    const Nphi_u = B[1];
+    const Nphi_p = K[2];
+    const N_BC = 2;
+
+    const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
     reduced.N_BC(N_BC);
-    reduced.addMatrices(P, M, K, B);
-    reduced.addModes(modes);
-
-    P.delete();
-    M.delete();
-    K.delete();
-    B.delete();
-    modes.delete();
+    reduced.addMatrices(P[0], M[0], K[0], B[0]);
+    reduced.addModes(modes[0]);
 
     let Nphi_nut = 0;
     (async () => {
@@ -386,34 +423,30 @@ const readMatrixFile = async (data) => {
         indexes.push(i);
       }
 
-      if (isTurbulent) {
-        const coeffL2 = new rom.Matrix(await readMatrixFile(getData('coeffL2_mat.txt')));
-        Nphi_nut = coeffL2.rows();
-        reduced.Nphi_nut(Nphi_nut);
-        let indexesNut = []
-        for (var j = 0; j < Nphi_u; j++ ) {
-          indexesNut.push(j);
-        }
-
-        await Promise.all(indexesNut.map(async (indexNut) => {
-          const C1Path = 'ct1_' + indexNut + "_mat.txt"
-          const C2Path = 'ct2_' + indexNut + "_mat.txt"
-          const C1 = new rom.Matrix(await readMatrixFile(getData(C1Path)));
-          const C2 = new rom.Matrix(await readMatrixFile(getData(C2Path)));
-          reduced.addCt1Matrix(C1, indexNut);
-          reduced.addCt2Matrix(C2, indexNut);
-        }));
-        reduced.setRBF(mu, coeffL2);
-        coeffL2.delete();
-      }
-
       await Promise.all(indexes.map(async (index) => {
         const CPath = 'C' + index + "_mat.txt"
-        const C = new rom.Matrix(await readMatrixFile(getData(CPath)));
-        reduced.addCMatrix(C, index);
+        const C = await loadData(getData(CPath));
+        reduced.addCMatrix(C[0], index);
       }));
 
+      if (isTurbulent) {
+        const coeffL2 = await loadData(getData('coeffL2_mat.txt'));
+        Nphi_nut = coeffL2[1];
+        reduced.Nphi_nut(Nphi_nut);
+
+        await Promise.all(indexes.map(async (index) => {
+          const C1Path = 'ct1_' + index + "_mat.txt"
+          const C2Path = 'ct2_' + index + "_mat.txt"
+          const C1 = await loadData(getData(C1Path));
+          const C2 = await loadData(getData(C2Path));
+          reduced.addCt1Matrix(C1[0], index);
+          reduced.addCt2Matrix(C2[0], index);
+        }));
+      }
+
+
       reduced.preprocess();
+      reduced.setRBF(mu[0], coeffL2[0]);
       //reduced.nu(nuMin*1e-05);
       context.current = { reduced };
       setDataLoaded(true);
@@ -423,15 +456,30 @@ const readMatrixFile = async (data) => {
 
   const resetCamera = () => {
     if (context.current) {
-     const { fullScreenRenderer, focalPoint, cameraPosition, renderer, renderWindow } = context.current;
+     const {
+       fullScreenRenderer,
+       focalPoint,
+       cameraPosition,
+       renderer,
+       renderWindow
+     } = context.current;
      renderer.getActiveCamera().setProjectionMatrix(null);
-     const offset = Math.sqrt( (cameraPosition[0]-focalPoint[0])**2 + (cameraPosition[1]-focalPoint[1])**2 + (cameraPosition[2]-focalPoint[2])**2 )
-     renderer.getActiveCamera().setPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2] + offset);
-     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
      renderer.resetCamera();
+     renderer.getActiveCamera().setPosition
+     (
+       cameraPosition[0],
+       cameraPosition[1],
+       cameraPosition[2]
+     );
+     renderer.getActiveCamera().setFocalPoint
+     (
+       focalPoint[0],
+       focalPoint[1],
+       focalPoint[2]
+     );
+     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
      fullScreenRenderer.resize();
-     //renderer.update();
-     renderer.getActiveCamera().zoom(1.3);
+     renderer.getActiveCamera().zoom(initialZoom);
      renderWindow.render();
     }
   }
@@ -443,12 +491,11 @@ const readMatrixFile = async (data) => {
        (image) => {
          (async () => {
            const blob = await (await fetch(image)).blob();
-           var a = document.createElement("a"); //Create <a>
+           var a = document.createElement("a");
            a.innerHTML = 'download';
-           //a.href = "data:image/png;base64," + image; //Image Base64 Goes here
            a.href = URL.createObjectURL(blob);
-           a.download = "pitzDaily_nu_" + viscosityValue + ".png";//File name Here
-           a.click(); //Downloaded file
+           a.download = "pitzDaily_nu_" + viscosityValue + ".png";
+           a.click();
          })();
        }
      );
@@ -485,7 +532,7 @@ const readMatrixFile = async (data) => {
       var blob = new Blob([data_string], {
         type: 'text/plain'
       });
-       var a = document.createElement("a"); //Create <a>
+       var a = document.createElement("a");
        a.innerHTML = 'download';
        a.href = URL.createObjectURL(blob);
        a.download = "pitzDaily_nu_" + viscosityValue + "_U_" + velocityValue + ".vtu";
@@ -518,12 +565,16 @@ const readMatrixFile = async (data) => {
     if (context.current) {
       const { polydata, reduced, lookupTable, renderWindow, mapper } = context.current;
       reduced.nu(viscosityValue*1e-05);
-      reduced.solveOnline(new rom.Matrix([velocityValue]));
-      //reduced.solveOnline(velocityValue);
+      reduced.solveOnline(velocityValue, 0.0);
       const newU = reduced.reconstruct();
       polydata.getPointData().removeArray('uRec');
       var nCells = polydata.getNumberOfPoints();
-      const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
+      const array = vtkDataArray.newInstance({
+        name: 'uRec',
+        size: nCells*3,
+        numberOfComponents: 3,
+        dataType: 'Float32Array'
+      });
       for (let i = 0; i < nCells; i++) {
         let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
         array.setTuple(i, v)
@@ -556,7 +607,7 @@ const readMatrixFile = async (data) => {
   };
 
   const handleFile = loadedFiles => {
-    console.log("loadedFiles: ", files)
+    // console.log("loadedFiles: ", files)
   };
 
 
@@ -564,50 +615,71 @@ const readMatrixFile = async (data) => {
     <div className={classes.root}>
       { ! isConfirmed &&
         <Box sx={{ flexGrow: 1 }}>
-          <div
-            className={classes.titleText}
-          >
-              Instructions
-          </div>
-          <div
-            className={classes.bodyText}
-            style={{ display: "flex", marginTop: 0, marginLeft: 60, marginRight: 0, marginBottom: 10}}
-          >
-              - This tool hanldes data generated by ITHACA-FV SteadyNS and SteadyNSTurb classes (limited to 2D cases in current version).
-          </div>
-          <div
-            className={classes.bodyText}
-            style={{ display: "flex", marginTop: 0, marginLeft: 60, marginRight: 0, marginBottom: 10}}
-          >
-              - Drag your ITHACAoutput folder in the area below, set ranges and confirm.
-          </div>
-          <div
-            className={classes.bodyText}
-            style={{ display: "flex", marginTop: 0, marginLeft: 60, marginRight: 0, marginBottom: 40}}
-          >
-              - The files will not be uploaded to any cloud or server, and will be processed locally in your device by this app.
-          </div>
           <Grid
             container
-            spacing={5}
+            direction="row"
+            alignItems="center"
             justifyContent="center"
-            display="flex"
           >
-            <Grid item item xs={9}>
+            <Grid item md={11}>
+              <div
+                className={classes.titleText}
+                style={{
+                  marginTop: 10
+                }}
+              >
+                Instructions
+              </div>
+              <div className={classes.bodyText}>
+                - This tool handles data generated by ITHACA-FV SteadyNS and
+                SteadyNSTurb classes (limited to 2D cases in this version).
+              </div>
+              <div className={classes.bodyText} style={{paddingTop: 6}}>
+                - Drag your ITHACAoutput folder in the area below, set ranges
+                and confirm.
+              </div>
+              <div className={classes.bodyText} style={{paddingTop: 6}}>
+                - For a try-out: download, uncompress and drag one of the
+                folders (pitzDaily, bump2D, ...) of this
+                <a
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.5.tar.gz?raw=true'}
+                >
+                  {' sample'}
+                </a>.
+              </div>
+              <div className={classes.bodyText} style={{paddingTop: 6}}>
+                - The files dragged and dropped will not be uploaded to any cloud or server, and
+                will be processed locally in your device by the app.
+              </div>
+            </Grid>
+            <Grid item md={11} style={{padding: 12, paddingTop: 24}}>
+              <div className={classes.dropzone}>
               <DropzoneAreaBase
-                classes={{  root: classes.dropzone, active: classes.dropzoneActive, textContainer: classes.vtkText,  text: classes.vtkText}}
+                classes={{
+                  root: classes.dropzone,
+                  active: classes.dropzoneActive,
+                  textContainer: classes.vtkText,
+                  text: classes.vtkText
+                }}
                 Icon={() =>
                   <FontAwesomeIcon
                     className={classes.dropzoneIcon}
                     icon={solid('upload')}
                   />
                 }
-                dropzoneText={<div className={classes.dropzoneText}>Drag and drop here or click </div>}
-                previewText={<div className={classes.bodyText}>Preview files:</div>}
+                dropzoneText={
+                  <div className={classes.dropzoneText}>
+                    Drag and drop here or click
+                  </div>
+                }
+                previewText={
+                  <div className={classes.bodyText}>
+                    Preview files:
+                  </div>
+                }
                 dropzoneParagraphClass={classes.dropzoneText}
                 inputProps={{ classes: { root: classes.dropzone } }}
                 previewChipProps={{ classes: { label: classes.dropzonePreview } }}
-                dropzoneProps={{ disabled: isDisabled, classes: { root: classes.dropzoneText } }}
                 filesLimit={1000}
                 maxFileSize={30000000}
                 showFileNamesInPreview={true}
@@ -621,8 +693,10 @@ const readMatrixFile = async (data) => {
                 onDelete={handleDelete}
                 onDrop={handleFile}
               />
+              </div>
             </Grid>
-            <Grid item xs='auto'>
+            <Grid item md={11} style={{padding: 12}}>
+              <div>
               <div className={classes.bodyText} style={{ marginBottom: 10 }}>
                 Inlet velocity (m/s)
               </div>
@@ -632,6 +706,7 @@ const readMatrixFile = async (data) => {
                     id="U-min"
                     variant="outlined"
                     className={classes.textField}
+                    style={{ width: '100px' }}
                     label=" min"
                     type="number"
                     defaultValue="1.0"
@@ -641,7 +716,7 @@ const readMatrixFile = async (data) => {
                     id="U-max"
                     variant="outlined"
                     className={classes.textField}
-                    style={{ marginLeft: 15 }}
+                    style={{ marginLeft: 15, width: '100px' }}
                     label=" max"
                     type="number"
                     defaultValue="10.0"
@@ -667,7 +742,10 @@ const readMatrixFile = async (data) => {
               </Box>
               <div>
                 <Box>
-                  <div className={classes.bodyText} style={{ marginBottom: 10, marginTop: 15 }}>
+                  <div
+                    className={classes.bodyText}
+                    style={{ marginBottom: 10, marginTop: 15 }}
+                  >
                     Kinematic viscosity
                   </div>
                 </Box>
@@ -676,20 +754,7 @@ const readMatrixFile = async (data) => {
                     id="nu-min"
                     variant="outlined"
                     className={classes.textField}
-                    //InputProps={{
-                    //classes: {
-                    //  root: classes.cssOutlinedInput,
-                    //  focused: classes.cssFocused,
-                    //  notchedOutline: classes.notchedOutline
-                    //}
-                    // className: classes.input,
-                    //}}
-                    /*InputLabelProps={{
-                      classes: {
-                        root: classes.cssLabel,
-                        focused: classes.cssFocused,
-                      },
-                    }}*/
+                    style={{ width: '100px' }}
                     label="min"
                     type="number"
                     defaultValue="1e-04"
@@ -700,21 +765,7 @@ const readMatrixFile = async (data) => {
                     id="nu-max"
                     variant="outlined"
                     className={classes.textField}
-                    style={{ marginLeft: 15 }}
-                    //InputProps={{
-                     //classes: {
-                       //  root: classes.cssOutlinedInput,
-                       //  focused: classes.cssFocused,
-                       // notchedOutline: classes.notchedOutline
-                     //}
-                     // className: classes.input,
-                     //}}
-                     /*InputLabelProps={{
-                      classes: {
-                        root: classes.cssLabel,
-                        focused: classes.cssFocused,
-                      },
-                     }}*/
+                    style={{ marginLeft: 15, width: '100px' }}
                     label="max"
                     type="number"
                     defaultValue="1e-06"
@@ -740,7 +791,7 @@ const readMatrixFile = async (data) => {
                 </FormGroup>
                 <div spacing={50}>
                   <button
-                    style={{ marginTop: 20, marginLeft: 22, marginRight: 10}}
+                    style={{ marginTop: 20, marginLeft: 2, marginRight: 10}}
                     type="button"
                     className={classes.buttons}
                     onClick={clear}
@@ -749,12 +800,12 @@ const readMatrixFile = async (data) => {
                   </button>
                   <button
                     type="button"
-                    // className="btn btn-success mr-3"
                     className={classes.buttons}
                     onClick={confirmed}>
                       Confirm
                   </button>
                 </div>
+              </div>
               </div>
             </Grid>
           </Grid>
@@ -762,160 +813,204 @@ const readMatrixFile = async (data) => {
       }
       { isConfirmed &&
       <div>
-        <div style={{ paddingBottom: 60}} ref={vtkContainerRef}>
+        <div ref={vtkContainerRef}>
+        {!dataLoaded &&
+          <div
+            style={{
+              position: 'absolute', left: '50%', top: '35%',
+              transform: 'translate(-50%, -35%)',
+              width: '100%'
+            }}
+            className={classes.bodyText}
+          >
+            <div
+              style={{
+                textAlign: 'center',
+                paddingBottom: 20
+              }}
+            >
+              Loading and reading data...
+            </div>
+            <div
+              style={{
+                textAlign: 'center'
+              }}
+            >
+              <PropagateLoader color={textColorLoader}/>
+            </div>
+          </div>
+        }
         </div>
-        <div
-          style={{
-            paddingBottom: 80,
-            //padding: 10,
-            position: 'absolute',
-            backgroundColor: background,
-            top: '60px',
-            right: '170px',
-            padding: '5px',
-            marginRight: '2%',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
-          <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={restart}>
-            <FontAwesomeIcon
-              title="Delete"
-              style={{width: '32px', height: '32px'}}
-              icon={solid('trash')}
-            />          
-          </Box>
-        </div>
-        <div
-          style={{
-            paddingBottom: 80,
-            //padding: 10,
-            position: 'absolute',
-            top: '60px',
-            right: '20px',
-            backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
-          <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={downloadData}>
-            <FontAwesomeIcon
-              title="Download"
-              style={{width: '32px', height: '32px'}}
-              icon={solid('download')}
-            />
-          </Box>
-        </div>
-        <div
-          style={{
-            paddingBottom: 60,
-            //padding: 10,
-            position: 'absolute',
-            top: '60px',
-            right: '70px',
-            backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
-           <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={takeScreenshot}>
-             <FontAwesomeIcon
-              title="Screenshot"
-               style={{width: '32px', height: '32px'}}
-               icon={solid('camera-retro')}
-             />
-           </Box>
-        </div>
-        <div
-          style={{
-            paddingBottom: 60,
-            //padding: 10,
-            position: 'absolute',
-            top: '60px',
-            right: '120px',
-            backgroundColor: background,
-            padding: '5px',
-            marginRight: '2%',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
-          <Box className={classes.link} sx={{ height: '34px', width: '34px' }} onClick={resetCamera}>
-            <FontAwesomeIcon
-              title="Reset camera"
-              style={{width: '32px', height: '32px'}}
-              icon={solid('undo-alt')}
-            />
-          </Box>
-        </div>
-        <div
-          style={{
-            paddingTop: '100px',
-            paddingBottom: 60,
-            padding: 10,
-            position: 'absolute',
-            top: '60px',
-            left: '20px',
-            backgroundColor: background,
-            //padding: '15px',
-            border: '1px solid rgba(125, 125, 125)',
-          }}
-        >
+        {dataLoaded &&
           <div>
-            { ! nuFixed &&
-            <div style={{marginTop: '2%'}}>
-            <Box sx={{ width: 300 }}>
-            <Slider
-              className={classes.slider}
-              defaultValue={nuIni}
-              onChange={handleViscosityChange}
-              step={(Number(nuMax)-Number(nuMin))/100}
-              min={nuMin}
-              max={nuMax}
-              valueLabelDisplay="auto"
-            />
+            <div
+              style={{
+                paddingBottom: 80,
+                position: 'absolute',
+                backgroundColor: background,
+                top: '60px',
+                right: '170px',
+                padding: '5px',
+                marginRight: '2%',
+               border: '1px solid rgba(125, 125, 125)',
+              }}
+            >
+              <Box
+                className={classes.link}
+                sx={{ height: '34px', width: '34px' }}
+                onClick={restart}
+              >
+                <FontAwesomeIcon
+                  title="Delete"
+                  style={{width: '32px', height: '32px'}}
+                  icon={solid('trash')}
+                />          
+              </Box>
+            </div>
+          <div
+            style={{
+              paddingBottom: 80,
+              position: 'absolute',
+              top: '60px',
+              right: '20px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={downloadData}
+            >
+              <FontAwesomeIcon
+                title="Download"
+                style={{width: '32px', height: '32px'}}
+                icon={solid('download')}
+              />
             </Box>
-            </div>}
-            { ! nuFixed &&
+          </div>
+          <div
+            style={{
+              paddingBottom: 60,
+              position: 'absolute',
+              top: '60px',
+              right: '70px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={takeScreenshot}
+            >
+              <FontAwesomeIcon
+                title="Screenshot"
+                style={{width: '32px', height: '32px'}}
+                icon={solid('camera-retro')}
+              />
+            </Box>
+          </div>
+          <div
+            style={{
+              paddingBottom: 60,
+              position: 'absolute',
+              top: '60px',
+              right: '120px',
+              backgroundColor: background,
+              padding: '5px',
+              marginRight: '2%',
+             border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
+            <Box
+              className={classes.link}
+              sx={{ height: '34px', width: '34px' }}
+              onClick={resetCamera}
+            >
+              <FontAwesomeIcon
+                title="Reset camera"
+                style={{width: '32px', height: '32px'}}
+                icon={solid('undo-alt')}
+              />
+            </Box>
+          </div>
+          <div
+            style={{
+              paddingTop: '100px',
+              paddingBottom: 60,
+              padding: 10,
+              position: 'absolute',
+              top: '60px',
+              left: '20px',
+              backgroundColor: background,
+              //padding: '15px',
+              border: '1px solid rgba(125, 125, 125)',
+            }}
+          >
             <div>
-            <div className={classes.vtkText}>
-                Kinematic viscosity (m2/s)
-            </div>
-            </div>
-            }
-            { nuFixed &&
-            <div className={classes.vtkText}>
-                Kinematic viscosity (m2/s): {viscosityValue}
-            </div>
+              { ! nuFixed &&
+                <div style={{marginTop: '2%'}}>
+                  <Box sx={{ width: 300 }}>
+                    <Slider
+                      className={classes.slider}
+                      defaultValue={nuIni}
+                      onChange={handleViscosityChange}
+                      step={(Number(nuMax)-Number(nuMin))/100}
+                      min={nuMin}
+                      max={nuMax}
+                      valueLabelDisplay="auto"
+                    />
+                  </Box>
+                </div>}
+              { ! nuFixed &&
+                <div>
+                  <div className={classes.vtkText}>
+                    Kinematic viscosity (m2/s)
+                  </div>
+                </div>
+              }
+              { nuFixed &&
+                <div className={classes.vtkText}>
+                  Kinematic viscosity (m2/s): {viscosityValue}
+                </div>
+              }
+              { ! UFixed &&
+                <div style={{marginTop: '10%'}}>
+                  <Box sx={{ width: 300 }}>
+                    <Slider
+                      className={classes.slider}
+                      defaultValue={UIni}
+                      onChange={handleVelocityChange}
+                      step={0.1}
+                      min={UMin}
+                      max={UMax}
+                      valueLabelDisplay="auto"
+                    />
+                  </Box>
+                </div>
             }
             { ! UFixed &&
-            <div style={{marginTop: '10%'}}>
-            <Box sx={{ width: 300 }}>
-            <Slider
-              className={classes.slider}
-              defaultValue={UIni}
-              onChange={handleVelocityChange}
-              step={0.1}
-              min={UMin}
-              max={UMax}
-              valueLabelDisplay="auto"
-            />
-            </Box>
-            </div>}
-            { ! UFixed &&
-            <div>
-            <div className={classes.vtkText}>
-                Inlet velocity (m/s)
-            </div>
-            </div>}
+              <div>
+                <div className={classes.vtkText}>
+                  Inlet velocity (m/s)
+               </div>
+              </div>}
             {  UFixed &&
-            <div style={{marginTop: '10%'}}>
-            <div className={classes.vtkText}>
-                Inlet velocity (m/s): {velocityValue}
+              <div style={{marginTop: '10%'}}>
+                <div className={classes.vtkText}>
+                  Inlet velocity (m/s): {velocityValue}
+                </div>
+              </div>
+            }
             </div>
-            </div>}
           </div>
       </div>
+      }
     </div>
   }
   </div>
