@@ -62,6 +62,7 @@ function Footer() {
             position: 'relative',
             height: '52px',
             width: '100%',
+            boxShadow: '0px -2px 10px 0px rgba(0,0,0,.25)',
             backgroundColor: mainPrimaryColor,
             color: mainSecondaryColor
           }}

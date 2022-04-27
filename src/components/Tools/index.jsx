@@ -15,7 +15,7 @@ function Tools() {
   }, []);
 
   //const classes = useStyles();
-  const localTheme = window.localStorage.getItem('theme')
+  const localTheme = window.localStorage.getItem('theme') || 'light'
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();

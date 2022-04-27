@@ -22,7 +22,7 @@ function About() {
           alignItems="center"
 	  justifyContent="center"
         >
-	  <Grid item md={10}>
+	  <Grid item md={11}>
           <div
             className={classes.titleText}
             style={{
@@ -202,7 +202,7 @@ function About() {
               rel='noreferrer'
               href='https://github.com/simzero-oss/rom-js'
             >
-              {' rom-js'}
+              {' rom-js '}
             </a>
             GitHub repositories.
           </div>

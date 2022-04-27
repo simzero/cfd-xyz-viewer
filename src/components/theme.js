@@ -19,8 +19,8 @@ const cardTitleWeight =' 500';
 const toolsSize = 16;
 const vtkFontSize = 14;
 const cardDescriptionSize = 14;
-const bodySize = 16;
-const titleSize = 23;
+const bodySize = 14;
+const titleSize = 20;
 
 export const global = {
   root: {
@@ -31,6 +31,12 @@ export const global = {
     paddingBottom: 100,
     paddingRight: 20,
     paddingLeft: 20,
+  },
+  fadeIn: {
+    transition: 'opacity 2s ease'
+  },
+  fadeOut: {
+    transition: 'opacity 0s ease'
   }
 }
 
@@ -44,7 +50,7 @@ export const lightTheme = {
     alignItems: 'center',
     borderWidth: 0,
     backgroundColor: backgroundColor1,
-    paddingTop: 20,
+    paddingTop: 15,
     paddingBottom: 100,
     paddingRight: 20,
     paddingLeft: 20,
@@ -110,7 +116,8 @@ export const lightTheme = {
     marginRight: 0,
     marginLeft: 0,
     marginBottom: 0,
-    minWidth: '400px',
+    minWidth: '300px',
+    width: '100%',
     background: backgroundColor1,
     fontFamily: globalFont,
    '&$dropzoneActive': {
@@ -339,7 +346,7 @@ export const darkTheme = {
     //minHeight: '100vh',
     borderWidth: 0,
     backgroundColor: backgroundColor2,
-    paddingTop: 20,
+    paddingTop: 15,
     paddingBottom: 100,
     paddingRight: 20,
     paddingLeft: 20,
@@ -405,7 +412,8 @@ export const darkTheme = {
     marginRight: 0,
     marginLeft: 0,
     marginBottom: 0,
-    minWidth: '400px',
+    minWidth: '300px',
+    width: '100%',
     background: backgroundColor2,
     fontFamily: globalFont,
    '&$dropzoneActive': {
@@ -551,14 +559,14 @@ export const darkTheme = {
     fontFamily: globalFont
   },
   cardDescriptionMobile: {
-    color: color2,
+    color: color1,
     paddingTop: 15,
     paddingRight: 20,
     paddingLeft: 20,
     float: 'left',
     textAlign: 'left',
     whiteSpace: 'pre-line',
-    backgroundColor: backgroundColorImage1,
+    backgroundColor: backgroundColorImage2,
     fontWeight: 400,
     fontSize: cardDescriptionSize-2,
     fontFamily: globalFont,

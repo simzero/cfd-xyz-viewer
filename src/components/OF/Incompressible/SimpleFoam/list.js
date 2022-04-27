@@ -35,6 +35,8 @@ const posts = [
                   - T = [-100, 1000] °C
                   - U_{inlet} = [5,100] m/s
                   - Turb. model = kOmegaSST
+                  - k = 1.08e-03 m2/s2
+                  - omega = 5220.8 s-1
                 \nDocs:
                   - https://turbmodels.larc.nasa.gov/bump.html
                `
