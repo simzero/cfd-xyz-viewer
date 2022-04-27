@@ -2,6 +2,7 @@ import { React, useCallback, useEffect, useRef, useState } from "react";
 import debounce from "lodash/debounce";
 import { makeStyles } from "@mui/styles";
 import { lightTheme, darkTheme } from './../theme';
+import Fader from "../Main/Fader";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Slider from '@mui/material/Slider';
 import IconButton from '@mui/material/IconButton';
@@ -33,6 +34,12 @@ import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransf
 import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import vtkOutlineFilter from '@kitware/vtk.js/Filters/General/OutlineFilter';
 const { ColorMode } = vtkMapper;
+
+const messages = [
+  'Please wait until the setting up has completely finished. It might take up to 2 min for some mobiles and cases',
+  'Try cfd.xyz on a desktop computer for a better performance and user experience',
+  'We are working on improving loading times. If you found a bug or this takes unusually long, pelase open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
+];
 
 const GenericView = ({
     vtuPath,
@@ -510,11 +517,25 @@ const GenericView = ({
     renderer.getActiveCamera().setPosition(-1.0, 0, 0.0);
     renderer.getActiveCamera().setViewUp(0.0, 0.0, 1.0)
     renderer.resetCamera();
-    renderWindow.render();
 
     const camera = renderer.getActiveCamera();
     const focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
     const cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+
+    renderer.getActiveCamera().setPosition
+    (
+      cameraPosition[0],
+      cameraPosition[1],
+      cameraPosition[2]
+    );
+    renderer.getActiveCamera().setFocalPoint
+    (
+      focalPoint[0],
+      focalPoint[1],
+      focalPoint[2]
+    );
+    renderWindow.modified();
+    renderWindow.render();
 
     renderer.addActor(actorPlaneX);
     renderer.addActor(actorPlaneY);
@@ -671,6 +692,7 @@ const GenericView = ({
         const response = await data.text();
         await VTK.readUnstructuredGrid(response);
         setDataLoaded(true);
+        window.scrollTo(0, 0);
       })();
     }
   }, [ready]);
@@ -751,17 +773,20 @@ const GenericView = ({
          renderer,
          renderWindow } = context.current;
        renderer.getActiveCamera().setProjectionMatrix(null);
-       const offset = Math.sqrt( (cameraPosition[0]-focalPoint[0])**2 +
-         (cameraPosition[1]-focalPoint[1])**2 +
-         (cameraPosition[2]-focalPoint[2])**2 )
-       renderer.getActiveCamera().setPosition(
+       renderer.resetCamera();
+       renderer.getActiveCamera().setPosition
+       (
          cameraPosition[0],
          cameraPosition[1],
-         cameraPosition[2] + offset
+         cameraPosition[2]
        );
-       renderer.getActiveCamera().setPosition(-1.0, 0, 0.0);
+       renderer.getActiveCamera().setFocalPoint
+       (
+         focalPoint[0],
+         focalPoint[1],
+         focalPoint[2]
+       );
        renderer.getActiveCamera().setViewUp(0.0, 0.0, 1.0)
-       renderer.resetCamera();
        fullScreenRenderer.resize();
        if (portrait)
          renderer.getActiveCamera().zoom(0.55);
@@ -999,7 +1024,7 @@ const GenericView = ({
         {(!sceneLoaded) &&
             <div
               style={{
-                position: 'absolute', left: '50%', top: '45%',
+                position: 'absolute', left: '50%', top: '35%',
                 transform: 'translate(-50%, -50%)',
                 width: '100%'
               }}
@@ -1025,7 +1050,7 @@ const GenericView = ({
         {(!sceneLoaded && !isMobile) &&
         <div
           style={{
-            position: 'absolute', left: '50%', top: '70%',
+            position: 'absolute', left: '50%', top: '75%',
             transform: 'translate(-50%, -50%)',
             width: '100%',
             justifyContent: 'center',
@@ -1059,13 +1084,13 @@ const GenericView = ({
         {(!sceneLoaded && isMobile) &&
           <div
             style={{
-              position: 'absolute', left: '50%', top: '70%', right: 0,
+              position: 'absolute', left: '50%', top: '75%', right: 0,
               transform: 'translate(-50%, -50%)',
               width: '100%',
               textAlign: 'center',
               alignItems: 'center',
               dispplay: 'flex',
-              padding: 16
+              padding: 12
             }}
             className={classes.bodyText}
           >
@@ -1084,10 +1109,8 @@ const GenericView = ({
                     {<AutoAwesomeIcon />}
                   </IconButton>
                 </div>
-                <div style={{fontStyle: 'italic'}}>
-                  Try cfd.xyz on a desktop computer for a better performance
-                  and user experience.
-                </div>
+                <Fader text={messages}>
+                </Fader>
               </div>
             </div>
           </div>

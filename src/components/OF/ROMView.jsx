@@ -24,6 +24,7 @@ import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransf
 import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import debounce from "lodash/debounce";
 import { lightTheme, darkTheme } from './../theme';
+import Fader from "../Main/Fader";
 import hexRgb from 'hex-rgb';
 import rom from '@simzero/rom'
 import Papa from 'papaparse'
@@ -44,6 +45,12 @@ const { ColorMode } = vtkMapper;
 // is fixed.
 
 const repo = 'https://github.com/simzero-oss/cfd-xyz/blob/main'
+
+const messages = [
+  'Please wait until the setting up has completely finished. It might take up to 2 min for some mobiles and cases',
+  'Try cfd.xyz on a desktop computer for a better performance and user experience',
+  'We are working on improving loading times. If you found a bug or this takes unusually long, pelase open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
+];
 
 const temperatureToViscosity = (T) => {
   const a0 = 1.145757;
@@ -86,7 +93,7 @@ const readFile = async (filePath) => {
           resolve(results.data);
         }
       })
-   })
+    })
   })
 };
 
@@ -728,6 +735,7 @@ const ROMView = ({
         const response = await data.text();
         await reduced.readUnstructuredGrid(response);
         setDataLoaded(true);
+        window.scrollTo(0, 0);
       })();
     }
   }, [ready]);
@@ -857,7 +865,7 @@ const ROMView = ({
       {(!sceneLoaded && !isMobile) &&
         <div
           style={{
-            position: 'absolute', left: '50%', top: '70%',
+            position: 'absolute', left: '50%', top: '75%',
             transform: 'translate(-50%, -50%)',
             width: '100%',
             justifyContent: 'center',
@@ -891,13 +899,13 @@ const ROMView = ({
       {(!sceneLoaded && isMobile) &&
         <div
           style={{
-            position: 'absolute', left: '50%', top: '70%', right: 0,
+            position: 'absolute', left: '50%', top: '75%', right: 0,
             transform: 'translate(-50%, -50%)',
             width: '100%',
             textAlign: 'center',
             alignItems: 'center',
             dispplay: 'flex',
-            padding: 16
+            padding: 12
           }}
           className={classes.bodyText}
         >
@@ -916,10 +924,8 @@ const ROMView = ({
                   {<AutoAwesomeIcon />}
                 </IconButton>
               </div>
-              <div style={{fontStyle: 'italic'}}>
-                Try cfd.xyz on a desktop computer for a better performance
-                and user experience.
-              </div>
+              <Fader text={messages}>
+              </Fader>
             </div>
           </div>
         </div>
