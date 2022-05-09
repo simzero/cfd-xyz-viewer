@@ -179,7 +179,7 @@ function About() {
           <div
             className={classes.titleText}
           >
-              The code
+              The Code
           </div>
           <div
             className={classes.bodyText}
@@ -326,7 +326,7 @@ function About() {
                 height="16"
               />
             </a>.
-            Please feel free to contact us by email (info@simzero.es) or
+            Please feel free to contact us by email (info@simzero.com) or
             joining the
             <a
               target="_blank"
