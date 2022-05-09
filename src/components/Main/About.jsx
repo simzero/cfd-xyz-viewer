@@ -29,7 +29,7 @@ function About() {
               marginTop: 10
             }}
           >
-              The web
+              The Web app
           </div>
           <div
             className={classes.bodyText}
@@ -61,13 +61,13 @@ function About() {
               justifyContent: "left"
             }}
           >
-             We aim with this development to create a common place where
+             With this development, we aim to create a shared space where
              canonical and industrial computational fluid dynamics (CFD)
              problems can be visualized and analyzed without carrying out a
              simulation, or as a preliminary step for optimizing parameters of
              new simulations. Having an open-source centralized service has
-             several advantages from educational, optimization and
-             reproducibility point of views. But also from a CO2 footprint
+             several advantages, not only from an educational, optimization and
+             reproducibility point of view but also from a CO2 footprint
              perspective.
           </div>
           <div
@@ -140,7 +140,7 @@ function About() {
             >
               { ' React'}
             </a>,
-            and many others. Check a list of all the packages in the code
+            and many others. You'll find a list of all the packages in the code
             repositories.
           </div>
           <div
@@ -152,7 +152,7 @@ function About() {
               justifyContent: "center"
             }}
           >
-            This is a beta version, please handle it with care. Further
+            This is a beta version, please handle with care. Further
             features, optimizations and fixes are expected.
           </div>
           <div
@@ -171,10 +171,10 @@ function About() {
             }}
           >
             <div>3D view control keys: </div>
-            <div> &nbsp;&nbsp; * Rotate: left mouse.</div>
-            <div> &nbsp;&nbsp; * Pan: shift + left mouse.</div>
-            <div> &nbsp;&nbsp; * Spin: ctrl/alt + left mouse.</div>
-            <div> &nbsp;&nbsp; * Zoom: mouse wheel.</div>
+            <div> &nbsp;&nbsp; * Rotate: left click</div>
+            <div> &nbsp;&nbsp; * Pan: shift + left click</div>
+            <div> &nbsp;&nbsp; * Spin: Ctrl/Alt + left click</div>
+            <div> &nbsp;&nbsp; * Zoom: mouse wheel</div>
           </div>
           <div
             className={classes.titleText}
@@ -204,12 +204,13 @@ function About() {
             >
               {' rom-js '}
             </a>
-            GitHub repositories.
+            GitHub repositories. Everyone is welcome to contribute to this
+            project.
           </div>
           <div
             className={classes.titleText}
           >
-              The licenses and trademarks
+              The Licenses and trademarks
           </div>
           <div
             className={classes.bodyText}
@@ -286,7 +287,7 @@ function About() {
           <div
             className={classes.titleText}
           >
-              The authors
+              The Authors
           </div>
           <div
             className={classes.bodyText}
@@ -338,7 +339,7 @@ function About() {
           <div
             className={classes.titleText}
           >
-              The funding
+              The Funding
           </div>
           <div
             className={classes.bodyText}
@@ -351,8 +352,8 @@ function About() {
               whiteSpace: "pre-wrap"
             }}
           >
-             cfd.xyz is free of charge, with no adds, no popups, no
-             registration and no data collection. It will remain in that way.
+             cfd.xyz is free of charge, with no ads, popups,
+             registration or personal data collection.
           </div>
           <div
             className={classes.bodyText}
@@ -380,7 +381,7 @@ function About() {
           <div
             className={classes.titleText}
           >
-              The terms and conditions
+              The Terms and conditions
           </div>
           <div
             className={classes.bodyText}
