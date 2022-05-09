@@ -18,7 +18,7 @@ const codeLink = 'src/components/OF/Incompressible/SimpleFoam/TurbineSiting.jsx'
 
 function TurbineSiting() {
   useEffect(() => {
-    document.title = "cfd.xyz | OF/incompressible/simpleFoam/turbineSiting"
+    document.title = "/OF/incompressible/simpleFoam/turbineSiting"
   }, []);
 
   return (
