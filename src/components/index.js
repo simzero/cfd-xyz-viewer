@@ -15,4 +15,5 @@ export { default as WindAroundBuildings } from "./OF/Incompressible/SimpleFoam/W
 // Tools
 export { default as Tools } from "./Tools";
 export { default as Steady } from "./Tools/ITHACA-FV/Steady";
+export { default as Slicer } from "./Tools/VTK/Slicer";
 // Other

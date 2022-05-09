@@ -22,6 +22,7 @@ import {
    WindAroundBuildings,
    Tools,
    Steady,
+   Slicer,
 } from "./components";
 
 export const ThemeContext = createContext({
@@ -61,6 +62,7 @@ function App() {
               <Route path="/OF/incompressible/simpleFoam/MotorBike" exact element={<MotorBike />} />
               <Route path="/Tools" exact element={<Tools />} />
               <Route path="/Tools/ITHACA-FV_Steady" exact element={<Steady />} />
+              <Route path="/Tools/Slicer" exact element={<Slicer />} />
               <Route path="/About" exact element={<About />} />
             </Routes>
             <Footer />

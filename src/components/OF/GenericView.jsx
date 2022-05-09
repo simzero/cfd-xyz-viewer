@@ -33,15 +33,19 @@ import vtkColorMaps from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction/C
 import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
 import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import vtkOutlineFilter from '@kitware/vtk.js/Filters/General/OutlineFilter';
+
+// TODO: Re-write after completed generalization.
+
 const { ColorMode } = vtkMapper;
 
 const messages = [
   'Please wait until the setting up has completely finished. It might take up to 2 min for some mobiles and cases',
   'Try cfd.xyz on a desktop computer for a better performance and user experience',
-  'We are working on improving loading times. If you found a bug or this takes unusually long, pelase open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
+  'We are working on improving loading times. If you found a bug or this takes unusually long, please open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
 ];
 
 const GenericView = ({
+    files,
     vtuPath,
     vtuVariable,
     vtuTitle,
@@ -62,6 +66,12 @@ const GenericView = ({
   const [authors, setAuthors] = useState("");
   const localTheme = window.localStorage.getItem('theme') || "light"
   const trackTheme = useState(window.localStorage.getItem('theme') || "light");
+  const [stepX,setStepX] = useState(step);
+  const [stepY,setStepY] = useState(step);
+  const [stepZ,setStepZ] = useState(step);
+  const [initialPlaneX,setInitialPlaneX] = useState(initialPlanesCoords[0]);
+  const [initialPlaneY,setInitialPlaneY] = useState(initialPlanesCoords[1]);
+  const [initialPlaneZ,setInitialPlaneZ] = useState(initialPlanesCoords[2]);
   const [doIncrementX, setDoIncrementX] = useState(false);
   const [doDecrementX, setDoDecrementX] = useState(false);
   const [busyIncrementX, setBusyIncrementX] = useState(false);
@@ -98,10 +108,6 @@ const GenericView = ({
   const [modifiedPlaneX, setModifiedPlaneX] = useState(false);
   const [modifiedPlaneY, setModifiedPlaneY] = useState(false);
   const [modifiedPlaneZ, setModifiedPlaneZ] = useState(false);
-  const initialPlaneX = initialPlanesCoords[0];
-  const initialPlaneY = initialPlanesCoords[1];
-  const initialPlaneZ = initialPlanesCoords[2];
-
   const repo = 'https://github.com/simzero-oss/cfd-xyz/blob/main/'
   const link = repo + codeLink;
 
@@ -124,97 +130,85 @@ const GenericView = ({
   background.pop();
 
   useEffect(() => {
-    if (context.current && !busyIncrementX)
-    {
+    if (context.current && !busyIncrementX) {
       setBusyIncrementX(true);
       setDoIncrementX(!doIncrementX);
     }
   }, [incrementX]);
 
   useEffect(() => {
-    if (context.current && !busyDecrementX)
-    {
+    if (context.current && !busyDecrementX) {
       setBusyDecrementX(true);
       setDoDecrementX(!doDecrementX);
     }
   }, [decrementX]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleIncrementX();
     }
   }, [doIncrementX]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleDecrementX();
     }
   }, [doDecrementX]);
 
   useEffect(() => {
-    if (context.current && !busyIncrementY)
-    {
+    if (context.current && !busyIncrementY) {
       setBusyIncrementY(true);
       setDoIncrementY(!doIncrementY);
     }
   }, [incrementY]);
 
   useEffect(() => {
-    if (context.current && !busyDecrementY)
-    {
+    if (context.current && !busyDecrementY) {
       setBusyDecrementY(true);
       setDoDecrementY(!doDecrementY);
     }
   }, [decrementY]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleIncrementY();
     }
   }, [doIncrementY]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleDecrementY();
     }
   }, [doDecrementY]);
 
   useEffect(() => {
-    if (context.current && !busyIncrementZ)
-    {
+    if (context.current && !busyIncrementZ) {
       setBusyIncrementZ(true);
       setDoIncrementZ(!doIncrementZ);
     }
   }, [incrementZ]);
 
   useEffect(() => {
-    if (context.current && !busyDecrementZ)
-    {
+    if (context.current && !busyDecrementZ) {
       setBusyDecrementZ(true);
       setDoDecrementZ(!doDecrementZ);
     }
   }, [decrementZ]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleIncrementZ();
     }
   }, [doIncrementZ]);
 
   useEffect(() => {
-    if (context.current)
-    {
+    if (context.current) {
       handleDecrementZ();
     }
   }, [doDecrementZ]);
 
   const handleIncrementX = () => {
-    let newValue = planeXValue + step;
+    let newValue = planeXValue + stepX;
     newValue = Math.min(Math.max(newValue, boundsTest[0]), boundsTest[1]);
     setPlaneXValue(newValue);
     calculateNewFieldX();
@@ -222,7 +216,7 @@ const GenericView = ({
   }
 
   const handleDecrementX = () => {
-    let newValue = planeXValue - step;
+    let newValue = planeXValue - stepX;
     newValue = Math.min(Math.max(newValue, boundsTest[0]), boundsTest[1]);
     setPlaneXValue(newValue);
     calculateNewFieldX();
@@ -230,7 +224,7 @@ const GenericView = ({
   }
 
   const handleIncrementY = () => {
-    let newValue = planeYValue + step;
+    let newValue = planeYValue + stepY;
     newValue = Math.min(Math.max(newValue, boundsTest[2]), boundsTest[3]);
     setPlaneYValue(newValue);
     calculateNewFieldY();
@@ -238,7 +232,7 @@ const GenericView = ({
   }
 
   const handleDecrementY = () => {
-    let newValue = planeYValue - step;
+    let newValue = planeYValue - stepY;
     newValue = Math.min(Math.max(newValue, boundsTest[2]), boundsTest[3]);
     setPlaneYValue(newValue);
     calculateNewFieldY();
@@ -246,7 +240,7 @@ const GenericView = ({
   }
 
   const handleIncrementZ = () => {
-    let newValue = planeZValue + step;
+    let newValue = planeZValue + stepZ;
     newValue = Math.min(Math.max(newValue, boundsTest[4]), boundsTest[5]);
     setPlaneZValue(newValue);
     calculateNewFieldZ();
@@ -254,7 +248,7 @@ const GenericView = ({
   }
 
   const handleDecrementZ = () => {
-    let newValue = planeZValue - step;
+    let newValue = planeZValue - stepZ;
     newValue = Math.min(Math.max(newValue, boundsTest[4]), boundsTest[5]);
     setPlaneZValue(newValue);
     calculateNewFieldZ();
@@ -339,6 +333,11 @@ const GenericView = ({
     })
   );
 
+  function restart() {
+    // TODO: this is temporal
+    window.location.reload();
+  }
+
   function takeScreenshot() {
     if (context.current) {
      const { renderWindow } = context.current;
@@ -358,6 +357,9 @@ const GenericView = ({
   }
 
   function setScene(portrait, VTK, reader, context, vtkContainerRef, theme) {
+    let polydata;
+    let dataRange;
+
     const actor = vtkActor.newInstance();
     const scalarBarActor = vtkScalarBarActor.newInstance();
     const scalarBarActorPlaneX = vtkScalarBarActor.newInstance();
@@ -433,9 +435,6 @@ const GenericView = ({
     lookupTable.applyColorMap(preset);
     lookupTable.updateRange();
 
-    const polydata = reader.getOutputData(0);
-    //VTK.readUnstructuredGrid(ugrid);
-
     // - Define the outline
     const readerOutline = vtkXMLPolyDataReader.newInstance();
     const polydataStringOutline = VTK.unstructuredGridToPolyData();
@@ -445,6 +444,7 @@ const GenericView = ({
     const polydataOutline = readerOutline.getOutputData(0);
     const bounds = polydataOutline.getBounds();
     setBoundsTest(bounds);
+
 
     const outline = vtkOutlineFilter.newInstance();
 
@@ -459,24 +459,34 @@ const GenericView = ({
     actorOutline.getProperty().setColor(textColorLoader);
     renderer.addActor(actorOutline);
 
-    polydata.getPointData().setActiveScalars(vtpVariable);
-    const activeArray = polydata.getPointData().getArray(vtpVariable);
-    const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
-    lookupTable.setMappingRange(dataRange[0], dataRange[1]);
+    if (!files) {
+      polydata = reader.getOutputData(0);
+      polydata.getPointData().setActiveScalars(vtpVariable);
+      const activeArray = polydata.getPointData().getArray(vtpVariable);
+      dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
+      lookupTable.setMappingRange(dataRange[0], dataRange[1]);
+      renderer.addActor(actor);
+    }
 
     renderer.addActor(scalarBarActorPlaneX);
-    renderer.addActor(actor);
 
     actor.setMapper(mapper);
     scalarBarActor.setScalarsToColors(mapper.getLookupTable());
 
     scalarBarActorPlaneX.setScalarsToColors(mapperPlaneX.getLookupTable());
-    scalarBarActorPlaneX.setVisibility(false);
+    if (!files)
+      scalarBarActorPlaneX.setVisibility(false);
+    else {
+      scalarBarActor.setVisibility(false);
+      scalarBarActorPlaneX.setVisibility(true);
+    }
 
-    mapper.setInputData(polydata);
-    mapper.setLookupTable(lookupTable);
-    mapper.setScalarRange(dataRange[0],dataRange[1]);
-    mapper.setScalarModeToUsePointFieldData();
+    if (!files) {
+      mapper.setInputData(polydata);
+      mapper.setLookupTable(lookupTable);
+      mapper.setScalarRange(dataRange[0],dataRange[1]);
+      mapper.setScalarModeToUsePointFieldData();
+    }
 
     const planeReader = vtkXMLPolyDataReader.newInstance();
     const actorPlaneX = vtkActor.newInstance();
@@ -505,9 +515,12 @@ const GenericView = ({
     mapperPlaneY.setInputData(planeY);
     mapperPlaneZ.setInputData(planeZ);
 
-    actorPlaneX.setVisibility(false);
-    actorPlaneY.setVisibility(false);
-    actorPlaneZ.setVisibility(false);
+    if (!files) {
+      actorPlaneX.setVisibility(false);
+      actorPlaneY.setVisibility(false);
+      actorPlaneZ.setVisibility(false);
+      scalarBarActor.setVisibility(true);
+    }
 
     if (portrait)
       renderer.getActiveCamera().zoom(0.55);
@@ -545,7 +558,6 @@ const GenericView = ({
     actorPlaneZ.setMapper(mapperPlaneZ);
 
     renderer.addActor(scalarBarActor);
-    scalarBarActor.setVisibility(true);
 
     context.current = {
       VTK,
@@ -577,6 +589,28 @@ const GenericView = ({
       mapperPlaneY,
       mapperPlaneZ
     };
+
+    if (files) {
+      const resolution = 50.0;
+      const stepResolutionX = (bounds[1]-bounds[0])/resolution;
+      const stepResolutionY = (bounds[3]-bounds[2])/resolution;
+      const stepResolutionZ = (bounds[5]-bounds[4])/resolution;
+      const newPlaneX = bounds[0]+0.5*(bounds[1]-bounds[0]);
+      const newPlaneY = bounds[2]+0.5*(bounds[3]-bounds[2]);
+      const newPlaneZ = bounds[4]+0.5*(bounds[5]-bounds[4]);
+      setStepX(Number(stepResolutionX.toFixed(3)));
+      setStepY(Number(stepResolutionY.toFixed(3)));
+      setStepZ(Number(stepResolutionZ.toFixed(3)));
+      setInitialPlaneX(Number(newPlaneX.toFixed(3)));
+      setInitialPlaneY(Number(newPlaneY.toFixed(3)));
+      setInitialPlaneZ(Number(newPlaneZ.toFixed(3)));
+      setPlaneXValue(newPlaneX);
+      calculateNewFieldX();
+      setPlaneYValue(newPlaneY);
+      calculateNewFieldY();
+      setPlaneZValue(newPlaneZ);
+      calculateNewFieldZ();
+    }
   }
 
   const initialize = async() => {
@@ -688,9 +722,20 @@ const GenericView = ({
     if (context.current && ready) {
       (async () => {
         const { VTK } = context.current;
-        const data = await fetch(vtuPath);
-        const response = await data.text();
-        await VTK.readUnstructuredGrid(response);
+        if (!files) {
+          const data = await fetch(vtuPath);
+          const response = await data.text();
+          await VTK.readUnstructuredGrid(response);
+        }
+        else {
+          const grid_file = files.find(item => item.file.name.match(".*.vtu"));
+          const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
+          await VTK.readUnstructuredGrid(atob(grid_data));
+          setShowPlanes(true);
+          setShowPlaneX(true);
+          setShowPlaneY(true);
+          setShowPlaneZ(true);
+        }
         setDataLoaded(true);
         window.scrollTo(0, 0);
       })();
@@ -702,9 +747,10 @@ const GenericView = ({
       //async () => {
       const { VTK } = context.current;
       const reader = vtkXMLPolyDataReader.newInstance();
-      reader
-        .setUrl(vtpPath, {loadData: true } )
-        .then(() => {
+      if (!files) {
+        reader
+          .setUrl(vtpPath, {loadData: true } )
+          .then(() => {
             setScene(
               initialPortrait,
               VTK,
@@ -714,7 +760,19 @@ const GenericView = ({
               localTheme
             );
             setSceneLoaded(true);
-        });
+          });
+      }
+      else {
+        setScene(
+          initialPortrait,
+          VTK,
+          reader,
+          context,
+          vtkContainerRef,
+          localTheme
+        );
+        setSceneLoaded(true);
+      }
     }
   }, [dataLoaded]);
 
@@ -1036,7 +1094,7 @@ const GenericView = ({
                   paddingBottom: 20,
                 }}
               >
-                Loading {MB} MB of data {dataLoaded}
+                Loading & setting up the scene
               </div>
               <div
                 style={{
@@ -1169,8 +1227,7 @@ const GenericView = ({
             }}
           >
             <IconButton
-              title="Show contributors"
-              id="authors"
+              id="tooltip"
               edge={false}
               style={{
                 border: "5px",
@@ -1230,28 +1287,57 @@ const GenericView = ({
                 />
               </Box>
             </div>
+            {!files &&
+              <div
+                style={{
+                  paddingBottom: 60,
+                  position: 'absolute',
+                  top: '60px',
+                  right: landscape ? '140px' : '120px',
+                  backgroundColor: background,
+                  padding: '5px',
+                  marginRight: '2%',
+                  border: '1px solid rgba(125, 125, 125)',
+                }}
+                className={showPlanes ? classes.viewButtonsPressed : null}
+              >
+                <Box
+                  className={classes.link}
+                  sx={{ height: '34px', width: '34px' }}
+                  onClick={handleSetShowPlanes}
+                >
+                  <LayersIcon
+                    style={{width: '32px', height: '32px'}}
+                  />
+                </Box>
+              </div>
+            }
+            {files &&
             <div
               style={{
-                paddingBottom: 60,
+                paddingBottom: 80,
                 position: 'absolute',
+                backgroundColor: background,
                 top: '60px',
                 right: landscape ? '140px' : '120px',
-                backgroundColor: background,
                 padding: '5px',
                 marginRight: '2%',
-                border: '1px solid rgba(125, 125, 125)',
+               border: '1px solid rgba(125, 125, 125)',
               }}
-              className={showPlanes ? classes.viewButtonsPressed : null}
             >
               <Box
                 className={classes.link}
                 sx={{ height: '34px', width: '34px' }}
-                onClick={handleSetShowPlanes}>
-                <LayersIcon
+                onClick={restart}
+              >
+                <FontAwesomeIcon
+                  title="Delete"
                   style={{width: '32px', height: '32px'}}
+                  icon={solid('trash')}
                 />
               </Box>
             </div>
+            }
           </div>
         }
         {(sceneLoaded && showPlanes && isMobile) &&
@@ -1704,7 +1790,7 @@ const GenericView = ({
                     className={classes.slider}
                     defaultValue={initialPlaneX}
                     onChange={handlePlaneXChange}
-                    step={step}
+                    step={stepX}
                     min={boundsTest[0]}
                     max={boundsTest[1]}
                     valueLabelDisplay="on"
@@ -1738,7 +1824,7 @@ const GenericView = ({
                     className={classes.slider}
                     defaultValue={initialPlaneY}
                     onChange={handlePlaneYChange}
-                    step={step}
+                    step={stepY}
                     min={boundsTest[2]}
                     max={boundsTest[3]}
                     valueLabelDisplay="on"
@@ -1772,7 +1858,7 @@ const GenericView = ({
                     className={classes.slider}
                     defaultValue={initialPlaneZ}
                     onChange={handlePlaneZChange}
-                    step={step}
+                    step={stepZ}
                     min={boundsTest[4]}
                     max={boundsTest[5]}
                     valueLabelDisplay="on"

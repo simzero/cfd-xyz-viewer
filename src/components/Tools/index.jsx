@@ -2,33 +2,32 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-import { useEffect } from "react";
+import { React, useEffect } from "react";
+import Grid from '@mui/material/Grid'
+import ShowCards  from './../Main/ShowCards';
 import { makeStyles } from "@mui/styles";
-import { Link } from "react-router-dom";
 import posts from "./list";
-import { lightTheme, darkTheme } from './../theme';
+import { global } from './../theme';
 
 function Tools() {
-
   useEffect(() => {
-   document.title = "Tools"
+   document.title = "/Tools"
   }, []);
 
-  //const classes = useStyles();
-  const localTheme = window.localStorage.getItem('theme') || 'light'
-  const theme = localTheme === 'light' ? lightTheme : darkTheme;
-  const useStyles = makeStyles(theme);
+  const useStyles = makeStyles(global);
   const classes = useStyles();
 
   return (
-    <div className={classes.root} align="left">
-      {posts.map(post => (
-        <Link to={post.link} className={classes.link}>
-          <div className={classes.cardTextTools} key={post.key}>
-           {post.title}
-          </div>
-        </Link>
-      ))}
+    <div className={classes.root} align="center">
+      <Grid
+        container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16 }}
+        display="flex"
+        flexDirection="row"
+      >
+        {posts.map(post => (
+           <ShowCards key={post.key} post={post} />
+        ))}
+      </Grid>
     </div>
   );
 }
