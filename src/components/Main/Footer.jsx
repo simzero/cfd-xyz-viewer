@@ -38,14 +38,14 @@ function Footer() {
           {'© '}
           {new Date().getFullYear()}
           {' '}
-          {'SIMZERO'}
           <Link
             className={classes.link}
             color='inherit'
-            href='https://www.companyname.com'
+            href='https://www.simzero.com'
             target='_blank'
             rel='noreferrer'
           >
+            {'SIMZERO'}
           </Link>
         </Typography>
       </div>
