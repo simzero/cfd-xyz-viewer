@@ -35,5 +35,5 @@ start-docker:
 data-docker:
 	$(cfd-xyz) curl -LJ0 $(surrogates-url) -o surrogates.tar.gz
 	$(cfd-xyz) curl -LJ0 $(simulations-url) -o simulations.tar.gz
-	tar -zxvf surrogates.tar.gz -C public/surrogates
-	tar -zxvf simulations.tar.gz -C public/simulations
+	tar -zxvf surrogates.tar.gz -C public/
+	tar -zxvf simulations.tar.gz -C public/
