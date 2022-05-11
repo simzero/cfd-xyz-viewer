@@ -1,4 +1,4 @@
-# cfd.xyz
+# cfd.xyz - An open-source web app for generating and visualizing parametric CFD results
 
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://cfd.xyz)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz)
@@ -65,8 +65,7 @@ A technical note related to this work was submitted to the OpenFOAM Journal and 
 - Repository:
 ```
 @online{cfd_xyz_repo_2022,
-  author       = {Carlos Peña-Monferrer and
-                  Carmen Díaz-Marín},
+  author       = {{SIMZERO}},
   title = {{cfd.xyz}},
   howpublished = {\url{https://github.com/simzero-oss/cfd-xyz}},
   addendum = "(accessed: 28.04.2022)",
