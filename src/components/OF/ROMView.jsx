@@ -49,7 +49,7 @@ const repo = 'https://github.com/simzero-oss/cfd-xyz/blob/main'
 const messages = [
   'Please wait until the setting up has completely finished. It might take up to 2 min for some mobiles and cases',
   'Try cfd.xyz on a desktop computer for a better performance and user experience',
-  'We are working on improving loading times. If you found a bug or this takes unusually long, pelase open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
+  'We are working on improving loading times. If you found a bug or this takes unusually long, please open an issue at: https://github.com/simzero-oss/cfd-xyz/issues/new',
 ];
 
 const temperatureToViscosity = (T) => {
@@ -973,7 +973,6 @@ const ROMView = ({
           >
           <Tooltip
             id="tooltip"
-            title="Show contributors"
             arrow
             open={authorsTooltip}
             disableFocusListener

@@ -1094,7 +1094,7 @@ const GenericView = ({
                   paddingBottom: 20,
                 }}
               >
-                Loading & setting up the scene
+                Loading and setting up the scene
               </div>
               <div
                 style={{
