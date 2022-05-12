@@ -639,7 +639,7 @@ function Steady() {
                 and confirm.
               </div>
               <div className={classes.bodyText} style={{paddingTop: 6}}>
-                - For a try-out: download, uncompress and drag one of the
+                - For a try-out: download, extract, and drag one of the
                 folders (pitzDaily, bump2D, ...) of this
                 <a
                   href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.5.tar.gz?raw=true'}

@@ -109,7 +109,7 @@ function Slicer() {
                   paddingTop: 6
                 }}
               >
-                - For a try-out: download, uncompress and drag one of the
+                - For a try-out: download, extract, and drag one of the
                   internal.vtu files of this
                 <a
                   href={simulationsLink}
