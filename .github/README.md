@@ -92,8 +92,9 @@ A technical note related to this work was submitted to the OpenFOAM Journal and 
 Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
 
 * Code: [MIT](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE)
-* Media: [CC BY 4.0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-BY)
-* Media (`public/constructionSolver.png`): [CC0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-0)
+* Media `public/constructionSolver.png`: [CC0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-0)
+* Media `src/components/Main/logoLight.svg` and `src/components/Main/logoDark.svg`: [CC BY-ND 4.0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-BY-ND) 
+* Other media: [CC BY 4.0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-BY)
 
 * Trademarks:
   - OPENFOAM® is a registered trade mark of OpenCFD Limited, producer and distributor of the OpenFOAM software via [www.openfoam.com](www.openfoam.com).
