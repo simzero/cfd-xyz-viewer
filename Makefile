@@ -11,12 +11,12 @@ simulations-data := simulations_${VERSION}
 surrogates-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(surrogates-data).tar.gz
 simulations-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(simulations-data).tar.gz
 
-all: install run-build data start
-all-docker: install-docker run-build-docker data-docker start-docker
+all: install data build start
+all-docker: install-docker data-docker build-docker start-docker
 
 install:
 	npm install
-run-build:
+build:
 	npm run build
 start:
 	npm start
@@ -28,7 +28,7 @@ data:
 
 install-docker:
 	$(cfd-xyz) npm install
-run-build-docker:
+build-docker:
 	$(cfd-xyz) npm run build
 start-docker:
 	$(cfd-xyz) npm start
