@@ -89,7 +89,7 @@ A technical note related to this work was submitted to the OpenFOAM Journal and 
 
 ## License
 
-Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
+Code on this repository is covered by the MIT license. All the media/images in the `public` directory are CC BY 4.0 except the `public/constructionSolver.png` image that is covered by CC0, and the cfd.xyz logos (`src/components/Main/logo*.svg`) with CC BY-ND 4.0 license so you may not alter, remix or transform these images. The cfd.xyz logo, SIMZERO and OpenFOAM are trademarks. A full description of the licenses can be found below:
 
 * Code: [MIT](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE)
 * Media `public/constructionSolver.png`: [CC0](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE-CC-0)
