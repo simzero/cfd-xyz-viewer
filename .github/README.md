@@ -38,7 +38,7 @@ Alternatively, you can use the [Docker image](https://github.com/orgs/simzero-os
 VERSION=v1.0.0-rc.5 make all-docker
 ```
 
-The web will be accessible at `http://localhost:3001`.
+The web will be accessible at `http://localhost:5000`.
 
 ## Contributing
 
