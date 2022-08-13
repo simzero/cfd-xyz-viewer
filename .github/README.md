@@ -6,7 +6,6 @@
 [![Join Slack](https://img.shields.io/badge/Join%20us%20on-Slack-e01563.svg)](https://join.slack.com/t/cfd-xyz/shared_invite/zt-15qjacmzo-1woWqeklQ0IeXZb_F6ueaQ)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/simzero-oss/cfd-xyz/blob/main/LICENSE)
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![PayPal donate button](https://img.shields.io/badge/paypal-donate-red.svg)](https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4)
 
 [cfd.xyz](http://cfd.xyz) is an open-source web app to efficiently and easily explore fluid dynamics problems for a wide range of parameters. The framework provides a proof of technology for OpenFOAM tutorials, showing the whole process from the generation of the surrogate models to the web browser. It also includes a standalone web tool for visualizing users' models by directly dragging and dropping the output folder of the ROM offline stage. Beyond the current proof of technology, this enables a collaborative effort for the implementation of OpenFOAM-based surrogate models in applications demanding real-time solutions such as digital twins and other digital transformation technologies.
 
@@ -27,7 +26,7 @@ This is a beta version, please handle it with care. Further features, optimizati
 You can install and serve `cfd-xyz` in your computer with `npm`:
 
 ```
-VERSION=v1.0.0-rc.5 make all
+VERSION=v1.0.0-rc.6 make all
 ```
 
 And use the web by entering `http://localhost:3000` in your browser.
@@ -35,7 +34,7 @@ And use the web by entering `http://localhost:3000` in your browser.
 Alternatively, you can use the [Docker image](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz) for building and serving the web:
 
 ```
-VERSION=v1.0.0-rc.5 make all-docker
+VERSION=v1.0.0-rc.6 make all-docker
 ```
 
 The web will be accessible at `http://localhost:5000`.
