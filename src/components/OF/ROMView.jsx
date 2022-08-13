@@ -218,8 +218,13 @@ const ROMView = ({
           indexes.push(j);
         }
 
+        let indexesNut = []
+        for (var j = 0; j < Nphi_nut; j ++ ) {
+          indexesNut.push(j);
+	}
+
         await Promise.all(indexes.map(async (index) => {
-          const C1Path = 'matrices/ct1_' + index + "_mat.txt"
+          const C1Path = 'matrices/ct1_' + index + "_mat.txt";
           const C1 = await loadData(C1Path);
           reduced.addCt1Matrix(C1[0], index);
         }));
@@ -227,12 +232,20 @@ const ROMView = ({
         setProcess(60);
 
         await Promise.all(indexes.map(async (index) => {
-          const C2Path = 'matrices/ct2_' + index + "_mat.txt"
+          const C2Path = 'matrices/ct2_' + index + "_mat.txt";
           const C2 = await loadData(C2Path);
           reduced.addCt2Matrix(C2[0], index);
         }));
 
         setProcess(70);
+
+        await Promise.all(indexesNut.map(async (indexNut) => {
+          const weightPath = 'wRBF_' + indexNut + '_mat.txt';
+          const weight = await loadData(weightPath);
+          reduced.addWeight(weight[0], indexNut);
+        }));
+
+        setProcess(80);
 
         await Promise.all(indexes.map(async (index) => {
           const CPath = 'matrices/C' + index + "_mat.txt"
