@@ -26,7 +26,7 @@ This is a beta version, please handle it with care. Further features, optimizati
 You can install and serve `cfd-xyz` in your computer with `npm`:
 
 ```
-VERSION=v1.0.0-rc.7 make all
+VERSION=v1.0.0-rc.8 make all
 ```
 
 And use the web by entering `http://localhost:3000` in your browser.
@@ -34,7 +34,7 @@ And use the web by entering `http://localhost:3000` in your browser.
 Alternatively, you can use the [Docker image](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz) for building and serving the web:
 
 ```
-VERSION=v1.0.0-rc.7 make all-docker
+VERSION=v1.0.0-rc.8 make all-docker
 ```
 
 The web will be accessible at `http://localhost:5000`.
@@ -90,16 +90,16 @@ A technical note related to this work was submitted to the OpenFOAM Journal and 
 }
 ```
 
-- Specific version with DOI. Example for v1.0.0-rc.3:
+- Specific version with DOI. Example for v1.0.0-rc.8:
 ```
-@software{cfd_xyz_v1.0.0-rc.3,
+@software{cfd_xyz_v1.0.0-rc.8,
   author       = {Carlos Peña-Monferrer and
                   Carmen Díaz-Marín},
   title        = {simzero-oss/cfd-xyz},
   month        = mar,
   year         = 2022,
   publisher    = {Zenodo},
-  version      = {v1.0.0-rc.3},
+  version      = {v1.0.0-rc.8},
   doi          = {10.5281/zenodo.6365615},
   url          = {https://doi.org/10.5281/zenodo.6365615}
 }
