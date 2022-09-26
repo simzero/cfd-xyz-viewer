@@ -2,7 +2,7 @@
   "name": "cfd-xyz",
   "license": "MIT",
   "version": "1.0.0-rc.8",
-  "author": "Carlos Pena-Monferrer <carpemonf@simzero.es>",
+  "author": "Carlos Pena-Monferrer <carlos@simzero.com>",
   "description": "An open-source web platform for data-driven generation and visualization of CFD data",
   "dependencies": {
     "@babel/helper-module-imports": "^7.16.7",
