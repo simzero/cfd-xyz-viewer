@@ -102,6 +102,7 @@ const ROMView = ({
     rootPath,
     MB,
     codeLink,
+    stabilization,
     initialZoomLandscape,
     initialZoomPortrait,
     offsetY,
@@ -183,10 +184,8 @@ const ROMView = ({
 
       await rom.ready
 
-      const P = await loadData('matrices/P_mat.txt');
-      const M = await loadData('matrices/M_mat.txt');
-      const K = await loadData('matrices/K_mat.txt');
       const B = await loadData('matrices/B_mat.txt');
+      const K = await loadData('matrices/K_mat.txt');
 
       setProcess(25);
 
@@ -201,11 +200,27 @@ const ROMView = ({
 
       const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
+      reduced.stabilization(stabilization);
       reduced.Nphi_u(Nphi_u);
       reduced.Nphi_p(Nphi_p);
       reduced.Nphi_nut(Nphi_nut);
       reduced.N_BC(N_BC);
-      reduced.addMatrices(P[0], M[0], K[0], B[0]);
+
+      if (stabilization === "supremizer") {
+        const P = await loadData('matrices/P_mat.txt');
+        reduced.addMatrices(P[0], K[0], B[0]);
+      }
+      else if (stabilization === "PPE") {
+        const D = await loadData('matrices/D_mat.txt');
+        const BC3 = await loadData('matrices/BC3_mat.txt');
+
+        reduced.addBC3Matrix(BC3[0]);
+        reduced.addMatrices(D[0], K[0], B[0]);
+      }
+      else {
+        // TODO: check
+      }
+
       reduced.addModes(modes[0]);
 
       setProcess(50);
@@ -252,6 +267,14 @@ const ROMView = ({
           const C = await loadData(CPath);
           reduced.addCMatrix(C[0], index);
         }));
+
+        if (stabilization === "PPE") {
+          await Promise.all(indexes.map(async (index) => {
+            const CPath = 'matrices/G' + index + "_mat.txt"
+            const C = await loadData(CPath);
+            reduced.addGMatrix(C[0], index);
+          }));
+        }
 
         setProcess(90);
 

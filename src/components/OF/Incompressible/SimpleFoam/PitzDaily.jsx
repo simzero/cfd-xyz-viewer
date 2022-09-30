@@ -8,6 +8,7 @@ import ROMView  from './../../ROMView';
 const surrogatesPath = '/surrogates';
 
 // - Define case custom data
+const stabilization = "supremizer";
 const initialZoomPortrait = 0.55;
 const initialZoomLandscape = 1.3;
 const offsetY = 0.0;
@@ -39,6 +40,7 @@ function PitzDaily() {
         rootPath={rootPath}
         MB={MB}
         codeLink={codeLink}
+        stabilization={stabilization}
         initialZoomPortrait={initialZoomPortrait}
         initialZoomLandscape={initialZoomLandscape}
         offsetY={offsetY}

@@ -1,7 +1,7 @@
 {
   "name": "cfd-xyz",
   "license": "MIT",
-  "version": "1.0.0-rc.8",
+  "version": "1.0.0-rc.9",
   "author": "Carlos Pena-Monferrer <carlos@simzero.com>",
   "description": "An open-source web platform for data-driven generation and visualization of CFD data",
   "dependencies": {
@@ -21,7 +21,7 @@
     "@mui/icons-material": "^5.4.1",
     "@mui/material": "^5.4.3",
     "@mui/styles": "^5.4.1",
-    "@simzero/rom": "^1.0.0-rc.8",
+    "@simzero/rom": "1.0.0-rc.11",
     "ajv": "^8.10.0",
     "arraybuffer-loader": "^1.0.8",
     "babel-loader": "^8.0.6",

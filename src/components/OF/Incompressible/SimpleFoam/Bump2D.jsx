@@ -8,6 +8,7 @@ import ROMView  from './../../ROMView';
 const surrogatesPath = '/surrogates';
 
 // - Define case custom data
+const stabilization = "supremizer";
 const initialZoomPortrait = 20.0;
 const initialZoomLandscape = 145.0;
 const offsetY = -2.4;
@@ -39,6 +40,7 @@ function Bump2D() {
         rootPath={rootPath}
         MB={MB}
         codeLink={codeLink}
+        stabilization={stabilization}
         initialZoomPortrait={initialZoomPortrait}
         initialZoomLandscape={initialZoomLandscape}
         offsetY={offsetY}
