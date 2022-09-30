@@ -11,6 +11,7 @@ import {
    Footer,
    Home,
    About,
+   Error,
    OF,
    Incompressible,
    SimpleFoam,
@@ -64,6 +65,7 @@ function App() {
               <Route path="/Tools/ITHACA-FV_Steady" exact element={<Steady />} />
               <Route path="/Tools/Slicer" exact element={<Slicer />} />
               <Route path="/About" exact element={<About />} />
+              <Route path="*" exact element={<Error />} status={404} />
             </Routes>
             <Footer />
           </ThemeContext.Provider>

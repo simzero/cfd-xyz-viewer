@@ -2,6 +2,7 @@ export { default as Navigation } from "./Main/Navigation";
 export { default as Footer } from "./Main/Footer";
 export { default as Home } from "./Main";
 export { default as About } from "./Main/About";
+export { default as Error } from "./Main/Error";
 // OpenFOAM
 export { default as OF } from "./OF";
 export { default as Incompressible } from "./OF/Incompressible";
