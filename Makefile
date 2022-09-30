@@ -4,10 +4,12 @@
 
 SHELL := /bin/bash
 
-cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:${VERSION}
+cfd-xyz-version := 1.0.0-rc.9
+surrogates-version := 1.0.0-rc.11
+cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:$(cfd-xyz-version)
 cfd-xyz := docker run --publish 5000:3000 --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
-surrogates-data := surrogates_${VERSION}
-simulations-data := simulations_${VERSION}
+surrogates-data := surrogates_$(surrogates-version)
+simulations-data := simulations_${surrogates-version}
 surrogates-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(surrogates-data).tar.gz
 simulations-url := https://github.com/simzero-oss/cfd-xyz-data/raw/main/$(simulations-data).tar.gz
 

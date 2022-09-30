@@ -26,7 +26,7 @@ This is a beta version, please handle it with care. Further features, optimizati
 You can install and serve `cfd-xyz` in your computer with `npm`:
 
 ```
-VERSION=v1.0.0-rc.8 make all
+make all
 ```
 
 And use the web by entering `http://localhost:3000` in your browser.
@@ -34,7 +34,7 @@ And use the web by entering `http://localhost:3000` in your browser.
 Alternatively, you can use the [Docker image](https://github.com/orgs/simzero-oss/packages/container/package/cfd-xyz) for building and serving the web:
 
 ```
-VERSION=v1.0.0-rc.8 make all-docker
+make all-docker
 ```
 
 The web will be accessible at `http://localhost:5000`.
