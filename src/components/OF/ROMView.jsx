@@ -396,7 +396,6 @@ const ROMView = ({
     }
 
     array.modified();
-    array.modified();
 
     polydata.getPointData().addArray(array);
 

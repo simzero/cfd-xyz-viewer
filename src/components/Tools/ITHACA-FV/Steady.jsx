@@ -55,7 +55,7 @@ function Steady() {
   const [nuFixed, setNuFixed] = useState(false);
 
   const localTheme = window.localStorage.getItem('theme') || "light";
-  const testVar = useState(window.localStorage.getItem('theme'));
+  const trackTheme = useState(window.localStorage.getItem('theme') || "light");
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
   const useStyles = makeStyles(theme);
   const classes = useStyles();
@@ -90,9 +90,8 @@ function Steady() {
     if (context.current) {
       const { scalarBarActor, renderer, renderWindow } = context.current;
       if (renderWindow) {
-        const currentTheme = window.localStorage.getItem('theme');
-        const background = currentTheme === 'light' ? backgroundLight : backgroundDark;
-        const textColor = currentTheme === 'light' ? textColorLight : textColorDark;
+        const background = localTheme === 'light' ? backgroundLight : backgroundDark;
+        const textColor = localTheme === 'light' ? textColorLight : textColorDark;
 
         const scalarBarActorStyle1 = {
           paddingBottom: 30,
@@ -109,7 +108,7 @@ function Steady() {
         renderWindow.render();
       }
     }
-  }, [testVar, backgroundLight, backgroundDark]);
+  }, [trackTheme, localTheme, backgroundLight, backgroundDark]);
 
 
   useEffect(() => {
@@ -146,11 +145,8 @@ function Steady() {
         background,
         rootContainer: vtkContainerRef.current,
       });
-      //fullScreenRenderer.setBackground(0.5,0.5,0.5);
       const renderer = fullScreenRenderer.getRenderer();
       const renderWindow = fullScreenRenderer.getRenderWindow();
-      //const containerDimensions = vtkContainerRef.current.getBoundingClientRect();
-      //vtkContainerRef.current.openglRenderWindow.setSize(containerDimensions.width, containerDimensions.height);
       const preset = vtkColorMaps.getPresetByName('erdc_rainbow_bright');
       lookupTable.setVectorModeToMagnitude();
       lookupTable.applyColorMap(preset);
@@ -162,99 +158,101 @@ function Steady() {
         fontStyle: 'normal',
         fontFamily: theme.vtkText.fontFamily
       };
-        const grid_file = files.find(item => item.file.name.match(".*.vtu"));
-        const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
-          reduced.readUnstructuredGrid(atob(grid_data));
-          reduced.nu(nuIni*1e-05);
-         reduced.solveOnline(UIni, 0.0);
-          //reduced.solveOnline(initialVelocity);
-          const polydata_string = reduced.unstructuredGridToPolyData();
-          // TODO: parse directly as buffer or parse as a string...
-          var buf = Buffer.from(polydata_string, 'utf-8');
-          reader.parseAsArrayBuffer(buf);
-          polydata = reader.getOutputData(0);
+      const grid_file = files.find(item => item.file.name.match(".*.vtu"));
+      const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
+      reduced.readUnstructuredGrid(atob(grid_data));
+      reduced.nu(nuIni*1e-05);
+      reduced.solveOnline(UIni, 0.0);
+      const polydata_string = reduced.unstructuredGridToPolyData();
+      // TODO: parse directly as buffer or parse as a string...
+      var buf = Buffer.from(polydata_string, 'utf-8');
+      reader.parseAsArrayBuffer(buf);
+      polydata = reader.getOutputData(0);
 
+      renderer.addActor(scalarBarActor);
+      renderer.addActor(actor);
 
-          renderer.addActor(scalarBarActor);
-          renderer.addActor(actor);
+      const newU = reduced.reconstruct();
+      var nCells = polydata.getNumberOfPoints();
+      polydata.getPointData().setActiveScalars("uRec");
 
-          const newU = reduced.reconstruct();
+      const array = vtkDataArray.newInstance({
+        name: 'uRec',
+        size: nCells*3,
+        numberOfComponents: 3,
+        dataType: 'Float32Array'
+      });
+      for (let i = 0; i < nCells; i++) {
+        let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
+        array.setTuple(i, v)
+      }
 
-          var nCells = polydata.getNumberOfPoints();
-          polydata.getPointData().setActiveScalars("uRec");
+      array.modified();
 
-          const array = vtkDataArray.newInstance({ name: 'uRec', size: nCells*3, numberOfComponents: 3, dataType: 'Float32Array' });
-          for (let i = 0; i < nCells; i++) {
-            let v =[newU[i], newU[i + nCells], newU[i + nCells * 2]];
-            array.setTuple(i, v)
-          }
-          array.modified();
-          array.modified();
+      polydata.getPointData().addArray(array);
 
-          polydata.getPointData().addArray(array);
+      var activeArray = polydata.getPointData().getArray("uRec");
+      const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
+      lookupTable.setMappingRange(dataRange[0], dataRange[1]);
+      lookupTable.updateRange();
+      mapper.setScalarModeToUsePointFieldData();
+      mapper.setScalarRange(dataRange[0],dataRange[1]);
+      mapper.setColorByArrayName('uRec');
+      mapper.setInputData(polydata);
+      scalarBarActor.setScalarsToColors(mapper.getLookupTable());
+      scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
+      scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
+      scalarBarActor.setTickTextStyle(scalarBarActorStyle);
+      lookupTable.updateRange();
+      scalarBarActor.modified();
+      renderer.resetCamera();
+      renderer.getActiveCamera().zoom(initialZoom);
+      renderWindow.render();
+      renderer.resetCameraClippingRange();
+      scalarBarActor.modified();
+      scalarBarActor.setVisibility(false);
+      renderWindow.render();
+      renderWindow.modified();
+      scalarBarActor.modified();
+      scalarBarActor.setVisibility(true);
 
-          var activeArray = polydata.getPointData().getArray("uRec");
-          const dataRange = [].concat(activeArray ? activeArray.getRange() : [0, 1]);
-          lookupTable.setMappingRange(dataRange[0], dataRange[1]);
-          lookupTable.updateRange();
-          mapper.setScalarModeToUsePointFieldData();
-          mapper.setScalarRange(dataRange[0],dataRange[1]);
-          mapper.setColorByArrayName('uRec');
-          mapper.setInputData(polydata);
-          scalarBarActor.setScalarsToColors(mapper.getLookupTable());
-          scalarBarActor.setAxisLabel("Velocity magnitude (m/s)");
-          scalarBarActor.setAxisTextStyle(scalarBarActorStyle);
-          scalarBarActor.setTickTextStyle(scalarBarActorStyle);
-          lookupTable.updateRange();
-          scalarBarActor.modified();
-          renderer.resetCamera();
-          renderer.getActiveCamera().zoom(initialZoom);
-          renderWindow.render();
-          renderer.resetCameraClippingRange();
-          scalarBarActor.modified();
-          scalarBarActor.setVisibility(false);
-          renderWindow.render();
-          renderWindow.modified();
-          scalarBarActor.modified();
-          scalarBarActor.setVisibility(true);
+      const camera = renderer.getActiveCamera();
+      let focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
+      let cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
 
-          const camera = renderer.getActiveCamera();
-          let focalPoint = [].concat(camera ? camera.getFocalPoint() : [0, 1, 2]);
-          let cameraPosition = [].concat(camera ? camera.getPosition() : [0, 1, 2]);
+      renderer.getActiveCamera().setPosition
+      (
+        cameraPosition[0],
+        cameraPosition[1],
+        cameraPosition[2]
+      );
+      renderer.getActiveCamera().setFocalPoint
+      (
+        focalPoint[0],
+        focalPoint[1],
+        focalPoint[2]
+      );
 
-          renderer.getActiveCamera().setPosition
-          (
-            cameraPosition[0],
-            cameraPosition[1],
-            cameraPosition[2]
-          );
-          renderer.getActiveCamera().setFocalPoint
-          (
-            focalPoint[0],
-            focalPoint[1],
-            focalPoint[2]
-          );
+      renderWindow.modified();
+      renderWindow.render();
 
-          renderWindow.modified();
-          renderWindow.render();
-
-          context.current = {
-            focalPoint,
-            cameraPosition,
-            reduced,
-            reader,
-            fullScreenRenderer,
-            renderWindow,
-            renderer,
-            lookupTable,
-            polydata,
-            actor,
-            scalarBarActor,
-            mapper,
-          };
-          setVelocityValue(UIni);
-          setViscosityValue(nuIni);
-        }
+      context.current = {
+        focalPoint,
+        cameraPosition,
+        reduced,
+        reader,
+        fullScreenRenderer,
+        renderWindow,
+        renderer,
+        lookupTable,
+        polydata,
+        actor,
+        scalarBarActor,
+        mapper,
+      };
+      setVelocityValue(UIni);
+      setViscosityValue(nuIni);
+    }
   }, [dataLoaded]);
 
   const validFiles = [
@@ -268,7 +266,7 @@ function Steady() {
   ];
 
   const patterns = [
-    'C.*_mat.txt|ct1_.*_mat.txt|ct2_.*_mat.txt|.*.vtu'
+    'C.*_mat.txt|ct1_.*_mat.txt|ct2_.*_mat.txt|wRBF_.*_mat.txt|.*.vtu'
   ];
 
   function checkFile(item) {
@@ -396,7 +394,6 @@ function Steady() {
     await rom.ready
 
     const P = await loadData(getData("P_mat.txt"));
-    const M = await loadData(getData("M_mat.txt"));
     const K = await loadData(getData("K_mat.txt"));
     const B = await loadData(getData("B_mat.txt"));
 
@@ -410,10 +407,11 @@ function Steady() {
 
     const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
+    reduced.stabilization("supremizer");
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
     reduced.N_BC(N_BC);
-    reduced.addMatrices(P[0], M[0], K[0], B[0]);
+    reduced.addMatrices(P[0], K[0], B[0]);
     reduced.addModes(modes[0]);
 
     let Nphi_nut = 0;
@@ -422,6 +420,7 @@ function Steady() {
       for (var i = 0; i < Nphi_u; i++ ) {
         indexes.push(i);
       }
+
 
       await Promise.all(indexes.map(async (index) => {
         const CPath = 'C' + index + "_mat.txt"
@@ -434,6 +433,11 @@ function Steady() {
         Nphi_nut = coeffL2[1];
         reduced.Nphi_nut(Nphi_nut);
 
+        let indexesNut = []
+        for (var j = 0; j < Nphi_nut; j ++ ) {
+          indexesNut.push(j);
+        }
+
         await Promise.all(indexes.map(async (index) => {
           const C1Path = 'ct1_' + index + "_mat.txt"
           const C2Path = 'ct2_' + index + "_mat.txt"
@@ -442,8 +446,13 @@ function Steady() {
           reduced.addCt1Matrix(C1[0], index);
           reduced.addCt2Matrix(C2[0], index);
         }));
-      }
 
+        await Promise.all(indexesNut.map(async (indexNut) => {
+          const weightPath = 'wRBF_' + indexNut + '_mat.txt';
+          const weight = await loadData(getData(weightPath));
+          reduced.addWeight(weight[0], indexNut);
+        }));
+      }
 
       reduced.preprocess();
       reduced.setRBF(mu[0], coeffL2[0]);
@@ -642,7 +651,7 @@ function Steady() {
                 - For a try-out: download, extract, and drag one of the
                 folders (pitzDaily, bump2D, ...) of this
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.5.tar.gz?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.11.tar.gz?raw=true'}
                 >
                   {' sample'}
                 </a>.
