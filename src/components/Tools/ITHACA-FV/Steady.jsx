@@ -651,7 +651,7 @@ function Steady() {
                 - For a try-out: download, extract, and drag one of the
                 folders (pitzDaily, bump2D, ...) of this
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.11.tar.gz?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.12.tar.gz?raw=true'}
                 >
                   {' sample'}
                 </a>.

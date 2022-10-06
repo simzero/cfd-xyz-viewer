@@ -16,7 +16,7 @@ const vtuVariable = "U";
 const vtuTitle = "Velocity magnitude (m/s)";
 const codeLink = 'src/components/Tools/VTK/Slicer.jsx';
 const repoRoot = 'https://github.com/simzero-oss/cfd-xyz-data/blob/main/'
-const simulationsLink = repoRoot + 'simulations_v1.0.0-rc.5.tar.gz?raw=true';
+const simulationsLink = repoRoot + 'simulations_v1.0.0-rc.12.tar.gz?raw=true';
 //
 
 function Slicer() {
