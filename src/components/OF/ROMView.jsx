@@ -255,7 +255,7 @@ const ROMView = ({
         setProcess(70);
 
         await Promise.all(indexesNut.map(async (indexNut) => {
-          const weightPath = 'wRBF_' + indexNut + '_mat.txt';
+          const weightPath = 'matrices/wRBF_' + indexNut + '_mat.txt';
           const weight = await loadData(weightPath);
           reduced.addWeight(weight[0], indexNut);
         }));
