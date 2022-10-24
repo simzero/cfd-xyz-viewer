@@ -51,57 +51,55 @@ cfd.xyz is a self-funded initiative, free of charge, with no adds, no popups, no
 
 Your donations encourage future developments and help with server costs for providing a better service. If you like the tool you can [:heart: donate](https://www.paypal.com/donate/?hosted_button_id=KKB4LH96E59A4).
 
-## Citation
+## Citations
 
-A technical note related to this work was submitted to the OpenFOAM Journal and it is currently being reviewed. In the meanwhile please use the following bibtex to cite this repository:
-
-- Technical note submitted to the OpenFOAM Journal and under review. Preprint available at arXiv:
+- Article published in the OpenFOAM® Journal:
 
 ```
-@misc{cfd_xyz_note_2022,
-  doi = {10.48550/ARXIV.2205.08387},
-  url = {https://arxiv.org/abs/2205.08387},
-  author = {Peña-Monferrer, Carlos and Díaz-Marín, Carmen},
-  keywords = {Fluid Dynamics (physics.flu-dyn), Numerical Analysis (math.NA), FOS: Physical sciences, FOS: Physical sciences, FOS: Mathematics, FOS: Mathematics},
-  title = {cfd.xyz/rom.js: An open-source framework for generating and visualizing parametric CFD results on the web},
-  publisher = {arXiv},
-  year = {2022},
-  copyright = {Creative Commons Attribution Share Alike 4.0 International}
+@article{Pena-Monferrer_Diaz-Marin_2022,
+  author={Peña-Monferrer, Carlos and Diaz-Marin, Carmen},
+  title={rom.js/cfd.xyz: An open-source framework for generating and visualizing parametric {CFD} results},
+  journal={OpenFOAM® Journal},
+  volume={2},
+  month={Oct.},
+  pages={143–148}
+  DOI={10.51560/ofj.v2.83},
+  url={https://journal.openfoam.com/index.php/ofj/article/view/83},
+  year={2022},
 }
 ```
 
 - Web:
 ```
 @online{cfd_xyz_web_2022,
-  author = {{SIMZERO}},
-  title = {{cfd.xyz}},
-  howpublished = {\url{https://cfd-xyz}},
-  addendum = "(accessed: 28.04.2022)",
+  author={{SIMZERO}},
+  title={{cfd.xyz}},
+  howpublished={\url{https://cfd-xyz}},
+  addendum="(accessed: 28.04.2022)",
 }
 ```
 
 - Repository:
 ```
 @online{cfd_xyz_repo_2022,
-  author       = {{SIMZERO}},
-  title = {{cfd.xyz}},
-  howpublished = {\url{https://github.com/simzero-oss/cfd-xyz}},
-  addendum = "(accessed: 28.04.2022)",
+  author={{SIMZERO}},
+  title={{cfd.xyz}},
+  howpublished={\url{https://github.com/simzero-oss/cfd-xyz-viewer}},
+  addendum="(accessed: 28.04.2022)",
 }
 ```
 
 - Specific version with DOI. Example for v1.0.0-rc.8:
 ```
 @software{cfd_xyz_v1.0.0-rc.8,
-  author       = {Carlos Peña-Monferrer and
-                  Carmen Díaz-Marín},
-  title        = {simzero-oss/cfd-xyz},
-  month        = mar,
-  year         = 2022,
-  publisher    = {Zenodo},
-  version      = {v1.0.0-rc.8},
-  doi          = {10.5281/zenodo.6365615},
-  url          = {https://doi.org/10.5281/zenodo.6365615}
+  author={{SIMZERO}},
+  title={simzero-oss/cfd-xyz},
+  month={mar},
+  year={2022},
+  publisher={Zenodo},
+  version={v1.0.0-rc.8},
+  doi={10.5281/zenodo.6365615},
+  url={https://doi.org/10.5281/zenodo.6365615}
 }
 ```
 
