@@ -172,7 +172,9 @@ function Steady() {
       renderer.addActor(scalarBarActor);
       renderer.addActor(actor);
 
-      const newU = reduced.reconstruct();
+      reduced.reconstruct();
+      const newU = reduced.geometry();
+
       var nCells = polydata.getNumberOfPoints();
       polydata.getPointData().setActiveScalars("uRec");
 
@@ -597,7 +599,8 @@ function Steady() {
       const { polydata, reduced, lookupTable, renderWindow, mapper } = context.current;
       reduced.nu(viscosityValue*1e-05);
       reduced.solveOnline(velocityValue, 0.0);
-      const newU = reduced.reconstruct();
+      reduced.reconstruct();
+      const newU = reduced.geometry();
       polydata.getPointData().removeArray('uRec');
       var nCells = polydata.getNumberOfPoints();
       const array = vtkDataArray.newInstance({
@@ -667,10 +670,10 @@ function Steady() {
                 and confirm.
               </div>
               <div className={classes.bodyText} style={{paddingTop: 6}}>
-                - For a try-out: download, extract, and drag one of the
-                folders (pitzDaily, bump2D, ...) of this
+                - For a try-out: download, extract, and drag one of the 
+                ZIP files (pitzDaily.zip, bump2D.zip, ...) of this
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.12.tar.gz?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.13.tar.gz?raw=true'}
                 >
                   {' sample'}
                 </a>.
