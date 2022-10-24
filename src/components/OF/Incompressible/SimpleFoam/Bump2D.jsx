@@ -8,26 +8,31 @@ import ROMView  from './../../ROMView';
 const surrogatesPath = '/surrogates';
 
 // - Define case custom data
-const stabilization = "supremizer";
+const threeDimensions = false;
+const stabilization = "PPE";
 const initialZoomPortrait = 20.0;
 const initialZoomLandscape = 145.0;
 const offsetY = -2.4;
+const dynamicTemperature = true;
 const initialTemperature = 20;
 const minTemperature = -50;
 const maxTemperature = 50;
 const stepTemperature = 5.0;
+const dynamicVelocity = true;
 const initialVelocity = 5.0;
 const minVelocity = 5.0;
 const maxVelocity = 70.0;
 const stepVelocity = 2.0;
-const MB=19.6;
-const codeLink = "/src/components/OF/Incompressible/SimpleFoam/Bump2D.jsx";
+const dynamicAngle = false;
+const initialAngle = 0.0;
+const viewerLink = "/src/components/OF/Incompressible/SimpleFoam/Bump2D.jsx";
+const ROMLink = "examples/OpenFOAM/incompressible/simpleFoam/bump2D";
 //
 
 function Bump2D() {
   const casePath = window.location.pathname
   const caseName = casePath.split("/").pop();
-  const rootPath = surrogatesPath + casePath + "/"
+  const path = surrogatesPath + casePath
 
   useEffect(() => {
     document.title = casePath;
@@ -36,22 +41,27 @@ function Bump2D() {
   return (
     <div style={{ paddingBottom: 80}}>
       <ROMView
+        threeDimensions={threeDimensions}
         caseName={caseName}
-        rootPath={rootPath}
-        MB={MB}
-        codeLink={codeLink}
+        path={path}
+        ROMLink={ROMLink}
+        viewerLink={viewerLink}
         stabilization={stabilization}
         initialZoomPortrait={initialZoomPortrait}
         initialZoomLandscape={initialZoomLandscape}
         offsetY={offsetY}
+        dynamicTemperature={dynamicTemperature}
         initialTemperature={initialTemperature}
         minTemperature={minTemperature}
         maxTemperature={maxTemperature}
         stepTemperature={stepTemperature}
+        dynamicVelocity={dynamicVelocity}
         initialVelocity={initialVelocity}
         minVelocity={minVelocity}
         maxVelocity={maxVelocity}
         stepVelocity={stepVelocity}
+        dynamicAngle={dynamicAngle}
+        initialAngle={initialAngle}
       />
     </div>
   );

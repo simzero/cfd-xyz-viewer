@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import GenericView  from './../../GenericView';
 
 // - Define case custom data
-const MB=1.0;
 const initialPlanesCoords = [0, 0, 0.005]
 const dataPath = "/simulations/OF/incompressible/simpleFoam/mixerVessel2D/";
 const vtpPath = dataPath + "body.vtp";
@@ -30,7 +29,6 @@ function MixerVessel2D() {
         vtpPath={vtpPath}
         vtpVariable={vtpVariable}
         vtpTitle={vtpTitle}
-        MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
         codeLink={codeLink}

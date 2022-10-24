@@ -1,39 +1,61 @@
 import { useEffect } from 'react';
+import ROMView  from './../../ROMView';
 
-import GenericView  from './../../GenericView';
+const surrogatesPath = '/surrogates';
 
 // - Define case custom data
-const MB=31.3;
-const initialPlanesCoords = [120.0, 90.0, 30]
-const dataPath = "/simulations/OF/incompressible/simpleFoam/windAroundBuildings/";
-const vtpPath = dataPath + "body.vtp";
-const vtuPath = dataPath + "internal.vtu";
-const vtpVariable = "p";
-const vtuVariable = "U";
-const vtpTitle = "Pressure (m2/s2)";
-const vtuTitle = "Velocity magnitude (m/s)";
-const step = 5.0;
-const codeLink = 'src/components/OF/Incompressible/SimpleFoam/WindAroundBuildings.jsx';
+const threeDimensions = true;
+const initialPlanesCoords = [300.0, 150.0, 28.0];
+const stepPlanes = 1.0;
+const stabilization = "PPE";
+const initialZoomPortrait = 0.55;
+const initialZoomLandscape = 1.15;
+const offsetY = 10.0;
+const dynamicTemperature = false;
+const initialTemperature = 66.029869;
+const dynamicVelocity = false;
+const initialVelocity = 10.0;
+const dynamicAngle = true;
+const initialAngle = 0.0;
+const minAngle = -40.0;
+const maxAngle = 40.0;
+const stepAngle = 2.0;
+const viewerLink = "/src/components/OF/Incompressible/SimpleFoam/WindAroundBuildings.jsx";
+const ROMLink = "examples/OpenFOAM/incompressible/simpleFoam/windAroundBuildings";
 //
 
 function WindAroundBuildings() {
+  const casePath = window.location.pathname
+  const caseName = casePath.split("/").pop();
+  const path = surrogatesPath + casePath
+
   useEffect(() => {
     document.title = "cfd.xyz | OF/incompressible/simpleFoam/windAroundBuildings"
   }, []);
 
   return (
     <div style={{ paddingBottom: 50}}>
-      <GenericView
-        vtuPath={vtuPath}
-        vtuVariable={vtuVariable}
-        vtuTitle={vtuTitle}
-        vtpPath={vtpPath}
-        vtpVariable={vtpVariable}
-        vtpTitle={vtpTitle}
-        MB={MB}
+      <ROMView
+        threeDimensions={threeDimensions}
         initialPlanesCoords={initialPlanesCoords}
-        step={step}
-        codeLink={codeLink}
+        stepPlanes={stepPlanes}
+        caseName={caseName}
+        path={path}
+        ROMLink={ROMLink}
+        viewerLink={viewerLink}
+        stabilization={stabilization}
+        initialZoomPortrait={initialZoomPortrait}
+        initialZoomLandscape={initialZoomLandscape}
+        offsetY={offsetY}
+        dynamicTemperature={dynamicTemperature}
+        initialTemperature={initialTemperature}
+        dynamicVelocity={dynamicVelocity}
+        initialVelocity={initialVelocity}
+        dynamicAngle={dynamicAngle}
+        initialAngle={initialAngle}
+        minAngle={minAngle}
+        maxAngle={maxAngle}
+        stepAngle={stepAngle}
       />
     </div>
   );

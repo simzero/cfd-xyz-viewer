@@ -43,6 +43,19 @@ const posts = [
  },
 
  {
+  title: "windAroundBuildings",
+  link: "/OF/incompressible/simpleFoam/windAroundBuildings",
+  key: "8",
+  ready: true,
+  surrogate: true,
+  image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
+  description: `Wind around building.
+                \nVisualization of data from an OpenFOAM simulation.
+                \nModel with ROM will be soon available.
+               `
+ },
+
+ {
   title: "airFoil2D",
   link: "/OF/incompressible/simpleFoam/airFoil2D",
   key: "2",
@@ -89,20 +102,8 @@ const posts = [
                 \nVisualization of data from an OpenFOAM simulation.
                 \nModel with ROM will be soon available.
                `
- },
-
- {
-  title: "windAroundBuildings",
-  link: "/OF/incompressible/simpleFoam/windAroundBuildings",
-  key: "8",
-  ready: true,
-  surrogate: false,
-  image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
-  description: `Wind around building.
-                \nVisualization of data from an OpenFOAM simulation.
-                \nModel with ROM will be soon available.
-               `
  }
+
 ]
 
 export default posts;

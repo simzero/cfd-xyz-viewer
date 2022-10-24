@@ -6,6 +6,8 @@ const backgroundColor1 = '#f4f4f4'
 const backgroundColor2 = '#151515'
 const color1 = '#E2E2E2'
 const color2 = '#363537'
+const color1Alpha = 'rgba(226, 226, 226, 0.8)'
+const color2Alpha = 'rgba(54, 53, 55, 0.8)'
 
 const backgroundColorImage1 = '#5F9EA0'
 const backgroundColorImageDisabled1 = '#325354'
@@ -136,7 +138,10 @@ export const lightTheme = {
     height: '35px'
   },
   viewButtonsPressed: {
-    backgroundColor: color1
+    backgroundColor: color1Alpha,
+    '&:hover': {
+      cursor: 'pointer'
+    }
   },
   textField: {
     [`& fieldset`]: {
@@ -189,15 +194,18 @@ export const lightTheme = {
     minHeight: '100vh'
   },
   slider: {
-    '& .MuiSlider-valueLabel': {
-      fontFamily: globalFont,
-      fontSize: 12,
-    },
     '& .MuiSlider-thumb': {
-      color: color2
+      color: color2,
+      '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+        boxShadow: 'inherit',
+      },
+      '&:before': {
+        display: 'none',
+      },
     },
     '& .MuiSlider-track': {
-      color: color2
+      color: color2,
+      border: 'none'
     },
     '& .MuiSlider-rail': {
       color: backgroundColor2
@@ -432,7 +440,10 @@ export const darkTheme = {
     height: '35px'
   },
   viewButtonsPressed: {
-    backgroundColor: color2
+    backgroundColor: color2Alpha,
+    '&:hover': {
+      cursor: 'pointer'
+    }
   },
   textField: {
     [`& fieldset`]: {

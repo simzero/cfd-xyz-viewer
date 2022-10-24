@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 
 import GenericView  from './../../GenericView';
 
+const simulationsPath = '/simulations';
+
 // - Define case custom data
-const MB=31.5;
 const initialPlanesCoords = [582135, 4785805, 960]
 const dataPath = "/simulations/OF/incompressible/simpleFoam/turbineSiting/";
 const vtpPath = dataPath + "body.vtp";
@@ -17,6 +18,10 @@ const codeLink = 'src/components/OF/Incompressible/SimpleFoam/TurbineSiting.jsx'
 //
 
 function TurbineSiting() {
+  const casePath = window.location.pathname
+  const caseName = casePath.split("/").pop();
+  const path = simulationsPath + casePath
+
   useEffect(() => {
     document.title = "/OF/incompressible/simpleFoam/turbineSiting"
   }, []);
@@ -24,13 +29,13 @@ function TurbineSiting() {
   return (
     <div style={{ paddingBottom: 50}}>
       <GenericView
+        path={path}
         vtuPath={vtuPath}
         vtuVariable={vtuVariable}
         vtuTitle={vtuTitle}
         vtpPath={vtpPath}
         vtpVariable={vtpVariable}
         vtpTitle={vtpTitle}
-        MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
         codeLink={codeLink}

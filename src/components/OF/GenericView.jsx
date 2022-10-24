@@ -34,6 +34,9 @@ import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransf
 import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import vtkOutlineFilter from '@kitware/vtk.js/Filters/General/OutlineFilter';
 
+import jszip from 'jszip'
+import JSZipUtils from 'jszip-utils'
+
 // TODO: Re-write after completed generalization.
 
 const { ColorMode } = vtkMapper;
@@ -46,6 +49,7 @@ const messages = [
 
 const GenericView = ({
     files,
+    path,
     vtuPath,
     vtuVariable,
     vtuTitle,
@@ -356,7 +360,7 @@ const GenericView = ({
     }
   }
 
-  function setScene(portrait, VTK, reader, context, vtkContainerRef, theme) {
+  function setScene(vtpData, portrait, VTK, context, vtkContainerRef, theme) {
     let polydata;
     let dataRange;
 
@@ -445,14 +449,12 @@ const GenericView = ({
     const bounds = polydataOutline.getBounds();
     setBoundsTest(bounds);
 
-
     const outline = vtkOutlineFilter.newInstance();
 
     outline.setInputData(polydataOutline);
 
     const mapperOutline = vtkMapper.newInstance();
     mapperOutline.setInputConnection(outline.getOutputPort());
-    //mapper_outline.setInputData(polydata_outline);
     const actorOutline = vtkActor.newInstance();
     actorOutline.setMapper(mapperOutline);
     actorOutline.getProperty().set({ lineWidth: 2 });
@@ -460,6 +462,8 @@ const GenericView = ({
     renderer.addActor(actorOutline);
 
     if (!files) {
+      const reader = vtkXMLPolyDataReader.newInstance();
+      reader.parseAsArrayBuffer(vtpData);
       polydata = reader.getOutputData(0);
       polydata.getPointData().setActiveScalars(vtpVariable);
       const activeArray = polydata.getPointData().getArray(vtpVariable);
@@ -572,7 +576,6 @@ const GenericView = ({
       actorPlaneZ,
       focalPoint,
       cameraPosition,
-      reader,
       fullScreenRenderer,
       renderWindow,
       renderer,
@@ -617,7 +620,10 @@ const GenericView = ({
     if (!context.current) {
       await rom.ready;
       const VTK = new rom.VTK();
-      context.current = { VTK };
+      const zipContent = await JSZipUtils.getBinaryContent(path + ".zip");
+      const zipFiles = await jszip.loadAsync(zipContent);
+      console.log("initialize: ", zipFiles)
+      context.current = { VTK, zipFiles };
       setIsReady(true);
     }
   }
@@ -721,16 +727,13 @@ const GenericView = ({
   useEffect(() => {
     if (context.current && ready) {
       (async () => {
-        const { VTK } = context.current;
-        if (!files) {
-          const data = await fetch(vtuPath);
-          const response = await data.text();
-          await VTK.readUnstructuredGrid(response);
-        }
-        else {
-          const grid_file = files.find(item => item.file.name.match(".*.vtu"));
-          const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
-          await VTK.readUnstructuredGrid(atob(grid_data));
+        const { VTK, zipFiles } = context.current;
+
+        const grid_item = zipFiles.files['internal.vtu'];
+        const grid_data = Buffer.from(await grid_item.async('arraybuffer'));
+        await VTK.readUnstructuredGrid(grid_data);
+
+        if (files) {
           setShowPlanes(true);
           setShowPlaneX(true);
           setShowPlaneY(true);
@@ -743,38 +746,42 @@ const GenericView = ({
   }, [ready]);
 
   useEffect(() => {
-    if (dataLoaded) {
-      //async () => {
-      const { VTK } = context.current;
-      const reader = vtkXMLPolyDataReader.newInstance();
-      if (!files) {
-        reader
-          .setUrl(vtpPath, {loadData: true } )
-          .then(() => {
-            setScene(
-              initialPortrait,
-              VTK,
-              reader,
-              context,
-              vtkContainerRef,
-              localTheme
-            );
-            setSceneLoaded(true);
-          });
-      }
-      else {
-        setScene(
-          initialPortrait,
-          VTK,
-          reader,
-          context,
-          vtkContainerRef,
-          localTheme
-        );
-        setSceneLoaded(true);
-      }
+    if (context.current && dataLoaded && ready) {
+      (async () => {
+        console.log("LLLLLL")
+        const { VTK, zipFiles } = context.current;
+
+        const reader = vtkXMLPolyDataReader.newInstance();
+        const vtpItem = zipFiles.files['body.vtp'];
+        console.log("vtpItem: ", vtpItem)
+        const vtpData = Buffer.from(await vtpItem.async('arraybuffer'));
+
+        if (!files) {
+          setScene(
+            vtpData,
+            initialPortrait,
+            VTK,
+            context,
+            vtkContainerRef,
+            localTheme
+          );
+          setSceneLoaded(true);
+        }
+        else {
+          setScene(
+            vtpData,
+            initialPortrait,
+            VTK,
+            context,
+            vtkContainerRef,
+            localTheme
+          );
+          setSceneLoaded(true);
+        }
+      })();
     }
-  }, [dataLoaded]);
+  // scene();
+  }, [dataLoaded, ready]);
 
   useEffect(() => {
     initialize();
@@ -858,7 +865,6 @@ const GenericView = ({
   // - Color new slices
   useEffect(() => {
     if (context.current) {
-     //var start = new Date().getTime();	    
      const {
        planeX,
        planeY,
@@ -929,8 +935,6 @@ const GenericView = ({
      lookupTablePlaneY.updateRange();
      lookupTablePlaneZ.updateRange();
      renderWindow.render();
-     //var end = new Date().getTime();
-     //var time = end - start;
     }
   }, [modifiedPlaneX, modifiedPlaneY, modifiedPlaneZ]);
 

@@ -32,6 +32,8 @@ import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
 import debounce from "lodash/debounce";
 import { lightTheme, darkTheme } from './../../theme';
 import rom from '@simzero/rom'
+import jszip from 'jszip'
+import JSZipUtils from 'jszip-utils'
 import Papa from 'papaparse'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
@@ -158,9 +160,7 @@ function Steady() {
         fontStyle: 'normal',
         fontFamily: theme.vtkText.fontFamily
       };
-      const grid_file = files.find(item => item.file.name.match(".*.vtu"));
-      const grid_data = grid_file.data.replace('data:application/octet-stream;base64,', '')
-      reduced.readUnstructuredGrid(atob(grid_data));
+
       reduced.nu(nuIni*1e-05);
       reduced.solveOnline(UIni, 0.0);
       const polydata_string = reduced.unstructuredGridToPolyData();
@@ -255,23 +255,12 @@ function Steady() {
     }
   }, [dataLoaded]);
 
-  const validFiles = [
-    'B_mat.txt',
-    'K_mat.txt',
-    'M_mat.txt',
-    'P_mat.txt',
-    'EigenModes_U_mat.txt',
-    'coeffL2_mat.txt',
-    'par.txt'
-  ];
-
   const patterns = [
-    'C.*_mat.txt|ct1_.*_mat.txt|ct2_.*_mat.txt|wRBF_.*_mat.txt|.*.vtu'
+    '.*.zip'
   ];
 
-  function checkFile(item) {
-    return validFiles.includes(item.file.name) ||
-      item.file.name.match(patterns);
+  function checkZip(item) {
+    return item.file.name.match(patterns);
   }
 
   function checkAll(names) {
@@ -302,11 +291,11 @@ function Steady() {
     return [vecVec, rows, cols];
   }
 
-  const readFile = async (filePath) => {
+  const readFile = async (buffer) => {
+    const csvData = buffer.toString();
+
     return new Promise(resolve => {
-      fetch(filePath).then(res => res.text())
-      .then((data) => {
-        Papa.parse(data, {
+        Papa.parse(csvData, {
           download: false,
           delimiter: " ",
           dynamicTyping: true,
@@ -316,12 +305,13 @@ function Steady() {
             resolve(results.data);
           }
         })
-      })
     })
   };
 
-  const loadData = async (dataPath) => {
-    const data = await readFile(dataPath)
+  const loadData = async (zipFiles, filename) => {
+    const item = zipFiles.files[filename]
+    const buffer = Buffer.from(await item.async('arraybuffer'))
+    const data = await readFile(buffer)
     const vector = dataToVector(data);
 
     return vector;
@@ -349,11 +339,6 @@ function Steady() {
     };
   }, []);
 
-  function getData(name) {
-    const element = files.find((item) => item.file.name === name)
-    return element.data;
-  }
-
   const confirmed = async() => {
     setNuMin(nuMin*1e05);
     setNuMax(nuMax*1e05);
@@ -361,24 +346,20 @@ function Steady() {
     {
       const UMid = Number(UMin) + 0.5*(Number(UMax) - Number(UMin));
       setUIni(UMid);
-      //setVelocityValue(UMid);
     }
     else
     {
       setUIni(UMin);
-      //setVelocityValue(UMin);      
     }
 
     if (! nuFixed)
     {
       const nuMid = Number(nuMin) + 0.5*(Number(nuMax) - Number(nuMin));
       setNuIni(nuMid*1e05);
-      //setViscosityValue(nuMid*1e05);
     }
     else
     {
       setNuIni(Number(nuMin*1e05));
-      //setViscosityValue(nuMin*1e05);      
     }
 
     let loadedNames = []
@@ -386,20 +367,23 @@ function Steady() {
       loadedNames.push(item.file.name)
     )
 
-    const isTurbulent = loadedNames.includes("coeffL2_mat.txt")
+    const zipContent = await JSZipUtils.getBinaryContent(files[0].data);
+    const zipFiles = await jszip.loadAsync(zipContent);
+    const zipKeys = Object.keys(zipFiles.files);
+
+    const isTurbulent = zipKeys.includes("coeffL2_mat.txt")
 
     checkAll(loadedNames);
     setConfirmed(true);
 
     await rom.ready
 
-    const P = await loadData(getData("P_mat.txt"));
-    const K = await loadData(getData("K_mat.txt"));
-    const B = await loadData(getData("B_mat.txt"));
+    const K = await loadData(zipFiles, "K_mat.txt");
+    const B = await loadData(zipFiles, "B_mat.txt");
 
-    const modes = await loadData(getData('EigenModes_U_mat.txt'));
-    const coeffL2 = await loadData(getData('coeffL2_mat.txt'));
-    const mu = await loadData(getData('par.txt'));
+    const modes = await loadData(zipFiles, 'EigenModes_U_mat.txt');
+    const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
+    const mu = await loadData(zipFiles, 'par.txt');
 
     const Nphi_u = B[1];
     const Nphi_p = K[2];
@@ -407,11 +391,33 @@ function Steady() {
 
     const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
 
-    reduced.stabilization("supremizer");
+    let stabilization = 'supremizer';
+
+    if (zipKeys.includes("D_mat.txt")) {
+      stabilization = 'PPE';
+    }
+
+    reduced.stabilization(stabilization);
     reduced.Nphi_u(Nphi_u);
     reduced.Nphi_p(Nphi_p);
     reduced.N_BC(N_BC);
-    reduced.addMatrices(P[0], K[0], B[0]);
+
+
+      if (stabilization === "supremizer") {
+        const P = await loadData(zipFiles, 'P_mat.txt');
+        reduced.addMatrices(P[0], K[0], B[0]);
+      }
+      else if (stabilization === "PPE") {
+        const D = await loadData(zipFiles, 'D_mat.txt');
+        const BC3 = await loadData(zipFiles, 'BC3_mat.txt');
+
+        reduced.addBC3Matrix(BC3[0]);
+        reduced.addMatrices(D[0], K[0], B[0]);
+      }
+      else {
+        // TODO: check
+      }
+
     reduced.addModes(modes[0]);
 
     let Nphi_nut = 0;
@@ -421,15 +427,26 @@ function Steady() {
         indexes.push(i);
       }
 
-
       await Promise.all(indexes.map(async (index) => {
         const CPath = 'C' + index + "_mat.txt"
-        const C = await loadData(getData(CPath));
+        const C = await loadData(zipFiles, CPath);
         reduced.addCMatrix(C[0], index);
       }));
 
+        if (stabilization === "PPE") {
+          let indexesP = []
+        for (var j = 0; j < Nphi_p; j ++ ) {
+          indexesP.push(j);
+        }
+          await Promise.all(indexesP.map(async (index) => {
+            const GPath = 'G' + index + "_mat.txt"
+            const G = await loadData(zipFiles, GPath);
+            reduced.addGMatrix(G[0], index);
+          }));
+        }
+
       if (isTurbulent) {
-        const coeffL2 = await loadData(getData('coeffL2_mat.txt'));
+        const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
         Nphi_nut = coeffL2[1];
         reduced.Nphi_nut(Nphi_nut);
 
@@ -441,22 +458,27 @@ function Steady() {
         await Promise.all(indexes.map(async (index) => {
           const C1Path = 'ct1_' + index + "_mat.txt"
           const C2Path = 'ct2_' + index + "_mat.txt"
-          const C1 = await loadData(getData(C1Path));
-          const C2 = await loadData(getData(C2Path));
+          const C1 = await loadData(zipFiles, C1Path);
+          const C2 = await loadData(zipFiles, C2Path);
           reduced.addCt1Matrix(C1[0], index);
           reduced.addCt2Matrix(C2[0], index);
         }));
 
         await Promise.all(indexesNut.map(async (indexNut) => {
           const weightPath = 'wRBF_' + indexNut + '_mat.txt';
-          const weight = await loadData(getData(weightPath));
+          const weight = await loadData(zipFiles, weightPath);
           reduced.addWeight(weight[0], indexNut);
         }));
       }
 
       reduced.preprocess();
       reduced.setRBF(mu[0], coeffL2[0]);
-      //reduced.nu(nuMin*1e-05);
+
+      const grid_item = zipFiles.files['internal.vtu'];
+      const grid_data = Buffer.from(await grid_item.async('arraybuffer'));
+      await reduced.readUnstructuredGrid(grid_data);
+
+
       context.current = { reduced };
       setDataLoaded(true);
     })();
@@ -601,15 +623,13 @@ function Steady() {
     }
   }, [viscosityValue, velocityValue]);
 
-  const handleAdd = newFiles => {
+  const handleAdd = async newFiles => {
     setDisabled(true);
-    newFiles = newFiles.filter(checkFile);
+    newFiles = newFiles.filter(checkZip);
     newFiles = newFiles.filter(file => !files.find(f => f.data === file.data));
     setFiles([...files, ...newFiles]);
     setDisabled(false);
   };
-
-
 
   const handleDelete = deleted => {
     setFiles(files.filter(f => f !== deleted));
@@ -618,7 +638,6 @@ function Steady() {
   const handleFile = loadedFiles => {
     // console.log("loadedFiles: ", files)
   };
-
 
   return (
     <div className={classes.root}>
@@ -979,7 +998,7 @@ function Steady() {
               { ! nuFixed &&
                 <div>
                   <div className={classes.vtkText}>
-                    Kinematic viscosity (m2/s)
+                    Kinematic viscosity (m2/s) x1e-05
                   </div>
                 </div>
               }
