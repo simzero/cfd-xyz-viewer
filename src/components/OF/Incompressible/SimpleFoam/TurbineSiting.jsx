@@ -7,8 +7,6 @@ const simulationsPath = '/simulations';
 // - Define case custom data
 const initialPlanesCoords = [582135, 4785805, 960]
 const dataPath = "/simulations/OF/incompressible/simpleFoam/turbineSiting/";
-const vtpPath = dataPath + "body.vtp";
-const vtuPath = dataPath + "internal.vtu";
 const vtpVariable = "p";
 const vtuVariable = "U";
 const vtpTitle = "Pressure (m2/s2)";
@@ -30,10 +28,8 @@ function TurbineSiting() {
     <div style={{ paddingBottom: 50}}>
       <GenericView
         path={path}
-        vtuPath={vtuPath}
         vtuVariable={vtuVariable}
         vtuTitle={vtuTitle}
-        vtpPath={vtpPath}
         vtpVariable={vtpVariable}
         vtpTitle={vtpTitle}
         initialPlanesCoords={initialPlanesCoords}

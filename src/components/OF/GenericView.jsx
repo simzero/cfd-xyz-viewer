@@ -50,10 +50,8 @@ const messages = [
 const GenericView = ({
     files,
     path,
-    vtuPath,
     vtuVariable,
     vtuTitle,
-    vtpPath,
     vtpVariable,
     vtpTitle,
     MB,
@@ -622,7 +620,6 @@ const GenericView = ({
       const VTK = new rom.VTK();
       const zipContent = await JSZipUtils.getBinaryContent(path + ".zip");
       const zipFiles = await jszip.loadAsync(zipContent);
-      console.log("initialize: ", zipFiles)
       context.current = { VTK, zipFiles };
       setIsReady(true);
     }
@@ -748,12 +745,10 @@ const GenericView = ({
   useEffect(() => {
     if (context.current && dataLoaded && ready) {
       (async () => {
-        console.log("LLLLLL")
         const { VTK, zipFiles } = context.current;
 
         const reader = vtkXMLPolyDataReader.newInstance();
         const vtpItem = zipFiles.files['body.vtp'];
-        console.log("vtpItem: ", vtpItem)
         const vtpData = Buffer.from(await vtpItem.async('arraybuffer'));
 
         if (!files) {
