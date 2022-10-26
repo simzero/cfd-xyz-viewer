@@ -387,11 +387,11 @@ function Steady() {
     const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
     const mu = await loadData(zipFiles, 'par.txt');
 
-    const Nphi_u = B[1];
-    const Nphi_p = K[2];
-    const N_BC = 2;
+    const nPhiU = B[1];
+    const nPhiP = K[2];
+    const nBC = 2;
 
-    const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
+    const reduced = new rom.reducedSteady(nPhiU + nPhiP, nPhiU + nPhiP);
 
     let stabilization = 'supremizer';
 
@@ -400,9 +400,9 @@ function Steady() {
     }
 
     reduced.stabilization(stabilization);
-    reduced.Nphi_u(Nphi_u);
-    reduced.Nphi_p(Nphi_p);
-    reduced.N_BC(N_BC);
+    reduced.nPhiU(nPhiU);
+    reduced.nPhiP(nPhiP);
+    reduced.nBC(nBC);
 
 
       if (stabilization === "supremizer") {
@@ -422,10 +422,10 @@ function Steady() {
 
     reduced.addModes(modes[0]);
 
-    let Nphi_nut = 0;
+    let nPhiNut = 0;
     (async () => {
       let indexes = []
-      for (var i = 0; i < Nphi_u; i++ ) {
+      for (var i = 0; i < nPhiU; i++ ) {
         indexes.push(i);
       }
 
@@ -437,7 +437,7 @@ function Steady() {
 
         if (stabilization === "PPE") {
           let indexesP = []
-        for (var j = 0; j < Nphi_p; j ++ ) {
+        for (var j = 0; j < nPhiP; j ++ ) {
           indexesP.push(j);
         }
           await Promise.all(indexesP.map(async (index) => {
@@ -449,11 +449,11 @@ function Steady() {
 
       if (isTurbulent) {
         const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
-        Nphi_nut = coeffL2[1];
-        reduced.Nphi_nut(Nphi_nut);
+        nPhiNut = coeffL2[1];
+        reduced.nPhiNut(nPhiNut);
 
         let indexesNut = []
-        for (var j = 0; j < Nphi_nut; j ++ ) {
+        for (var j = 0; j < nPhiNut; j ++ ) {
           indexesNut.push(j);
         }
 
@@ -670,10 +670,10 @@ function Steady() {
                 and confirm.
               </div>
               <div className={classes.bodyText} style={{paddingTop: 6}}>
-                - For a try-out: download, extract, and drag one of the 
-                ZIP files (pitzDaily.zip, bump2D.zip, ...) of this
+                - For a try-out: download and drag the following
+                ZIP
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.13.tar.gz?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.13/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
                 >
                   {' sample'}
                 </a>.

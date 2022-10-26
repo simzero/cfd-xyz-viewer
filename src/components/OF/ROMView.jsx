@@ -281,18 +281,18 @@ const ROMView = ({
       const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
       const mu = await loadData(zipFiles, 'par.txt');
 
-      const Nphi_u = B[1];
-      const Nphi_p = K[2];
-      const Nphi_nut = coeffL2[1];
-      const N_BC = 2;
+      const nPhiU = B[1];
+      const nPhiP = K[2];
+      const nPhiNut = coeffL2[1];
+      const nBC = 2;
 
-      const reduced = new rom.reducedSteady(Nphi_u + Nphi_p, Nphi_u + Nphi_p);
+      const reduced = new rom.reducedSteady(nPhiU + nPhiP, nPhiU + nPhiP);
 
       reduced.stabilization(stabilization);
-      reduced.Nphi_u(Nphi_u);
-      reduced.Nphi_p(Nphi_p);
-      reduced.Nphi_nut(Nphi_nut);
-      reduced.N_BC(N_BC);
+      reduced.nPhiU(nPhiU);
+      reduced.nPhiP(nPhiP);
+      reduced.nPhiNut(nPhiNut);
+      reduced.nBC(nBC);
 
       setProcess(40);
 
@@ -315,20 +315,20 @@ const ROMView = ({
       setProcess(50);
 
       (async () => {
-        reduced.Nphi_nut(Nphi_nut);
+        reduced.nPhiNut(nPhiNut);
 
         let indexesU = []
-        for (let j = 0; j < Nphi_u; j ++ ) {
+        for (let j = 0; j < nPhiU; j ++ ) {
           indexesU.push(j);
         }
 
         let indexesNut = []
-        for (let j = 0; j < Nphi_nut; j ++ ) {
+        for (let j = 0; j < nPhiNut; j ++ ) {
           indexesNut.push(j);
 	}
 
         let indexesP = []
-        for (let j = 0; j < Nphi_p; j ++ ) {
+        for (let j = 0; j < nPhiP; j ++ ) {
           indexesP.push(j);
 	}
 
@@ -1647,15 +1647,17 @@ const ROMView = ({
                 }}
                 className={showPlanes ? classes.viewButtonsPressed : null}
               >
-                <Box
-                  className={classes.link}
-                  sx={{ height: '34px', width: '34px' }}
-                  onClick={handleSetShowPlanes}
-                >
-                  <LayersIcon
-                    style={{width: '32px', height: '32px'}}
-                  />
-                </Box>
+                <Tooltip title="Show planes" enterDelay={1000} leaveDelay={200} arrow>
+                  <Box
+                    className={classes.link}
+                    sx={{ height: '34px', width: '34px' }}
+                    onClick={handleSetShowPlanes}
+                  >
+                    <LayersIcon
+                      style={{width: '32px', height: '32px'}}
+                    />
+                  </Box>
+                </Tooltip>
               </div>
           }
         </div>
