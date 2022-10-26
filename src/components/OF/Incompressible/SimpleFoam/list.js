@@ -13,10 +13,10 @@ const posts = [
   description: `Turbulent free shear layer forming a rearward-facing step.
                 \nData:
                   - P = 101325 Pa
-                  - ti_{inlet} = 5%
                   - T = [-100, 1000] °C
                   - U_{inlet} = [1,20] m/s
                   - Turb. model = kEpsilon
+                  - I_{inlet} = 5%
                 \nDocs:
                   - https://ntrs.nasa.gov/citations/19810023603
                `
@@ -39,6 +39,24 @@ const posts = [
                   - omega = 5220.8 s-1
                 \nDocs:
                   - https://turbmodels.larc.nasa.gov/bump.html
+               `
+ },
+
+ {
+  title: "windAroundBuildings",
+  link: "/OF/incompressible/simpleFoam/windAroundBuildings",
+  key: "8",
+  ready: true,
+  surrogate: true,
+  image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
+  description: `Wind around buildings..
+                \nData:
+                  - P = 101325 Pa
+                  - v = 1.5e-05 m2/s
+                  - U_{inlet} = 10 m/s
+                  - Uα_{inlet} = [-40,40] °
+                  - Turb. model = kEpsilon
+                  - I_{inlet} = 10%
                `
  },
 
@@ -89,20 +107,8 @@ const posts = [
                 \nVisualization of data from an OpenFOAM simulation.
                 \nModel with ROM will be soon available.
                `
- },
-
- {
-  title: "windAroundBuildings",
-  link: "/OF/incompressible/simpleFoam/windAroundBuildings",
-  key: "8",
-  ready: true,
-  surrogate: false,
-  image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
-  description: `Wind around building.
-                \nVisualization of data from an OpenFOAM simulation.
-                \nModel with ROM will be soon available.
-               `
  }
+
 ]
 
 export default posts;

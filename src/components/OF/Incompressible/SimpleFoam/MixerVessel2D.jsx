@@ -2,12 +2,11 @@ import { useEffect } from 'react';
 
 import GenericView  from './../../GenericView';
 
+const simulationsPath = '/simulations';
+
 // - Define case custom data
-const MB=1.0;
 const initialPlanesCoords = [0, 0, 0.005]
 const dataPath = "/simulations/OF/incompressible/simpleFoam/mixerVessel2D/";
-const vtpPath = dataPath + "body.vtp";
-const vtuPath = dataPath + "internal.vtu";
 const vtpVariable = "p";
 const vtuVariable = "U";
 const vtpTitle = "Pressure (m2/s2)";
@@ -17,6 +16,10 @@ const codeLink = 'src/components/OF/Incompressible/SimpleFoam/MixerVessel2D.jsx'
 //
 
 function MixerVessel2D() {
+  const casePath = window.location.pathname;
+  const caseName = casePath.split("/").pop();
+  const path = simulationsPath + casePath;
+
   useEffect(() => {
     document.title = "cfd.xyz | OF/incompressible/simpleFoam/mixerVessel2D"
   }, []);
@@ -24,13 +27,11 @@ function MixerVessel2D() {
   return (
     <div style={{ paddingBottom: 50}}>
       <GenericView
-        vtuPath={vtuPath}
+        path={path}
         vtuVariable={vtuVariable}
         vtuTitle={vtuTitle}
-        vtpPath={vtpPath}
         vtpVariable={vtpVariable}
         vtpTitle={vtpTitle}
-        MB={MB}
         initialPlanesCoords={initialPlanesCoords}
         step={step}
         codeLink={codeLink}
