@@ -14,6 +14,8 @@ import { lightTheme, darkTheme } from './../theme';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
 import SwipeIcon from '@mui/icons-material/Swipe';
+import FiberNewIcon from '@mui/icons-material/FiberNew';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import {isMobile} from 'react-device-detect';
 import Box from '@mui/material/Box';
 import { createTheme } from '@mui/material/styles';
@@ -23,7 +25,8 @@ import placeholder from './placeholder.png'
 
 const ShowCards = ({post}) => {
   const localTheme = window.localStorage.getItem('theme') || "light"
-  let theme = localTheme === 'light' ? lightTheme : darkTheme;
+  const theme = localTheme === 'light' ? lightTheme : darkTheme;
+  const newColor = localTheme === 'light' ? 'red' : 'white';
   const useStyles = makeStyles(theme);
   const classes = useStyles();
   const mainPrimaryColor = theme.palette.primary1Color;
@@ -71,16 +74,38 @@ const ShowCards = ({post}) => {
                 src={post.image + '.png'}
               />
           }
-          {post.surrogate &&
+          {post.surrogate === true &&
             <div>
-              <FontAwesomeIcon
+                <FontAwesomeIcon
+                  style={{
+                    position: 'absolute', left: isMobile ? '10%' : '8%', top: isMobile ? '12%' : '8%',
+                    transform: 'translate(-100%, -50%)'
+                  }}
+                  className={classes.cardIcon}
+                  icon={solid('database')}
+                  title={"Available surrogate model"}
+                />
+              </div>
+	  }
+          {post.surrogate === false &&
+            <div title={"Pending surrogate model"}>
+                <PendingActionsIcon
+                  style={{
+                    position: 'absolute', left: isMobile ? '10%' : '8%', top: isMobile ? '12%' : '8%',
+                    transform: 'translate(-100%, -50%)'
+                  }}
+                  className={classes.cardIcon}
+                />
+              </div>
+          }
+          {post.new &&
+            <div title={"New model!"}>
+              <FiberNewIcon
                 style={{
-                  position: 'absolute', left: isMobile ? '10%' : '8%', top: isMobile ? '12%' : '8%',
-                  transform: 'translate(-100%, -50%)'
+                  position: 'absolute', left: isMobile ? '24%' : '18%', top: isMobile ? '12%' : '8%',
+                  transform: 'translate(-100%, -50%)', color: newColor, fontSize: 34
                 }}
                 className={classes.cardIcon}
-                icon={solid('database')}
-                title={"Surrogate model available"}
               />
             </div>
           }
@@ -121,7 +146,7 @@ const ShowCards = ({post}) => {
                   <FontAwesomeIcon
                     className={classes.cardIcon}
                     icon={solid('triangle-exclamation')}
-                    title="On the backlog..."
+                    title="With issues"
                   />
                 }
               </div>

@@ -9,7 +9,6 @@ const posts = [
   image: "/images/OF/incompressible/incompressible",
   key: "1",
   ready: true,
-  surrogate: false,
   description: "Incompressible flow tutorials for different solvers."
  },
 
@@ -19,7 +18,6 @@ const posts = [
   image: "/images/OF/compressible/compressible",
   key: "2",
   ready: false,
-  surrogate: false,
   description: " "
  },
 
@@ -29,7 +27,6 @@ const posts = [
   image: "/images/OF/multiphase/multiphase",
   key: "3",
   ready: false,
-  surrogate: false,
   description: " "
  },
 
@@ -39,7 +36,6 @@ const posts = [
   image: "/images/OF/heatTransfer/heatTransfer",
   key: "4",
   ready: false,
-  surrogate: false,
   description: " "
  },
 
@@ -49,7 +45,6 @@ const posts = [
   image: "/images/OF/lagrangian/lagrangian",
   key: "5",
   ready: false,
-  surrogate: false,
   description: " "
  },
 
@@ -59,7 +54,6 @@ const posts = [
   image: "/images/OF/combustion/combustion",
   key: "6",
   ready: false,
-  surrogate: false,
   description: " "
  },
 ]

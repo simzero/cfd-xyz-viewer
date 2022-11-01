@@ -9,6 +9,7 @@ const posts = [
   key: "1",
   ready: true,
   surrogate: true,
+  new: false,
   image: "/images/OF/incompressible/simpleFoam/pitzDaily/pitzDaily",
   description: `Turbulent free shear layer forming a rearward-facing step.
                 \nData:
@@ -28,6 +29,7 @@ const posts = [
   key: "3",
   ready: true,
   surrogate: true,
+  new: false,
   image: "/images/OF/incompressible/simpleFoam/bump2D/bump2D",
   description: `Turbulent air flow in a channel with a bump (wall curvature).
                 \nData:
@@ -48,6 +50,7 @@ const posts = [
   key: "8",
   ready: true,
   surrogate: true,
+  new: true,
   image: "/images/OF/incompressible/simpleFoam/windAroundBuildings/windAroundBuildings",
   description: `Wind around buildings..
                 \nData:
@@ -66,6 +69,7 @@ const posts = [
   key: "2",
   ready: false,
   surrogate: false,
+  new: false,
   image: "/images/OF/incompressible/simpleFoam/airFoil2D/airFoil2D",
   description: "Tutorial for a . \n\nData:\n  -P = 101325 Pa \n -T = [-100, 1000] °C \n -U_{inlet} = [1,100] m/s \n -Turb. model = SpalartAllmaras"
  },
@@ -89,6 +93,7 @@ const posts = [
   key: "6",
   ready: true,
   surrogate: false,
+  new: false,
   image: "/images/OF/incompressible/simpleFoam/motorBike/motorBike",
   description: `Flow around a motorbike.
                 \nVisualization of data from an OpenFOAM simulation.
@@ -102,6 +107,7 @@ const posts = [
   key: "7",
   ready: true,
   surrogate: false,
+  new: false,
   image: "/images/OF/incompressible/simpleFoam/turbineSiting/turbineSiting",
   description: `Flow around a turbine siting.
                 \nVisualization of data from an OpenFOAM simulation.
