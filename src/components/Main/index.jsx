@@ -2,7 +2,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-import { React, useEffect } from "react";
+import { useEffect } from "react";
 import Grid from '@mui/material/Grid'
 import ShowCards  from './ShowCards';
 import { makeStyles } from "@mui/styles";
