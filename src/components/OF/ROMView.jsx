@@ -123,7 +123,7 @@ const ROMView = ({
   const [planeXValue, setPlaneXValue] = useState(initialPlanesCoords[0]);
   const [planeYValue, setPlaneYValue] = useState(initialPlanesCoords[1]);
   const [planeZValue, setPlaneZValue] = useState(initialPlanesCoords[2]);
-  const [boundsTest, setBoundsTest] = useState([0, 0, 0, 0, 0, 0]);
+  const [bounds, setBounds] = useState([0, 0, 0, 0, 0, 0]);
   const [workerDone, setWorkerDone] = useState(false);
   const [showU, setShowU] = useState(true);
   const [showPlanes, setShowPlanes] = useState(false);
@@ -485,13 +485,14 @@ const ROMView = ({
 
     let readerOutline = vtkXMLPolyDataReader.newInstance();
     let polydataStringOutline = reduced.current.unstructuredGridToPolyData();
-    // TODO: parse directly as buffer or parse as a string...
-    // const bufOutline = Buffer.from(polydataStringOutline, 'utf-8');
     readerOutline.parseAsArrayBuffer(Buffer.from(polydataStringOutline, 'utf-8'));
     polydataStringOutline = [];
     let polydataOutline = readerOutline.getOutputData(0);
-    let bounds = polydataOutline.getBounds();
-    setBoundsTest(bounds);
+    let polydataBounds = polydataOutline.getBounds();
+    console.log("bounds: ", polydataBounds);
+    polydataBounds = polydataBounds.map(bound => Math.round(bound * 1e2)/1e2);
+    console.log("bounds: ", polydataBounds);
+    setBounds(polydataBounds);
 
     let outline = vtkOutlineFilter.newInstance();
     outline.setInputData(polydataOutline);
@@ -1903,8 +1904,8 @@ const ROMView = ({
                     defaultValue={planeXValue}
                     onChange={handlePlaneXChange}
                     step={stepPlanes}
-                    min={boundsTest[0]}
-                    max={boundsTest[1]}
+                    min={bounds[0]}
+                    max={bounds[1]}
                     valueLabelDisplay="off"
                   />
                 </Box>
@@ -1983,8 +1984,8 @@ const ROMView = ({
                     defaultValue={planeYValue}
                     onChange={handlePlaneYChange}
                     step={stepPlanes}
-                    min={boundsTest[2]}
-                    max={boundsTest[3]}
+                    min={bounds[2]}
+                    max={bounds[3]}
                     valueLabelDisplay='off'
                   />
                 </Box>
@@ -2069,8 +2070,8 @@ const ROMView = ({
                     defaultValue={planeZValue}
                     onChange={handlePlaneZChange}
                     step={stepPlanes}
-                    min={boundsTest[4]}
-                    max={boundsTest[5]}
+                    min={bounds[4]}
+                    max={bounds[5]}
                     valueLabelDisplay='off'
                   />
                 </Box>
