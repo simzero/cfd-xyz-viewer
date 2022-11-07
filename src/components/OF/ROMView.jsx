@@ -964,7 +964,6 @@ const ROMView = ({
             // rom.doLeakCheck();
             worker.current.removeEventListener('message', initialize);
             setIsReady(true);
-            reduced.current.test();
             setZipFiles(null);
             break;
           case 'constructor':
@@ -983,69 +982,46 @@ const ROMView = ({
 
             break;
           case 'matrices':
-            let B = reduced.current.B();
-            let K = reduced.current.K();
-
-            B.set(e.data.B);
-            K.set(e.data.K);
+            reduced.current.B().set(e.data.B);
+            reduced.current.K().set(e.data.K);
 
             if (stabilization === 'supremizer') {
-              let P = reduced.current.P();
-
-              P.set(e.data.P);
+              reduced.current.P().set(e.data.P);
             }
             else if (stabilization === 'PPE') {
-              let BC3 = reduced.current.BC3();
-              let D = reduced.current.D();
-
-              BC3.set(e.data.BC3);
-              D.set(e.data.D);
+              reduced.current.BC3().set(e.data.BC3);
+              reduced.current.D().set(e.data.D);
             }
             else {
               // TODO: check
             }
             break;
           case 'modes':
-            let modes = reduced.current.modes();
-
-            modes.set(e.data.modes);
+            reduced.current.modes().set(e.data.modes);
             break;
           case 'Ct1':
-            let Ct1 = reduced.current.Ct1();
-
-            Ct1.set(e.data.Ct1);
+            reduced.current.Ct1().set(e.data.Ct1);
             reduced.current.addCt1Matrix();
             break;
           case 'Ct2':
-            let Ct2 = reduced.current.Ct2();
-
-            Ct2.set(e.data.Ct2);
+            reduced.current.Ct2().set(e.data.Ct2);
             reduced.current.addCt2Matrix();
             break;
           case 'weights':
-            let weights = reduced.current.weights();
-
-            weights.set(e.data.weights);
+            reduced.current.weights().set(e.data.weights);
             reduced.current.addWeights();
             break;
           case 'C':
-            let C = reduced.current.C();
-
-            C.set(e.data.C);
+            reduced.current.C().set(e.data.C);
             reduced.current.addCMatrix();
             break;
           case 'G':
-            let G = reduced.current.G();
-
-            G.set(e.data.G);
+            reduced.current.G().set(e.data.G);
             reduced.current.addGMatrix();
             break;
           case 'RBF':
-            let mu = reduced.current.mu();
-            let coeffL2 = reduced.current.coeffL2();
-
-            mu.set(e.data.mu);
-            coeffL2.set(e.data.coeffL2);
+            reduced.current.mu().set(e.data.mu);
+            reduced.current.coeffL2().set(e.data.coeffL2);
             reduced.current.setRBF();
             break;
           case 'grid':
