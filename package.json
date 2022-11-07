@@ -21,7 +21,7 @@
     "@mui/icons-material": "5.10.6",
     "@mui/material": "5.10.7",
     "@mui/styles": "5.10.7",
-    "@simzero/rom": "1.0.0-rc.13",
+    "@simzero/rom": "1.0.0-rc.14",
     "ajv": "8.11.0",
     "arraybuffer-loader": "1.0.8",
     "babel-loader": "8.2.5",
