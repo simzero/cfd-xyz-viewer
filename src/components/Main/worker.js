@@ -2,6 +2,12 @@ import {Buffer} from 'buffer';
 import Papa from 'papaparse'
 import jszip from 'jszip'
 
+const transpose = (matrix) => {
+  const transposed = matrix[0].map((col, i) => matrix.map(row => row[i]));
+
+  const buffer = Float64Array.from(transposed.flat());
+  return buffer;
+}
 
 const loadData = async (zipFiles, filename) => {
   const item = zipFiles.files[filename];
@@ -31,53 +37,92 @@ onmessage = (e) => {
   let stabilization = e.data[1];
   let threeDimensions = e.data[2];
 
-  postMessage({type: "process", percent: 0});
+  postMessage({event: "process", percent: 0});
   
   (async () => {
     let zipFiles = await jszip.loadAsync(zipContent);
     zipContent = [];
     let zipKeys = Object.keys(zipFiles.files);
 
-    postMessage({type: "process", percent: 10});
+    postMessage({event: "process", percent: 10});
 
-    let B = await loadData(zipFiles, 'B_mat.txt');
-    let K = await loadData(zipFiles, 'K_mat.txt');
-    let coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
-    let mu = await loadData(zipFiles, 'par.txt');
-    let nPhiU = B.length;
-    let nPhiP = K[0].length;
-    let nPhiNut = coeffL2.length;
+    let BData = await loadData(zipFiles, 'B_mat.txt');
+    let KData = await loadData(zipFiles, 'K_mat.txt');
+    let coeffL2Data = await loadData(zipFiles, 'coeffL2_mat.txt');
 
-    postMessage({type: "constructor", nPhiU: nPhiU, nPhiP: nPhiP, nPhiNut});
-    postMessage({type: "process", percent: 15});
+    let BTransposed = transpose(BData);
+    let KTransposed = transpose(KData);
+
+    let nPhiU = BData.length;
+    let nPhiP = KData[0].length;
+    let nPhiNut = coeffL2Data.length;
+    let nRuns = coeffL2Data[0].length;
+
+    postMessage({event: "constructor", nPhiU: nPhiU, nPhiP: nPhiP, nPhiNut, nRuns: nRuns});
+    postMessage({event: "process", percent: 20});
+
+    {
+      let gridItem = zipFiles.files['internal.vtu'];
+      let gridData = Buffer.from(await gridItem.async('arraybuffer'));
+
+      postMessage(
+        {
+          event: "grid",
+          grid: gridData
+        },
+        [
+          gridData.buffer
+        ]
+      );
+      postMessage({event: "process", percent: 40});
+    }
 
     if (stabilization === "supremizer") {
-      let P = await loadData(zipFiles, 'P_mat.txt');
+      let PData = await loadData(zipFiles, 'P_mat.txt');
+      let PTransposed = transpose(PData);
 
-      postMessage({type: "matrices", P: P, K: K, B: B});
-      P = [];
+      postMessage(
+        {
+          event: "matrices",
+          P: PTransposed,
+          K: KTransposed,
+          B: BTransposed
+        },
+        [
+          PTransposed.buffer,
+          KTransposed.buffer,
+          BTransposed.buffer
+        ]
+      );
     }
     else if (stabilization === "PPE") {
-      let D = await loadData(zipFiles, 'D_mat.txt');
-      let BC3 = await loadData(zipFiles, 'BC3_mat.txt');
-    
-      postMessage({type: "matrices", D: D, K: K, B: B, BC3: BC3});
-      D = [];
-      BC3 = [];
+      let DData = await loadData(zipFiles, 'D_mat.txt');
+      let BC3Data = await loadData(zipFiles, 'BC3_mat.txt');
+
+      let DTransposed = transpose(DData);
+      let BC3Transposed = transpose(BC3Data);
+
+      postMessage(
+        {
+          event: "matrices",
+          D: DTransposed,
+          K: KTransposed,
+          B: BTransposed,
+          BC3: BC3Transposed
+        },
+        [
+          DTransposed.buffer,
+          KTransposed.buffer,
+          BTransposed.buffer,
+          BC3Transposed.buffer,
+        ]
+      );
     }
     else {
       // TODO: check
     }
 
-    K = [];
-    B = [];
-
-    postMessage({type: "process", percent: 20});
-
-    let modes = await loadData(zipFiles, 'EigenModes_U_mat.txt');
-    postMessage({type: "modes", modes: modes});
-    postMessage({type: "process", percent: 30});
-    modes = [];
+    postMessage({event: "process", percent: 45});
 
     let indexesU = []
     for (let j = 0; j < nPhiU; j ++ ) {
@@ -94,93 +139,161 @@ onmessage = (e) => {
       indexesP.push(j);
     }
 
-    let Ct1Array = [];
-    await Promise.all(indexesU.map(async (index) => {
-      let C1Path = 'ct1_' + index + "_mat.txt";
-      let C1 = await loadData(zipFiles, C1Path);
-      
-      Ct1Array.push(C1);
-    }));
-    postMessage({type: "Ct1", Ct1: Ct1Array});
-    postMessage({type: "process", percent: 35});
-    Ct1Array = [];
+    {
+      await Promise.all(indexesU.map(async (index) => {
+        let Ct1Path = 'ct1_' + index + "_mat.txt";
+        let Ct1Data = await loadData(zipFiles, Ct1Path);
+        let Ct1Transposed = transpose(Ct1Data);
 
-    let Ct2Array = [];
-    await Promise.all(indexesU.map(async (index) => {
-      let C2Path = 'ct2_' + index + "_mat.txt";
-      let C2 = await loadData(zipFiles, C2Path);
+        postMessage(
+          {
+            event: "Ct1",
+            Ct1: Ct1Transposed
+          },
+          [
+            Ct1Transposed.buffer
+          ]
+        );
+      }));
+      postMessage({event: "process", percent: 50});
+    }
 
-      Ct2Array.push(C2);
-    }));
-    postMessage({type: "Ct2", Ct2: Ct2Array});
-    postMessage({type: "process", percent: 40});
-    Ct2Array = [];
+    {
+      await Promise.all(indexesU.map(async (index) => {
+        let Ct2Path = 'ct2_' + index + "_mat.txt";
+        let Ct2Data = await loadData(zipFiles, Ct2Path);
+        let Ct2Transposed = transpose(Ct2Data);
 
-    let weightArray = [];
-    await Promise.all(indexesNut.map(async (indexNut) => {
-      let weightPath = 'wRBF_' + indexNut + '_mat.txt';
-      let weight = await loadData(zipFiles, weightPath);
+        postMessage(
+          {
+            event: "Ct2",
+            Ct2: Ct2Transposed
+          },
+          [
+            Ct2Transposed.buffer
+          ]
+        );
+      }));
+      postMessage({event: "process", percent: 55});
+    }
 
-      weightArray.push(weight);
-    }));
-    postMessage({type: "weights", weights: weightArray});
-    postMessage({type: "process", percent: 50});
-    weightArray = [];
+    {
+      await Promise.all(indexesNut.map(async (indexNut) => {
+        let weightsPath = 'wRBF_' + indexNut + '_mat.txt';
+        let weightsData = await loadData(zipFiles, weightsPath);
+        let weightsTransposed = transpose(weightsData);
 
+        postMessage(
+          {
+            event: "weights",
+            index: indexNut,
+            weights: weightsTransposed
+          },
+          [
+            weightsTransposed.buffer
+          ]
+        );
+      }));
+      postMessage({event: "process", percent: 60});
+    }
 
-    let CArray = [];
-    await Promise.all(indexesU.map(async (index) => {
-      let CPath = 'C' + index + "_mat.txt"
-      let C = await loadData(zipFiles, CPath);
+    {
+      await Promise.all(indexesU.map(async (index) => {
+        let CPath = 'C' + index + "_mat.txt"
+        let CData = await loadData(zipFiles, CPath);
+        let CTransposed = transpose(CData);
 
-      CArray.push(C);
-    }));
-    postMessage({type: "C", C: CArray});
-    postMessage({type: "process", percent: 60});
-    CArray = [];
+        postMessage(
+          {
+            event: "C",
+	    C: CTransposed
+          },
+          [
+            CTransposed.buffer
+          ]
+        );
+      }));
+      postMessage({event: "process", percent: 65});
+    }
 
     if (stabilization === "PPE") {
-      let GArray = [];
+      {
+        await Promise.all(indexesP.map(async (index) => {
+          let GPath = 'G' + index + "_mat.txt"
+          let GData = await loadData(zipFiles, GPath);
+          let GTransposed = transpose(GData);
 
-      await Promise.all(indexesP.map(async (index) => {
-        let GPath = 'G' + index + "_mat.txt"
-        let G = await loadData(zipFiles, GPath);
-
-        GArray.push(G);
-      }));
-
-      postMessage({type: "GMatrix", G: GArray });
-      postMessage({type: "process", percent: 65});
-      GArray = [];
+          postMessage(
+            {
+              event: "G",
+              G: GTransposed
+            },
+            [
+              GTransposed.buffer
+            ]
+          );
+        }));
+        postMessage({event: "process", percent: 70});
+      }
     }
-        
-    let gridItem = zipFiles.files['internal.vtu'];
-    let gridData = Buffer.from(await gridItem.async('arraybuffer'));
 
-    postMessage({type: "grid", grid: gridData });
-    postMessage({type: "process", percent: 70});
-    gridItem = [];
-    gridData = [];
+    {
+      let muData = await loadData(zipFiles, 'par.txt');
+      let muTransposed = transpose(muData);
+      let coeffL2Transposed = transpose(coeffL2Data);
 
-    postMessage({type: "RBF", mu: mu, coeffL2: coeffL2});
-    postMessage({type: "process", percent: 75});
-    mu = [];
-    coeffL2 = [];
-
-    let vtpFile = zipKeys.filter((x) => [".vtp"].some(e => x.endsWith(e)));
-
-    if (vtpFile != null && threeDimensions) {
-      let vtpItem = zipFiles.files[vtpFile[0]];
-      let vtpData = Buffer.from(await vtpItem.async('arraybuffer'));
-          
-      postMessage({type: "vtp", vtp: vtpData});
-      postMessage({type: "process", percent: 80});  
-      vtpFile = [];
-      vtpData = [];
+      postMessage(
+        {
+          event: "RBF",
+          mu: muTransposed,
+          coeffL2: coeffL2Transposed
+        },
+        [
+          muTransposed.buffer,
+          coeffL2Transposed.buffer
+        ]
+      );
+      postMessage({event: "process", percent: 75});
     }
-        
-    postMessage({type: "process", percent: 90});  
-    postMessage({type: "initialization", data: true});
+
+    {
+      let modesData = await loadData(zipFiles, 'EigenModes_U_mat.txt');
+      let modesTransposed = transpose(modesData);
+
+      postMessage(
+        {
+          event: "modes",
+          modes: modesTransposed
+        },
+        [
+          modesTransposed.buffer
+        ]
+      );
+      postMessage({event: "process", percent: 90});
+    }
+
+    {
+      let vtpFile = zipKeys.filter((x) => [".vtp"].some(e => x.endsWith(e)));
+
+      if (vtpFile != null && threeDimensions) {
+        let vtpItem = zipFiles.files[vtpFile[0]];
+        let vtpData = Buffer.from(await vtpItem.async('arraybuffer'));
+
+        postMessage(
+          {
+            event: "vtp",
+            vtp: vtpData
+          },
+          [
+            vtpData.buffer
+          ]
+        );
+        postMessage({event: "process", percent: 95});
+      }
+    }
+
     zipFiles = [];
+    postMessage({event: "process", percent: 100});
+    postMessage({event: "initialization", data: true});
   })();
 }
