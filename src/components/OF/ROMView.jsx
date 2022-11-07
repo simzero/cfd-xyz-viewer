@@ -66,20 +66,6 @@ const temperatureToViscosity = (T) => {
   return a0+a1*T+a2*Math.pow(T,2);
 }
 
-const dataToVector = (data) => {
-  let vecVec = new rom.VectorVector();
-  data.forEach(row => {
-    let vec = new rom.Vector();
-    row.forEach(value => {
-      vec.push_back(value);
-    });
-    vecVec.push_back(vec);
-    vec.delete();
-  });
-
-  return vecVec;
-}
-
 const ROMView = ({
     caseName,
     path,
@@ -231,12 +217,11 @@ const ROMView = ({
     })
   };
 
-  const downloadZipFiles = useCallback( async (path) => {
+  const downloadZipFiles = async (path) => {
     if (!context.current) {
       setZipFiles(await downloadZip(path + '.zip'));
     }
-//  }
-  }, [])
+  };
 
   const resetCamera = () => {
     if (context.current) {
@@ -621,8 +606,7 @@ const ROMView = ({
       mapper.setInputData(polydataVtp);
       actor.setMapper(mapper);
       renderer.addActor(actor);
-      setVtpData(true);
-      actor.delete();
+      setVtpData(null);
     }
 
     renderer.resetCamera();
@@ -972,13 +956,15 @@ const ROMView = ({
   useEffect(() => {
     if (!context.current && ROMReady && dataDownloaded && !ready) {
       const initialize = (e) => {
-        switch (e.data.type) {
+        switch (e.data.event) {
           case 'process':
             setProcess(e.data.percent);
             break;
           case 'initialization':
+            // rom.doLeakCheck();
             worker.current.removeEventListener('message', initialize);
             setIsReady(true);
+            reduced.current.test();
             setZipFiles(null);
             break;
           case 'constructor':
@@ -987,91 +973,91 @@ const ROMView = ({
                 e.data.nPhiU + e.data.nPhiP,
                 e.data.nPhiU + e.data.nPhiP
               );
+
             reduced.current.stabilization(stabilization);
             reduced.current.nPhiU(e.data.nPhiU);
             reduced.current.nPhiP(e.data.nPhiP);
             reduced.current.nPhiNut(e.data.nPhiNut);
+            reduced.current.nRuns(e.data.nRuns);
             reduced.current.nBC(2);
+
             break;
           case 'matrices':
-            let K = dataToVector(e.data.K);
-            let B = dataToVector(e.data.B);
+            let B = reduced.current.B();
+            let K = reduced.current.K();
+
+            B.set(e.data.B);
+            K.set(e.data.K);
+
             if (stabilization === 'supremizer') {
-              let P = dataToVector(e.data.P);
-              reduced.current.addMatrices(P, K, B);
-              P.delete();
+              let P = reduced.current.P();
+
+              P.set(e.data.P);
             }
             else if (stabilization === 'PPE') {
-              let BC3 = dataToVector(e.data.BC3);
-              let D = dataToVector(e.data.D);
-              reduced.current.addBC3Matrix(BC3);
-              reduced.current.addMatrices(D, K, B);
-              D.delete();
-              BC3.delete();
+              let BC3 = reduced.current.BC3();
+              let D = reduced.current.D();
+
+              BC3.set(e.data.BC3);
+              D.set(e.data.D);
             }
             else {
               // TODO: check
             }
-            K.delete();
-            B.delete();
             break;
-          case 'modes': {
-            let modes = dataToVector(e.data.modes);
-            reduced.current.addModes(modes);
-            modes.delete();
+          case 'modes':
+            let modes = reduced.current.modes();
+
+            modes.set(e.data.modes);
             break;
-	  }
           case 'Ct1':
-            e.data.Ct1.forEach( function(item, index) {
-              let V = dataToVector(item);
-              reduced.current.addCt1Matrix(V, index);
-              V.delete();
-            });
+            let Ct1 = reduced.current.Ct1();
+
+            Ct1.set(e.data.Ct1);
+            reduced.current.addCt1Matrix();
             break;
           case 'Ct2':
-            e.data.Ct2.forEach( function(item, index) {
-              let V = dataToVector(item);
-              reduced.current.addCt2Matrix(V, index);
-              V.delete();
-            });
+            let Ct2 = reduced.current.Ct2();
+
+            Ct2.set(e.data.Ct2);
+            reduced.current.addCt2Matrix();
             break;
           case 'weights':
-            e.data.weights.forEach( function(item, index) {
-              let V = dataToVector(item);
-              reduced.current.addWeight(V, index);
-              V.delete();
-            });
+            let weights = reduced.current.weights();
+
+            weights.set(e.data.weights);
+            reduced.current.addWeights();
             break;
           case 'C':
-            e.data.C.forEach( function(item, index) {
-              let V = dataToVector(item);
-              reduced.current.addCMatrix(V, index);
-              V.delete();
-            });
+            let C = reduced.current.C();
+
+            C.set(e.data.C);
+            reduced.current.addCMatrix();
             break;
-          case 'GMatrix':
-            e.data.G.forEach( function(item, index) {
-              let V = dataToVector(item);
-              reduced.current.addGMatrix(V, index);
-              V.delete();
-            });
+          case 'G':
+            let G = reduced.current.G();
+
+            G.set(e.data.G);
+            reduced.current.addGMatrix();
             break;
           case 'RBF':
-            let mu = dataToVector(e.data.mu);
-            let coeffL2 = dataToVector(e.data.coeffL2);
-            reduced.current.setRBF(mu, coeffL2);
-            mu.delete();
-            coeffL2.delete();
+            let mu = reduced.current.mu();
+            let coeffL2 = reduced.current.coeffL2();
+
+            mu.set(e.data.mu);
+            coeffL2.set(e.data.coeffL2);
+            reduced.current.setRBF();
             break;
           case 'grid':
             reduced.current.readUnstructuredGrid(e.data.grid);
-            reduced.current.preprocess();
+            reduced.current.initialize();
             break;
           case 'vtp':
             setVtpData(e.data.vtp);
             break;
           default:
-            console.log('Wrong worker type: ', e.data.type);
+            console.log('Wrong worker type: ', e.data.event);
+
             break;
         }
       }
@@ -1227,14 +1213,14 @@ const ROMView = ({
           mapperPlaneZ,
           mapper } = context.current;
 
-        reduced.current.delete();
+        reader.delete();
+        fullScreenRenderer.delete();
+        renderWindow.delete();
+        renderer.delete();
+        scalarBarActor.delete();
         lookupTable.delete();
         mapper.delete();
-        reader.delete();
-        renderer.delete();
-        renderWindow.delete();
-        scalarBarActor.delete();
-        fullScreenRenderer.delete();
+
         if (threeDimensions) {
           planeReader.delete();
           actorPlaneX.delete();
@@ -1251,9 +1237,13 @@ const ROMView = ({
           actor.delete();
           polydata.delete();
         }
+
         context.current = null;
       }
+
       worker.current.terminate();
+      reduced.current.clear();
+      delete reduced.current;
     };
   }, []);
 
