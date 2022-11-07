@@ -310,13 +310,15 @@ function Steady() {
     })
   };
 
+
   const loadData = async (zipFiles, filename) => {
     const item = zipFiles.files[filename]
     const buffer = Buffer.from(await item.async('arraybuffer'))
-    const data = await readFile(buffer)
-    const vector = dataToVector(data);
+    const data = await readFile(buffer);
+    const transposed = data[0].map((col, i) => data.map(row => row[i]));
+    const transposedBuffer = Float64Array.from(transposed.flat());
 
-    return vector;
+    return [transposedBuffer, data.length, data[0].length];
   }
 
   useEffect(() => {
@@ -380,16 +382,20 @@ function Steady() {
 
     await rom.ready
 
-    const K = await loadData(zipFiles, "K_mat.txt");
-    const B = await loadData(zipFiles, "B_mat.txt");
-
-    const modes = await loadData(zipFiles, 'EigenModes_U_mat.txt');
-    const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
-    const mu = await loadData(zipFiles, 'par.txt');
-
-    const nPhiU = B[1];
-    const nPhiP = K[2];
     const nBC = 2;
+
+    const KData = await loadData(zipFiles, "K_mat.txt");
+    const BData = await loadData(zipFiles, "B_mat.txt");
+    const modesData = await loadData(zipFiles, 'EigenModes_U_mat.txt');
+    const coeffL2Data = await loadData(zipFiles, 'coeffL2_mat.txt');
+    const muData = await loadData(zipFiles, 'par.txt');
+    const gridItem = zipFiles.files['internal.vtu'];
+    const gridData = Buffer.from(await gridItem.async('arraybuffer'));
+
+    const nPhiU = BData[1];
+    const nPhiP = KData[2];
+    const nPhiNut = coeffL2Data[1];
+    const nRuns = coeffL2Data[2];
 
     const reduced = new rom.reducedSteady(nPhiU + nPhiP, nPhiU + nPhiP);
 
@@ -402,89 +408,97 @@ function Steady() {
     reduced.stabilization(stabilization);
     reduced.nPhiU(nPhiU);
     reduced.nPhiP(nPhiP);
+    reduced.nPhiNut(nPhiNut);
+    reduced.nRuns(nRuns);
     reduced.nBC(nBC);
 
+    reduced.readUnstructuredGrid(gridData);
+    reduced.initialize();
 
-      if (stabilization === "supremizer") {
-        const P = await loadData(zipFiles, 'P_mat.txt');
-        reduced.addMatrices(P[0], K[0], B[0]);
+    reduced.K().set(KData[0]);
+    reduced.B().set(BData[0]);
+
+    if (stabilization === "supremizer") {
+      const PData = await loadData(zipFiles, 'P_mat.txt');
+
+      reduced.P().set(PData[0]);
+    }
+    else if (stabilization === "PPE") {
+      const DData = await loadData(zipFiles, 'D_mat.txt');
+      const BC3Data = await loadData(zipFiles, 'BC3_mat.txt');
+
+      reduced.D().set(DData[0]);
+      reduced.BC3().set(BC3Data[0]);
+    }
+    else {
+      // TODO: check
+    }
+
+    reduced.modes().set(modesData[0]);
+
+    let indexes = []
+    for (var i = 0; i < nPhiU; i++ ) {
+      indexes.push(i);
+    }
+
+    await Promise.all(indexes.map(async (index) => {
+      const CPath = 'C' + index + "_mat.txt"
+      const CData = await loadData(zipFiles, CPath);
+
+      reduced.C().set(CData[0]);
+      reduced.addCMatrix();
+    }));
+
+    if (stabilization === "PPE") {
+      let indexesP = []
+      for (var j = 0; j < nPhiP; j ++ ) {
+        indexesP.push(j);
       }
-      else if (stabilization === "PPE") {
-        const D = await loadData(zipFiles, 'D_mat.txt');
-        const BC3 = await loadData(zipFiles, 'BC3_mat.txt');
 
-        reduced.addBC3Matrix(BC3[0]);
-        reduced.addMatrices(D[0], K[0], B[0]);
-      }
-      else {
-        // TODO: check
-      }
+      await Promise.all(indexesP.map(async (index) => {
+        const GPath = 'G' + index + "_mat.txt"
+        const GData = await loadData(zipFiles, GPath);
 
-    reduced.addModes(modes[0]);
+        reduced.G().set(GData[0]);
+        reduced.addGMatrix();
+      }));
+    }
 
-    let nPhiNut = 0;
-    (async () => {
-      let indexes = []
-      for (var i = 0; i < nPhiU; i++ ) {
-        indexes.push(i);
+    if (isTurbulent) {
+      // const coeffL2Data = await loadData(zipFiles, 'coeffL2_mat.txt');
+
+      let indexesNut = []
+      for (var j = 0; j < nPhiNut; j ++ ) {
+        indexesNut.push(j);
       }
 
       await Promise.all(indexes.map(async (index) => {
-        const CPath = 'C' + index + "_mat.txt"
-        const C = await loadData(zipFiles, CPath);
-        reduced.addCMatrix(C[0], index);
+        const C1Path = 'ct1_' + index + "_mat.txt"
+        const C2Path = 'ct2_' + index + "_mat.txt"
+        const C1Data = await loadData(zipFiles, C1Path);
+        const C2Data = await loadData(zipFiles, C2Path);
+
+        reduced.Ct1().set(C1Data[0]);
+        reduced.addCt1Matrix();
+        reduced.Ct2().set(C2Data[0]);
+        reduced.addCt2Matrix();
       }));
 
-        if (stabilization === "PPE") {
-          let indexesP = []
-        for (var j = 0; j < nPhiP; j ++ ) {
-          indexesP.push(j);
-        }
-          await Promise.all(indexesP.map(async (index) => {
-            const GPath = 'G' + index + "_mat.txt"
-            const G = await loadData(zipFiles, GPath);
-            reduced.addGMatrix(G[0], index);
-          }));
-        }
+      await Promise.all(indexesNut.map(async (indexNut) => {
+        const weightsPath = 'wRBF_' + indexNut + '_mat.txt';
+        const weightsData = await loadData(zipFiles, weightsPath);
 
-      if (isTurbulent) {
-        const coeffL2 = await loadData(zipFiles, 'coeffL2_mat.txt');
-        nPhiNut = coeffL2[1];
-        reduced.nPhiNut(nPhiNut);
+        reduced.weights().set(weightsData[0]);
+        reduced.addWeights();
+      }));
+    }
 
-        let indexesNut = []
-        for (var j = 0; j < nPhiNut; j ++ ) {
-          indexesNut.push(j);
-        }
+    reduced.mu().set(muData[0]);
+    reduced.coeffL2().set(coeffL2Data[0]);
+    reduced.setRBF();
 
-        await Promise.all(indexes.map(async (index) => {
-          const C1Path = 'ct1_' + index + "_mat.txt"
-          const C2Path = 'ct2_' + index + "_mat.txt"
-          const C1 = await loadData(zipFiles, C1Path);
-          const C2 = await loadData(zipFiles, C2Path);
-          reduced.addCt1Matrix(C1[0], index);
-          reduced.addCt2Matrix(C2[0], index);
-        }));
-
-        await Promise.all(indexesNut.map(async (indexNut) => {
-          const weightPath = 'wRBF_' + indexNut + '_mat.txt';
-          const weight = await loadData(zipFiles, weightPath);
-          reduced.addWeight(weight[0], indexNut);
-        }));
-      }
-
-      reduced.preprocess();
-      reduced.setRBF(mu[0], coeffL2[0]);
-
-      const grid_item = zipFiles.files['internal.vtu'];
-      const grid_data = Buffer.from(await grid_item.async('arraybuffer'));
-      await reduced.readUnstructuredGrid(grid_data);
-
-
-      context.current = { reduced };
-      setDataLoaded(true);
-    })();
-
+    context.current = { reduced };
+    setDataLoaded(true);
   }
 
   const resetCamera = () => {
@@ -673,7 +687,7 @@ function Steady() {
                 - For a try-out: download and drag the following
                 ZIP
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.13/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.14/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
                 >
                   {' sample'}
                 </a>.
