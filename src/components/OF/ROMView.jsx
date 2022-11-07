@@ -489,9 +489,7 @@ const ROMView = ({
     polydataStringOutline = [];
     let polydataOutline = readerOutline.getOutputData(0);
     let polydataBounds = polydataOutline.getBounds();
-    console.log("bounds: ", polydataBounds);
     polydataBounds = polydataBounds.map(bound => Math.round(bound * 1e2)/1e2);
-    console.log("bounds: ", polydataBounds);
     setBounds(polydataBounds);
 
     let outline = vtkOutlineFilter.newInstance();
