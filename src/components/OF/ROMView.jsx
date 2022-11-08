@@ -116,9 +116,9 @@ const ROMView = ({
   const [ROMReady, setIsROMReady] = useState(false);
   const [velocityValue, setVelocityValue] = useState([null, null]);
   const [angleValue, setAngleValue] = useState(initialAngle);
-  const [dataLoaded, setDataLoaded] = useState(null);
-  const [dataDownloaded, setDataDownloaded] = useState(null);
-  const [sceneLoaded, setSceneLoaded] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataDownloaded, setDataDownloaded] = useState(false);
+  const [sceneLoaded, setSceneLoaded] = useState(false);
   const [process, setProcess] = useState(10);
   const [planeXValue, setPlaneXValue] = useState(initialPlanesCoords[0]);
   const [planeYValue, setPlaneYValue] = useState(initialPlanesCoords[1]);
@@ -218,9 +218,8 @@ const ROMView = ({
   };
 
   const downloadZipFiles = async (path) => {
-    if (!context.current) {
-      setZipFiles(await downloadZip(path + '.zip'));
-    }
+    setZipFiles(await downloadZip(path + '.zip'));
+    setDataDownloaded(true);
   };
 
   const resetCamera = () => {
@@ -945,12 +944,11 @@ const ROMView = ({
   }, [ROMReady]);
 
   useEffect(() => {
-    if (!context.current && ROMReady && !dataDownloaded) {
+    if (!context.current && !dataDownloaded) {
       downloadZipFiles(path);
-      setDataDownloaded(true);
       setProcess(0);
     }
-  }, [ROMReady, dataDownloaded, downloadZipFiles]);
+  }, [dataDownloaded]);
 
   useEffect(() => {
     if (!context.current && ROMReady && dataDownloaded && !ready) {
