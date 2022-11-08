@@ -11,15 +11,17 @@ const transpose = (matrix) => {
 
 const loadData = async (zipFiles, filename) => {
   const item = zipFiles.files[filename];
-  const buffer = Buffer.from(await item.async('arrayBuffer')).toString('base64');
+  const buffer = Buffer.from(await item.async('arrayBuffer'));
   const data = await readFile(buffer);
 
   return data;
 }
 
 const readFile = async (buffer) => {
+  const decoder = new TextDecoder();
+  const decodedBuffer = decoder.decode(buffer);
   return new Promise(resolve => {
-    Papa.parse(atob(buffer), {
+    Papa.parse(decodedBuffer, {
       download: false,
       delimiter: " ",
       dynamicTyping: true,
