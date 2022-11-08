@@ -132,7 +132,8 @@ const ROMView = ({
   const [showPlaneZ, setShowPlaneZ] = useState(true);
   const [vtpData, setVtpData] = useState(null);
 
-  const debounceTime = (threeDimensions || isMobile) ? 500 : 1;
+  const debounceTimeVariables = (threeDimensions || isMobile) ? 500 : 1;
+  const debounceTimePlanes = isMobile ? 250 : 1;
 
   const localTheme = window.localStorage.getItem('theme') || 'light';
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
@@ -800,19 +801,8 @@ const ROMView = ({
     };
   };
 
-  const handlePlaneXChange = (event, newValue) => {
-    setPlaneXValue(newValue);
-  };
-
-  const handlePlaneYChange = (event, newValue) => {
-    setPlaneYValue(newValue);
-  };
-
-  const handlePlaneZChange = (event, newValue) => {
-    setPlaneZValue(newValue);
-  };
-
-  const update = (eventSrc, value) => {
+  const updateVariables = (eventSrc, value) => {
+    console.log(eventSrc)
     if (eventSrc === 'slider-angle') {
       let Ux = initialVelocity*xComponent(value);
       let Uy = initialVelocity*yComponent(value);
@@ -823,8 +813,20 @@ const ROMView = ({
       setVelocityValue([value, 0.0]);
     } else if (eventSrc === 'slider-temperature') {
       setTemperatureValue(value);
+    } else {
+      console.log('Slider not known');
     }
-    else {
+  };
+
+  const updatePlanes = (eventSrc, value) => {
+    console.log(eventSrc)
+    if (eventSrc === 'slider-planeX') {
+      setPlaneXValue(value);
+    } else if (eventSrc === 'slider-planeY') {
+      setPlaneYValue(value);
+    } else if (eventSrc === 'slider-planeZ') {
+      setPlaneZValue(value);
+    } else {
       console.log('Slider not known');
     }
   };
@@ -879,12 +881,23 @@ const ROMView = ({
     }
   }
 
-  const handleChange = (event, newValue) => {
-    debounceUpdate(event.target.name, newValue);
+  const handleChangeVariables = (event, newValue) => {
+    debounceUpdateVariables(event.target.name, newValue);
   };
 
-  const [debounceUpdate] = useState(() =>
-    debounce(update, debounceTime, {
+  const handleChangePlanes = (event, newValue) => {
+    debounceUpdatePlanes(event.target.name, newValue);
+  };
+
+  const [debounceUpdateVariables] = useState(() =>
+    debounce(updateVariables, debounceTimeVariables, {
+      leading: false,
+      trailing: true
+    })
+  );
+
+  const [debounceUpdatePlanes] = useState(() =>
+    debounce(updatePlanes, debounceTimePlanes, {
       leading: false,
       trailing: true
     })
@@ -1656,7 +1669,7 @@ const ROMView = ({
                       className={classes.slider}
                       name={'slider-temperature'}
                       defaultValue={temperatureValue}
-                      onChange={handleChange}
+                      onChange={handleChangeVariables}
                       step={stepTemperature}
                       min={minTemperature}
                       max={maxTemperature}
@@ -1726,7 +1739,7 @@ const ROMView = ({
                       className={classes.slider}
                       name={'slider-velocity'}
                       defaultValue={velocityValue[0]}
-                      onChange={handleChange}
+                      onChange={handleChangeVariables}
                       step={stepVelocity}
                       min={minVelocity}
                       max={maxVelocity}
@@ -1796,7 +1809,7 @@ const ROMView = ({
                       className={classes.slider}
                       name={"slider-angle"}
                       defaultValue={angleValue}
-                      onChange={handleChange}
+                      onChange={handleChangeVariables}
                       step={stepAngle}
                       min={minAngle}
                       max={maxAngle}
@@ -1898,7 +1911,7 @@ const ROMView = ({
                     className={classes.slider}
                     name={"slider-planeX"}
                     defaultValue={planeXValue}
-                    onChange={handlePlaneXChange}
+                    onChange={handleChangePlanes}
                     step={stepPlanes}
                     min={bounds[0]}
                     max={bounds[1]}
@@ -1978,7 +1991,7 @@ const ROMView = ({
                     className={classes.slider}
                     name={'slider-planeY'}
                     defaultValue={planeYValue}
-                    onChange={handlePlaneYChange}
+                    onChange={handleChangePlanes}
                     step={stepPlanes}
                     min={bounds[2]}
                     max={bounds[3]}
@@ -2064,7 +2077,7 @@ const ROMView = ({
                     className={classes.slider}
                     name={'slider-planeZ'}
                     defaultValue={planeZValue}
-                    onChange={handlePlaneZChange}
+                    onChange={handleChangePlanes}
                     step={stepPlanes}
                     min={bounds[4]}
                     max={bounds[5]}
