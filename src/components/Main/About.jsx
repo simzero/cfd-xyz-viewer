@@ -300,32 +300,14 @@ function About() {
               whiteSpace: 'pre-wrap'
             }}
           >
-	    cfd.xyz is developed and maintained by Carlos Peña-Monferrer
+	    cfd.xyz is developed and maintained by
             <a
               target='_blank'
               rel='noreferrer'
-              href='https://orcid.org/0000-0003-3271-6399'
+              href='https://www.simzero.com'
             >
-              <img
-                alt='ORCID logo'
-                src='https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png'
-                width="16"
-                height="16"
-              />
-            </a>
-              {' in collaboration with Carmen Diaz-Marin'}
-            <a
-              target='_blank'
-              rel='noreferrer'
-              href='https://orcid.org/0000-0002-8924-9544'
-            >
-              <img
-                alt='ORCID logo'
-                src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png"
-                width="16"
-                height="16"
-              />
-            </a>.
+              {' SIMZERO®'}
+            </a>. 
             Please feel free to contact us by email (info@simzero.com) or
             joining the
             <a
