@@ -687,7 +687,7 @@ function Steady() {
                 - For a try-out: download and drag the following
                 ZIP
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0-rc.14/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
                 >
                   {' sample'}
                 </a>.

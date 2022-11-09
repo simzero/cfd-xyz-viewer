@@ -4,8 +4,8 @@
 
 SHELL := /bin/bash
 
-cfd-xyz-version := v1.0.0-rc.11
-surrogates-version := v1.0.0-rc.14
+cfd-xyz-version := v1.0.0
+surrogates-version := v1.0.0
 cfd-xyz-image := ghcr.io/simzero-oss/cfd-xyz:$(cfd-xyz-version)
 cfd-xyz := docker run --publish 5000:3000 --user node -it --entrypoint "" -w /work -v ${PWD}:/work $(cfd-xyz-image)
 surrogates-data := surrogates_$(surrogates-version)
