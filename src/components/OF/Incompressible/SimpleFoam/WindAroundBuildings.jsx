@@ -5,6 +5,7 @@ const surrogatesPath = '/surrogates';
 
 // - Define case custom data
 const threeDimensions = true;
+const initialStreamsCoords = [-20.0, 42.0, 12.0];
 const initialPlanesCoords = [300.0, 150.0, 28.0];
 const stepPlanes = 1.0;
 const stabilization = "PPE";
@@ -37,6 +38,7 @@ function WindAroundBuildings() {
     <div style={{ paddingBottom: 50}}>
       <ROMView
         threeDimensions={threeDimensions}
+        initialStreamsCoords={initialStreamsCoords}
         initialPlanesCoords={initialPlanesCoords}
         stepPlanes={stepPlanes}
         caseName={caseName}
