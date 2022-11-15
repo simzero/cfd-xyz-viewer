@@ -12,15 +12,16 @@ import { makeStyles } from '@mui/styles';
 import {Buffer} from 'buffer';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
-import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
 import vtkColorMaps from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction/ColorMaps';
 import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
-import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
+import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkOutlineFilter from '@kitware/vtk.js/Filters/General/OutlineFilter';
+import vtkSphereSource from '@kitware/vtk.js/Filters/Sources/SphereSource';
+import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
+import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
 
 import debounce from 'lodash/debounce';
 import { lightTheme, darkTheme } from './../theme';
@@ -405,10 +406,12 @@ const ROMView = ({
     let scalarBarActor = vtkScalarBarActor.newInstance();
     let lookupTable = vtkColorTransferFunction.newInstance();
     let planeReader = vtkXMLPolyDataReader.newInstance();
+    let point = vtkSphereSource.newInstance();
     let actorPlaneX = vtkActor.newInstance();
     let actorPlaneY = vtkActor.newInstance();
     let actorPlaneZ = vtkActor.newInstance();
     let actorStreams = vtkActor.newInstance();
+    let actorPoint = vtkActor.newInstance();
     let mapperPlaneX = vtkMapper.newInstance({
       interpolateScalarsBeforeMapping: true,
       colorByArrayName: 'uRec',
@@ -441,6 +444,7 @@ const ROMView = ({
       useLookupTableScalarRange: true,
       lookupTable,
     });
+    let mapperPoint = vtkMapper.newInstance();
 
     mapperPlaneX.setScalarModeToUsePointFieldData();
     mapperPlaneY.setScalarModeToUsePointFieldData();
@@ -525,6 +529,9 @@ const ROMView = ({
     actorOutline.getProperty().set({ lineWidth: 2 });
     actorOutline.getProperty().setColor(textColorLoader);
 
+    point.setCenter(streamsXValue, streamsYValue, streamsZValue);
+    point.setRadius(sphereRadius*0.17);
+
     let polydataStreams = reduced.current.streams(
       streamsXValue,
       streamsYValue,
@@ -555,18 +562,25 @@ const ROMView = ({
     actorPlaneX.setMapper(mapperPlaneX);
     actorPlaneY.setMapper(mapperPlaneY);
     actorPlaneZ.setMapper(mapperPlaneZ);
+    actorPoint.setMapper(mapperPoint);
     mapperStreams.setInputData(streams);
     mapperPlaneX.setInputData(planeX);
     mapperPlaneY.setInputData(planeY);
     mapperPlaneZ.setInputData(planeZ);
+    mapperPoint.setInputConnection(point.getOutputPort());
+
 
     actorStreams.setVisibility(false);
+    actorPoint.setVisibility(false);
+    actorPoint.getProperty().setColor(1.0, 0.0, 1.0);
+
     renderer.addActor(actorStreams);
     renderer.addActor(actorOutline);
     renderer.addActor(scalarBarActor);
     renderer.addActor(actorPlaneX);
     renderer.addActor(actorPlaneY);
     renderer.addActor(actorPlaneZ);
+    renderer.addActor(actorPoint);
 
     streams.getPointData().setActiveScalars('uRec');
     planeX.getPointData().setActiveScalars('uRec');
@@ -685,28 +699,30 @@ const ROMView = ({
     renderWindow.render();
 
     context.current = {
-      focalPoint,
-      cameraPosition,
-      reader,
-      mapper,
-      fullScreenRenderer,
-      renderWindow,
-      renderer,
-      lookupTable,
-      scalarBarActor,
-      planeReader,
-      planeX,
-      planeY,
-      planeZ,
-      streams,
       actorPlaneX,
       actorPlaneY,
       actorPlaneZ,
       actorStreams,
+      actorPoint,
+      cameraPosition,
+      focalPoint,
+      fullScreenRenderer,
+      lookupTable,
+      mapper,
       mapperPlaneX,
       mapperPlaneY,
       mapperPlaneZ,
-      mapperStreams
+      mapperStreams,
+      planeReader,
+      planeX,
+      planeY,
+      planeZ,
+      point,
+      reader,
+      renderWindow,
+      renderer,
+      scalarBarActor,
+      streams
     };
 
     setSceneLoaded(true);
@@ -837,7 +853,8 @@ const ROMView = ({
         planeReader.parseAsArrayBuffer(buf);
         streams.shallowCopy(planeReader.getOutputData(0));
         let activeArray = streams.getPointData().getArrays()[0];
-        dataRangeX = activeArray.getRange();
+        if (activeArray)
+          dataRangeX = activeArray.getRange();
       }
 
       if (doPlaneY) {
@@ -936,7 +953,12 @@ const ROMView = ({
   // - Show/hide lines
   const handleSetShowStreams = () => {
     if (context.current) {
-      let { actorPlaneX, actorPlaneY, actorPlaneZ, actorStreams } = context.current;
+      let {
+        actorPlaneX,
+        actorPlaneY,
+        actorPlaneZ,
+        actorStreams,
+        actorPoint } = context.current;
 
       if (!streamsInitialized) {
         setShowStreams(true);
@@ -950,6 +972,7 @@ const ROMView = ({
       if (!showBoxStreams) {
         setSceneMode('streams');
         actorStreams.setVisibility(showStreams);
+        actorPoint.setVisibility(showStreams);
         actorPlaneX.setVisibility(false);
         actorPlaneY.setVisibility(false);
         actorPlaneZ.setVisibility(false);
@@ -988,10 +1011,10 @@ const ROMView = ({
 
   const handleStreams = () => {
     if (context.current) {
-      let { actorStreams, renderWindow } = context.current;
+      let { actorStreams, actorPoint, renderWindow } = context.current;
       setShowStreams(!showStreams);
       actorStreams.setVisibility(!showStreams);
-      // renderWindow.modified();
+      actorPoint.setVisibility(!showStreams);
       renderWindow.render();
     }
   }
@@ -1029,6 +1052,20 @@ const ROMView = ({
   };
 
   const handleChangeStreams = (event, newValue) => {
+    if (event.target.name === 'slider-streamsX') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(newValue, streamsYValue, streamsZValue);
+      renderWindow.render();
+    } else if (event.target.name === 'slider-streamsY') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(streamsXValue, newValue, streamsZValue);
+      renderWindow.render();
+    } else if (event.target.name === 'slider-streamsZ') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(streamsXValue, streamsYValue, newValue);
+      renderWindow.render();
+    }
+
     debounceUpdateStreams(event.target.name, newValue);
   };
 
@@ -1045,6 +1082,14 @@ const ROMView = ({
       trailing: true
     })
   );
+
+  useEffect(() => {
+    if (context.current) {
+      let { point } = context.current;
+
+      point.setCenter(streamsXValue, streamsYValue, streamsZValue);
+    }
+  }, [streamsXValue, streamsYValue, streamsZValue]);
 
   const [debounceUpdateStreams] = useState(() =>
     debounce(updateStreams, debounceTimeStreams, {
