@@ -240,27 +240,27 @@ const ROMView = ({
         cameraPosition,
         renderer,
         renderWindow } = context.current;
-     renderer.getActiveCamera().setProjectionMatrix(null);
-     renderer.resetCamera();
-     renderer.getActiveCamera().setPosition
-     (
-       cameraPosition[0],
-       cameraPosition[1],
-       cameraPosition[2]
-     );
-     renderer.getActiveCamera().setFocalPoint
-     (
-       focalPoint[0],
-       focalPoint[1],
-       focalPoint[2]
-     );
-     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
-     fullScreenRenderer.resize();
-     if (portrait)
-       renderer.getActiveCamera().zoom(initialZoomPortrait);
-     else
-       renderer.getActiveCamera().zoom(initialZoomLandscape);
-     renderWindow.render();
+      renderer.getActiveCamera().setProjectionMatrix(null);
+      renderer.resetCamera();
+      renderer.getActiveCamera().setPosition
+      (
+        cameraPosition[0],
+        cameraPosition[1],
+        cameraPosition[2]
+      );
+      renderer.getActiveCamera().setFocalPoint
+      (
+        focalPoint[0],
+        focalPoint[1],
+        focalPoint[2]
+      );
+      renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
+      fullScreenRenderer.resize();
+      if (portrait)
+        renderer.getActiveCamera().zoom(initialZoomPortrait);
+      else
+        renderer.getActiveCamera().zoom(initialZoomLandscape);
+      renderWindow.render();
     }
   }
 
@@ -569,7 +569,6 @@ const ROMView = ({
     mapperPlaneZ.setInputData(planeZ);
     mapperPoint.setInputConnection(point.getOutputPort());
 
-
     actorStreams.setVisibility(false);
     actorPoint.setVisibility(false);
     actorPoint.getProperty().setColor(1.0, 0.0, 1.0);
@@ -725,6 +724,8 @@ const ROMView = ({
       streams
     };
 
+    setVelocityValue([initialVelocity, 0.0]);
+    setTemperatureValue(initialTemperature);
     setSceneLoaded(true);
   }
 
@@ -738,8 +739,11 @@ const ROMView = ({
            let a = document.createElement('a');
            a.innerHTML = 'download';
            a.href = URL.createObjectURL(blob);
-           a.download = caseName + '_T_' + temperatureValue.toFixed(2) + '_Ux_' +
-             velocityValue[0].toFixed(2) + '_Uy_' + velocityValue[1].toFixed(2) + '.png';
+           a.download = caseName +
+             '_T_' + temperatureValue.toFixed(2) +
+             '_Ux_' + velocityValue[0].toFixed(2) +
+             '_Uy_' + (Math.round(velocityValue[1] * 100)/100) +
+             '.png';
            a.click();
          })();
        }
@@ -756,8 +760,11 @@ const ROMView = ({
        let a = document.createElement('a');
        a.innerHTML = 'download';
        a.href = URL.createObjectURL(blob);
-       a.download = caseName + '_T_' + temperatureValue.toFixed(2) + '_Ux_' +
-         velocityValue[0].toFixed(2) + '_Uy_' + velocityValue[1].toFixed(2) + '.vtu';
+       a.download = caseName +
+         '_T_' + temperatureValue.toFixed(2) +
+         '_Ux_' + velocityValue[0].toFixed(2) +
+         '_Uy_' + (Math.round(velocityValue[1] * 100)/100) +
+         '.vtu';
        a.click();
     }
   }
