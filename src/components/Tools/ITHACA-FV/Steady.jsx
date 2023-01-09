@@ -275,24 +275,6 @@ function Steady() {
     setFiles([]);
   }
 
-  const dataToVector = (data) => {
-    const vecVec = new rom.VectorVector();
-    let rows = 0;
-    let cols = 0;
-    data.forEach(row => {
-      const vec = new rom.Vector();
-      row.forEach(value => {
-        vec.push_back(value)
-        if (rows === 0)
-          cols++;
-      });
-      vecVec.push_back(vec)
-      vec.delete()
-      rows++;
-    })
-    return [vecVec, rows, cols];
-  }
-
   const readFile = async (buffer) => {
     const csvData = buffer.toString();
 
@@ -687,7 +669,7 @@ function Steady() {
                 - For a try-out: download and drag the following
                 ZIP
                 <a
-                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.0.0/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
+                  href={'https://github.com/simzero-oss/cfd-xyz-data/blob/main/surrogates_v1.1.0/OF/incompressible/simpleFoam/pitzDaily.zip?raw=true'}
                 >
                   {' sample'}
                 </a>.

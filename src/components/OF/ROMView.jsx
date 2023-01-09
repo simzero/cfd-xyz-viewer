@@ -1,7 +1,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>. 
 
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Slider from '@mui/material/Slider';
@@ -12,15 +12,16 @@ import { makeStyles } from '@mui/styles';
 import {Buffer} from 'buffer';
 
 import '@kitware/vtk.js/Rendering/Profiles/Geometry';
-import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
 import vtkActor from '@kitware/vtk.js/Rendering/Core/Actor';
-import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
-import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
-import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
 import vtkColorMaps from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction/ColorMaps';
 import vtkColorTransferFunction from '@kitware/vtk.js/Rendering/Core/ColorTransferFunction';
-import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
+import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
+import vtkFullScreenRenderWindow from '@kitware/vtk.js/Rendering/Misc/FullScreenRenderWindow';
+import vtkMapper from '@kitware/vtk.js/Rendering/Core/Mapper';
 import vtkOutlineFilter from '@kitware/vtk.js/Filters/General/OutlineFilter';
+import vtkSphereSource from '@kitware/vtk.js/Filters/Sources/SphereSource';
+import vtkScalarBarActor from '@kitware/vtk.js/Rendering/Core/ScalarBarActor';
+import vtkXMLPolyDataReader from '@kitware/vtk.js/IO/XML/XMLPolyDataReader';
 
 import debounce from 'lodash/debounce';
 import { lightTheme, darkTheme } from './../theme';
@@ -30,6 +31,7 @@ import rom from '@simzero/rom'
 import JSZipUtils from 'jszip-utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
+import AirIcon from '@mui/icons-material/Air';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -42,10 +44,6 @@ import {isMobile} from 'react-device-detect';
 import PropagateLoader from 'react-spinners/PropagateLoader';
 
 const { ColorMode } = vtkMapper;
-
-// TODO: redundand instances of vtkScalarBarActor to be removed
-// when issue https://github.com/Kitware/vtk-js/issues/2111
-// is fixed.
 
 let dataRangeX, dataRangeY, dataRangeZ;
 
@@ -70,6 +68,7 @@ const ROMView = ({
     caseName,
     path,
     threeDimensions=false,
+    initialStreamsCoords=[0, 0, 0],
     initialPlanesCoords=[0, 0, 0],
     stepPlanes,
     ROMLink,
@@ -120,20 +119,30 @@ const ROMView = ({
   const [dataDownloaded, setDataDownloaded] = useState(false);
   const [sceneLoaded, setSceneLoaded] = useState(false);
   const [process, setProcess] = useState(10);
+  const [propagationValue, setPropagationValue] = useState(0);
+  const [radiusValue, setRadiusValue] = useState(0);
+  const [streamsXValue, setStreamsXValue] = useState(initialStreamsCoords[0]);
+  const [streamsYValue, setStreamsYValue] = useState(initialStreamsCoords[1]);
+  const [streamsZValue, setStreamsZValue] = useState(initialStreamsCoords[2]);
   const [planeXValue, setPlaneXValue] = useState(initialPlanesCoords[0]);
   const [planeYValue, setPlaneYValue] = useState(initialPlanesCoords[1]);
   const [planeZValue, setPlaneZValue] = useState(initialPlanesCoords[2]);
   const [bounds, setBounds] = useState([0, 0, 0, 0, 0, 0]);
   const [workerDone, setWorkerDone] = useState(false);
+  const [sceneMode, setSceneMode] = useState('planes')
   const [showU, setShowU] = useState(true);
-  const [showPlanes, setShowPlanes] = useState(false);
+  const [showBoxPlanes, setShowBoxPlanes] = useState(false);
+  const [showBoxStreams, setShowBoxStreams] = useState(false);
   const [showPlaneX, setShowPlaneX] = useState(true);
   const [showPlaneY, setShowPlaneY] = useState(true);
   const [showPlaneZ, setShowPlaneZ] = useState(true);
+  const [showStreams, setShowStreams] = useState(true);
+  const [streamsInitialized, setStreamsInitialized] = useState(false);
   const [vtpData, setVtpData] = useState(null);
 
   const debounceTimeVariables = (threeDimensions || isMobile) ? 500 : 1;
   const debounceTimePlanes = isMobile ? 250 : 1;
+  const debounceTimeStreams = isMobile ? 500 : 500;
 
   const localTheme = window.localStorage.getItem('theme') || 'light';
   const theme = localTheme === 'light' ? lightTheme : darkTheme;
@@ -231,27 +240,27 @@ const ROMView = ({
         cameraPosition,
         renderer,
         renderWindow } = context.current;
-     renderer.getActiveCamera().setProjectionMatrix(null);
-     renderer.resetCamera();
-     renderer.getActiveCamera().setPosition
-     (
-       cameraPosition[0],
-       cameraPosition[1],
-       cameraPosition[2]
-     );
-     renderer.getActiveCamera().setFocalPoint
-     (
-       focalPoint[0],
-       focalPoint[1],
-       focalPoint[2]
-     );
-     renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
-     fullScreenRenderer.resize();
-     if (portrait)
-       renderer.getActiveCamera().zoom(initialZoomPortrait);
-     else
-       renderer.getActiveCamera().zoom(initialZoomLandscape);
-     renderWindow.render();
+      renderer.getActiveCamera().setProjectionMatrix(null);
+      renderer.resetCamera();
+      renderer.getActiveCamera().setPosition
+      (
+        cameraPosition[0],
+        cameraPosition[1],
+        cameraPosition[2]
+      );
+      renderer.getActiveCamera().setFocalPoint
+      (
+        focalPoint[0],
+        focalPoint[1],
+        focalPoint[2]
+      );
+      renderer.getActiveCamera().setViewUp(0.0, 1.0, 0.0)
+      fullScreenRenderer.resize();
+      if (portrait)
+        renderer.getActiveCamera().zoom(initialZoomPortrait);
+      else
+        renderer.getActiveCamera().zoom(initialZoomLandscape);
+      renderWindow.render();
     }
   }
 
@@ -397,9 +406,12 @@ const ROMView = ({
     let scalarBarActor = vtkScalarBarActor.newInstance();
     let lookupTable = vtkColorTransferFunction.newInstance();
     let planeReader = vtkXMLPolyDataReader.newInstance();
+    let point = vtkSphereSource.newInstance();
     let actorPlaneX = vtkActor.newInstance();
     let actorPlaneY = vtkActor.newInstance();
     let actorPlaneZ = vtkActor.newInstance();
+    let actorStreams = vtkActor.newInstance();
+    let actorPoint = vtkActor.newInstance();
     let mapperPlaneX = vtkMapper.newInstance({
       interpolateScalarsBeforeMapping: true,
       colorByArrayName: 'uRec',
@@ -424,10 +436,20 @@ const ROMView = ({
       useLookupTableScalarRange: true,
       lookupTable,
     });
+    let mapperStreams = vtkMapper.newInstance({
+      interpolateScalarsBeforeMapping: true,
+      colorByArrayName: 'uRec',
+      colorMode: ColorMode.DEFAULT,
+      scalarMode: 'pointData',
+      useLookupTableScalarRange: true,
+      lookupTable,
+    });
+    let mapperPoint = vtkMapper.newInstance();
 
     mapperPlaneX.setScalarModeToUsePointFieldData();
     mapperPlaneY.setScalarModeToUsePointFieldData();
     mapperPlaneZ.setScalarModeToUsePointFieldData();
+    mapperStreams.setScalarModeToUsePointFieldData();
 
     let mapper = vtkMapper.newInstance({
       interpolateScalarsBeforeMapping: true,
@@ -492,6 +514,12 @@ const ROMView = ({
     polydataBounds = polydataBounds.map(bound => Math.round(bound * 1e2)/1e2);
     setBounds(polydataBounds);
 
+    let minBound = Math.min(polydataBounds[0], polydataBounds[2], polydataBounds[4]);
+    let maxBound = Math.min(polydataBounds[1], polydataBounds[3], polydataBounds[5]);
+    let sphereRadius = 0.025*(maxBound - minBound);
+    setRadiusValue(sphereRadius);
+    setPropagationValue(maxBound);
+
     let outline = vtkOutlineFilter.newInstance();
     outline.setInputData(polydataOutline);
     let mapperOutline = vtkMapper.newInstance();
@@ -501,8 +529,22 @@ const ROMView = ({
     actorOutline.getProperty().set({ lineWidth: 2 });
     actorOutline.getProperty().setColor(textColorLoader);
 
+    point.setCenter(streamsXValue, streamsYValue, streamsZValue);
+    point.setRadius(sphereRadius*0.17);
+
+    let polydataStreams = reduced.current.streams(
+      streamsXValue,
+      streamsYValue,
+      streamsZValue,
+      sphereRadius,
+      100.0
+    );
+    let buf = Buffer.from(polydataStreams, 'utf-8');
+    planeReader.parseAsArrayBuffer(buf);
+    let streams = planeReader.getOutputData(0);
+
     let polydataStringX = reduced.current.planeX(planeXValue);
-    let buf = Buffer.from(polydataStringX, 'utf-8');
+    buf = Buffer.from(polydataStringX, 'utf-8');
     planeReader.parseAsArrayBuffer(buf);
     let planeX = planeReader.getOutputData(0);
 
@@ -516,19 +558,30 @@ const ROMView = ({
     planeReader.parseAsArrayBuffer(buf);
     let planeZ = planeReader.getOutputData(0);
 
+    actorStreams.setMapper(mapperStreams);
     actorPlaneX.setMapper(mapperPlaneX);
     actorPlaneY.setMapper(mapperPlaneY);
     actorPlaneZ.setMapper(mapperPlaneZ);
+    actorPoint.setMapper(mapperPoint);
+    mapperStreams.setInputData(streams);
     mapperPlaneX.setInputData(planeX);
     mapperPlaneY.setInputData(planeY);
     mapperPlaneZ.setInputData(planeZ);
+    mapperPoint.setInputConnection(point.getOutputPort());
 
+    actorStreams.setVisibility(false);
+    actorPoint.setVisibility(false);
+    actorPoint.getProperty().setColor(1.0, 0.0, 1.0);
+
+    renderer.addActor(actorStreams);
     renderer.addActor(actorOutline);
     renderer.addActor(scalarBarActor);
     renderer.addActor(actorPlaneX);
     renderer.addActor(actorPlaneY);
     renderer.addActor(actorPlaneZ);
+    renderer.addActor(actorPoint);
 
+    streams.getPointData().setActiveScalars('uRec');
     planeX.getPointData().setActiveScalars('uRec');
     planeY.getPointData().setActiveScalars('uRec');
     planeZ.getPointData().setActiveScalars('uRec');
@@ -573,17 +626,17 @@ const ROMView = ({
     mapperPlaneX.setScalarRange(min, max);
     mapperPlaneY.setScalarRange(min, max);
     mapperPlaneZ.setScalarRange(min, max);
-    mapperPlaneX.setColorByArrayName('uRec');
-    mapperPlaneY.setColorByArrayName('uRec');
-    mapperPlaneZ.setColorByArrayName('uRec');
+    mapperStreams.setScalarRange(min, max);
     mapperPlaneX.setInputData(planeX);
     mapperPlaneY.setInputData(planeY);
     mapperPlaneZ.setInputData(planeZ);
+    mapperStreams.setInputData(streams);
     mapperPlaneX.update();
     mapperPlaneY.update();
     mapperPlaneZ.update();
+    mapperStreams.update();
 
-    scalarBarActor.setScalarsToColors(mapperPlaneZ.getLookupTable());
+    scalarBarActor.setScalarsToColors(mapperPlaneX.getLookupTable());
     scalarBarActor.setAxisLabel('Velocity magnitude (m/s)');
     lookupTable.setMappingRange(min, max);
     lookupTable.updateRange();
@@ -645,27 +698,34 @@ const ROMView = ({
     renderWindow.render();
 
     context.current = {
-      focalPoint,
+      actorPlaneX,
+      actorPlaneY,
+      actorPlaneZ,
+      actorStreams,
+      actorPoint,
       cameraPosition,
-      reader,
-      mapper,
+      focalPoint,
       fullScreenRenderer,
-      renderWindow,
-      renderer,
       lookupTable,
-      scalarBarActor,
+      mapper,
+      mapperPlaneX,
+      mapperPlaneY,
+      mapperPlaneZ,
+      mapperStreams,
       planeReader,
       planeX,
       planeY,
       planeZ,
-      actorPlaneX,
-      actorPlaneY,
-      actorPlaneZ,
-      mapperPlaneX,
-      mapperPlaneY,
-      mapperPlaneZ
+      point,
+      reader,
+      renderWindow,
+      renderer,
+      scalarBarActor,
+      streams
     };
 
+    setVelocityValue([initialVelocity, 0.0]);
+    setTemperatureValue(initialTemperature);
     setSceneLoaded(true);
   }
 
@@ -679,8 +739,11 @@ const ROMView = ({
            let a = document.createElement('a');
            a.innerHTML = 'download';
            a.href = URL.createObjectURL(blob);
-           a.download = caseName + '_T_' + temperatureValue.toFixed(2) + '_Ux_' +
-             velocityValue[0].toFixed(2) + '_Uy_' + velocityValue[1].toFixed(2) + '.png';
+           a.download = caseName +
+             '_T_' + temperatureValue.toFixed(2) +
+             '_Ux_' + velocityValue[0].toFixed(2) +
+             '_Uy_' + (Math.round(velocityValue[1] * 100)/100) +
+             '.png';
            a.click();
          })();
        }
@@ -697,8 +760,11 @@ const ROMView = ({
        let a = document.createElement('a');
        a.innerHTML = 'download';
        a.href = URL.createObjectURL(blob);
-       a.download = caseName + '_T_' + temperatureValue.toFixed(2) + '_Ux_' +
-         velocityValue[0].toFixed(2) + '_Uy_' + velocityValue[1].toFixed(2) + '.vtu';
+       a.download = caseName +
+         '_T_' + temperatureValue.toFixed(2) +
+         '_Ux_' + velocityValue[0].toFixed(2) +
+         '_Uy_' + (Math.round(velocityValue[1] * 100)/100) +
+         '.vtu';
        a.click();
     }
   }
@@ -729,14 +795,16 @@ const ROMView = ({
       renderWindow.render();
   };
 
-  const calculateNewField3D = (doReconstruct, doPlaneX, doPlaneY, doPlaneZ) => {
+  const calculateNewField3D = (doReconstruct, doPlaneX, doPlaneY, doPlaneZ, doStreams) => {
     if (context.current) {
       let {
         renderWindow,
         lookupTable,
+        planeReader,
         planeX,
         planeY,
-        planeZ } = context.current;
+        planeZ,
+        streams } = context.current;
 
       if (doReconstruct) {
         reduced.current.nu(temperatureToViscosity(temperatureValue)*1e-05);
@@ -780,29 +848,51 @@ const ROMView = ({
         planeX.getPointData().addArray(array);
       }
 
-      if (doPlaneY && showPlaneY) {
-        updatePlaneY();
-      }
-      if (doPlaneZ && showPlaneZ) {
-        updatePlaneZ();
-      }
-      if (doPlaneX && showPlaneX) {
-        updatePlaneX();
+      const updateStreams = () => {
+        let polydataStreams = reduced.current.streams(
+          streamsXValue,
+          streamsYValue,
+          streamsZValue,
+          radiusValue,
+          propagationValue
+        );
+        let buf = Buffer.from(polydataStreams, 'utf-8');
+        planeReader.parseAsArrayBuffer(buf);
+        streams.shallowCopy(planeReader.getOutputData(0));
+        let activeArray = streams.getPointData().getArrays()[0];
+        if (activeArray)
+          dataRangeX = activeArray.getRange();
       }
 
-      lookupTable.setMappingRange(
-        Math.min(dataRangeX[0], dataRangeY[0], dataRangeZ[0]),
-        Math.max(dataRangeX[1], dataRangeY[1], dataRangeZ[1])
-      );
+      if (doPlaneY) {
+        updatePlaneY();
+      }
+      if (doPlaneZ) {
+        updatePlaneZ();
+      }
+      if (doPlaneX) {
+        updatePlaneX();
+      }
+      if (doStreams) {
+        updateStreams();
+        lookupTable.setMappingRange(dataRangeX[0], dataRangeX[1]);
+      }
+
+      if (doPlaneX || doPlaneY || doPlaneZ) {
+        lookupTable.setMappingRange(
+          Math.min(dataRangeX[0], dataRangeY[0], dataRangeZ[0]),
+          Math.max(dataRangeX[1], dataRangeY[1], dataRangeZ[1])
+        );
+      }
 
       lookupTable.updateRange();
 
+      renderWindow.modified();
       renderWindow.render();
     };
   };
 
   const updateVariables = (eventSrc, value) => {
-    console.log(eventSrc)
     if (eventSrc === 'slider-angle') {
       let Ux = initialVelocity*xComponent(value);
       let Uy = initialVelocity*yComponent(value);
@@ -819,13 +909,28 @@ const ROMView = ({
   };
 
   const updatePlanes = (eventSrc, value) => {
-    console.log(eventSrc)
     if (eventSrc === 'slider-planeX') {
       setPlaneXValue(value);
     } else if (eventSrc === 'slider-planeY') {
       setPlaneYValue(value);
     } else if (eventSrc === 'slider-planeZ') {
       setPlaneZValue(value);
+    } else {
+      console.log('Slider not known');
+    }
+  };
+
+  const updateStreams = (eventSrc, value) => {
+    if (eventSrc === 'slider-streamsX') {
+      setStreamsXValue(value);
+    } else if (eventSrc === 'slider-streamsY') {
+      setStreamsYValue(value);
+    } else if (eventSrc === 'slider-streamsZ') {
+      setStreamsZValue(value);
+    } else if (eventSrc === 'slider-radius') {
+      setRadiusValue(value);
+    } else if (eventSrc === 'slider-propagation') {
+      setPropagationValue(value);
     } else {
       console.log('Slider not known');
     }
@@ -846,16 +951,80 @@ const ROMView = ({
   // - Show/hide variables
   const handleSetShowU = () => {
     setShowU(!showU);
-    if (!showU)
-      setShowPlanes(false);
+    if (!showU) {
+      setShowBoxStreams(false);
+      setShowBoxPlanes(false);
+    }
+  };
+
+  // - Show/hide lines
+  const handleSetShowStreams = () => {
+    if (context.current) {
+      let {
+        actorPlaneX,
+        actorPlaneY,
+        actorPlaneZ,
+        actorStreams,
+        actorPoint } = context.current;
+
+      if (!streamsInitialized) {
+        setShowStreams(true);
+        setStreamsInitialized(true);
+      }
+
+      setShowU(showU ? null : false);
+      setShowBoxStreams(!showBoxStreams);
+      setShowBoxPlanes(showBoxPlanes ? null : false);
+
+      if (!showBoxStreams) {
+        setSceneMode('streams');
+        actorStreams.setVisibility(showStreams);
+        actorPoint.setVisibility(showStreams);
+        actorPlaneX.setVisibility(false);
+        actorPlaneY.setVisibility(false);
+        actorPlaneZ.setVisibility(false);
+        calculateNewField3D(false, false, false, false, true);
+      }
+    }
   };
 
   // - Show/hide planes
-  const handleSetShowPlanes = () => {
-    setShowPlanes(!showPlanes);
-    if (!showPlanes)
-      setShowU(false);
+  const handleSetShowBoxPlanes = () => {
+    if (context.current) {
+      let {
+        actorPlaneX,
+        actorPlaneY,
+        actorPlaneZ,
+        actorStreams,
+        renderWindow } = context.current;
+
+      setShowU(showBoxPlanes ? null : false);
+      setShowBoxStreams(showBoxPlanes ? null : false);
+      setShowBoxPlanes(!showBoxPlanes);
+
+      if (!showBoxPlanes) {
+        setSceneMode('planes');
+        calculateNewField3D(false, true, true, true, false);
+      }
+
+      actorPlaneX.setVisibility(showPlaneX);
+      actorPlaneY.setVisibility(showPlaneY);
+      actorPlaneZ.setVisibility(showPlaneZ);
+      actorStreams.setVisibility(false);
+      renderWindow.modified();
+      renderWindow.render();
+    }
   };
+
+  const handleStreams = () => {
+    if (context.current) {
+      let { actorStreams, actorPoint, renderWindow } = context.current;
+      setShowStreams(!showStreams);
+      actorStreams.setVisibility(!showStreams);
+      actorPoint.setVisibility(!showStreams);
+      renderWindow.render();
+    }
+  }
 
   const handlePlaneX = () => {
     if (context.current) {
@@ -889,6 +1058,24 @@ const ROMView = ({
     debounceUpdatePlanes(event.target.name, newValue);
   };
 
+  const handleChangeStreams = (event, newValue) => {
+    if (event.target.name === 'slider-streamsX') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(newValue, streamsYValue, streamsZValue);
+      renderWindow.render();
+    } else if (event.target.name === 'slider-streamsY') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(streamsXValue, newValue, streamsZValue);
+      renderWindow.render();
+    } else if (event.target.name === 'slider-streamsZ') {
+      let { point, renderWindow } = context.current;
+      point.setCenter(streamsXValue, streamsYValue, newValue);
+      renderWindow.render();
+    }
+
+    debounceUpdateStreams(event.target.name, newValue);
+  };
+
   const [debounceUpdateVariables] = useState(() =>
     debounce(updateVariables, debounceTimeVariables, {
       leading: false,
@@ -904,12 +1091,33 @@ const ROMView = ({
   );
 
   useEffect(() => {
+    if (context.current) {
+      let { point } = context.current;
+
+      point.setCenter(streamsXValue, streamsYValue, streamsZValue);
+    }
+  }, [streamsXValue, streamsYValue, streamsZValue]);
+
+  const [debounceUpdateStreams] = useState(() =>
+    debounce(updateStreams, debounceTimeStreams, {
+      leading: false,
+      trailing: true
+    })
+  );
+
+  useEffect(() => {
     worker.current = createWorker();
     return () => {
       worker.current.terminate();
     }
   }, [])
 
+  // - Define new sphere position
+  useEffect(() => {
+    if (context.current && showStreams && sceneLoaded && streamsInitialized) {
+      calculateNewField3D(false, false, false, false, true);
+    }
+  }, [streamsXValue, streamsYValue, streamsZValue, radiusValue, propagationValue]);
 
   // - Define new X slice
   useEffect(() => {
@@ -920,7 +1128,7 @@ const ROMView = ({
 
       planeReader.parseAsArrayBuffer(buf);
       planeX.shallowCopy(planeReader.getOutputData(0));
-      calculateNewField3D(false, true, false, false);
+      calculateNewField3D(false, true, false, false, false);
     }
   }, [showPlaneX, planeXValue]);
 
@@ -933,7 +1141,7 @@ const ROMView = ({
 
       planeReader.parseAsArrayBuffer(buf);
       planeY.shallowCopy(planeReader.getOutputData(0));
-      calculateNewField3D(false, false, true, false);
+      calculateNewField3D(false, false, true, false, false);
     }
   }, [showPlaneY, planeYValue]);
 
@@ -946,7 +1154,7 @@ const ROMView = ({
 
       planeReader.parseAsArrayBuffer(buf);
       planeZ.shallowCopy(planeReader.getOutputData(0));
-      calculateNewField3D(false, false, false, true);
+      calculateNewField3D(false, false, false, true, false);
     }
   }, [showPlaneZ, planeZValue]);
 
@@ -971,7 +1179,6 @@ const ROMView = ({
             setProcess(e.data.percent);
             break;
           case 'initialization':
-            // rom.doLeakCheck();
             worker.current.removeEventListener('message', initialize);
             setIsReady(true);
             setZipFiles(null);
@@ -1043,7 +1250,6 @@ const ROMView = ({
             break;
           default:
             console.log('Wrong worker type: ', e.data.event);
-
             break;
         }
       }
@@ -1082,7 +1288,7 @@ const ROMView = ({
               color: '#777',
               fontFamily: theme.vtkText.fontFamily,
               paddingiBottom: 4
-	    }}
+            }}
           >
             Contributors:
           </div>
@@ -1139,7 +1345,12 @@ const ROMView = ({
   useEffect(() => {
     if (context.current) {
       if (threeDimensions) {
-        calculateNewField3D(true, true, true, true);
+        if (sceneMode === 'streams') {
+          calculateNewField3D(true, false, false, false, true);
+        }
+        if (sceneMode === 'planes') {
+          calculateNewField3D(true, true, true, true, false);
+        }
       }
       else {
         calculateNewField2D();
@@ -1189,14 +1400,17 @@ const ROMView = ({
           planeX,
           planeY,
           planeZ,
+          streams,
           polydata,
           actor,
+          actorStreams,
           actorPlaneX,
           actorPlaneY,
           actorPlaneZ,
           mapperPlaneX,
           mapperPlaneY,
           mapperPlaneZ,
+          mapperStreams,
           mapper } = context.current;
 
         reader.delete();
@@ -1209,12 +1423,15 @@ const ROMView = ({
 
         if (threeDimensions) {
           planeReader.delete();
+          actorStreams.delete();
           actorPlaneX.delete();
           actorPlaneY.delete();
           actorPlaneZ.delete();
+          mapperStreams.delete();
           mapperPlaneX.delete();
           mapperPlaneY.delete();
           mapperPlaneZ.delete();
+          streams.delete();
           planeX.delete();
           planeY.delete();
           planeZ.delete();
@@ -1587,13 +1804,13 @@ const ROMView = ({
                   marginRight: '2%',
                   border: '1px solid rgba(125, 125, 125)',
                 }}
-                className={showPlanes ? classes.viewButtonsPressed : null}
+                className={(showBoxPlanes) ? classes.viewButtonsPressed : null}
               >
                 <Tooltip title='Show planes' enterDelay={1000} leaveDelay={200} arrow>
                   <Box
                     className={classes.link}
                     sx={{ height: '34px', width: '34px' }}
-                    onClick={handleSetShowPlanes}
+                    onClick={handleSetShowBoxPlanes}
                   >
                     <LayersIcon
                       style={{width: '32px', height: '32px'}}
@@ -1602,9 +1819,37 @@ const ROMView = ({
                 </Tooltip>
               </div>
           }
+          {(threeDimensions) &&
+              <div
+                style={{
+                  cursor: 'pointer',
+                  paddingBottom: 60,
+                  position: 'absolute',
+                  top: '60px',
+                  right: (isMobile && landscape) ? '290px' : '270px',
+                  backgroundColor: background,
+                  padding: '5px',
+                  marginRight: '2%',
+                  border: '1px solid rgba(125, 125, 125)',
+                }}
+                className={(showBoxStreams) ? classes.viewButtonsPressed : null}
+              >
+                <Tooltip title='Show streamlines' enterDelay={1000} leaveDelay={200} arrow>
+                  <Box
+                    className={classes.link}
+                    sx={{ height: '34px', width: '34px' }}
+                    onClick={handleSetShowStreams}
+                  >
+                    <AirIcon
+                      style={{width: '32px', height: '32px'}}
+                    />
+                  </Box>
+                </Tooltip>
+              </div>
+          }
         </div>
         }
-      {(sceneLoaded && !showPlanes && showU) &&
+      {(sceneLoaded && showU) &&
       <div
         style={{
           width: 250,
@@ -1673,7 +1918,7 @@ const ROMView = ({
                       step={stepTemperature}
                       min={minTemperature}
                       max={maxTemperature}
-                      valueLabelDisplay='off'
+                      valueLabelDisplay='auto'
                     />
                   </Box>
                 </div>
@@ -1743,7 +1988,7 @@ const ROMView = ({
                       step={stepVelocity}
                       min={minVelocity}
                       max={maxVelocity}
-                      valueLabelDisplay='off'
+                      valueLabelDisplay='auto'
                     />
                   </Box>
                 </div>
@@ -1813,7 +2058,7 @@ const ROMView = ({
                       step={stepAngle}
                       min={minAngle}
                       max={maxAngle}
-                      valueLabelDisplay="off"
+                      valueLabelDisplay="auto"
                     />
                   </Box>
                 </div>
@@ -1836,7 +2081,7 @@ const ROMView = ({
         </div>
       </div>
       }
-      {(sceneLoaded && showPlanes) &&
+      {(sceneLoaded && showBoxPlanes) &&
         <div
           style={{
             width: 250,
@@ -1915,7 +2160,7 @@ const ROMView = ({
                     step={stepPlanes}
                     min={bounds[0]}
                     max={bounds[1]}
-                    valueLabelDisplay="off"
+                    valueLabelDisplay="auto"
                   />
                 </Box>
               </div>
@@ -1995,7 +2240,7 @@ const ROMView = ({
                     step={stepPlanes}
                     min={bounds[2]}
                     max={bounds[3]}
-                    valueLabelDisplay='off'
+                    valueLabelDisplay='auto'
                   />
                 </Box>
               </div>
@@ -2081,7 +2326,7 @@ const ROMView = ({
                     step={stepPlanes}
                     min={bounds[4]}
                     max={bounds[5]}
-                    valueLabelDisplay='off'
+                    valueLabelDisplay='auto'
                   />
                 </Box>
               </div>
@@ -2097,6 +2342,382 @@ const ROMView = ({
                 className={classes.vtkText}
               >
                 {planeZValue}
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      {(sceneLoaded && showBoxStreams) &&
+        <div
+          style={{
+            width: 250,
+            display: "inline-block",
+            verticalAlign: "middle",
+            alignItems: "center",
+            paddingTop: 0,
+            paddingBottom: 0,
+            padding: 0,
+            position: 'absolute',
+            top: portrait ? '120px' : '60px',
+            left: portrait ? '' : '20px',
+            right: portrait ? '25px' : '',
+            backgroundColor: secondaryColor,
+            border: '1px solid rgba(125, 125, 125)',
+          }}
+        >
+          <div style={{alignItems: "center", verticalAlign: "middle", padding: 0}}>
+            <div
+              style={{
+                paddingLeft: 6,
+                display: "flex",
+                flexFlow: "row",
+                paddingTop: 2
+              }}
+              className={classes.vtkText}
+            >
+              <span className={classes.vtkText}>
+                Position X (m)
+              </span>
+              <span
+                style={{
+                  paddingLeft: 20
+                }}
+                className={classes.link}
+                sx={{
+                  height: '200px',
+                  width: '200px'
+                }}
+                onClick={handleStreams}
+              >
+                {showStreams
+                  ? <VisibilityIcon style={{width: '20px', height: '20px'}}/>
+                  : <VisibilityOffIcon style={{width: '20px', height: '20px'}}/>
+                }
+              </span>
+            </div>
+            <div style={{display: 'flex', flexFlow: 'row', padding: 0}}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  padding: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    paddingBottom: 0,
+                    paddingLeft: 1,
+                    paddingTop: 0,
+                    paddingRight: 3,
+                    width: 200
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  <Slider
+                    className={classes.slider}
+                    name={'slider-streamsX'}
+                    defaultValue={streamsXValue}
+                    onChange={handleChangeStreams}
+                    step={stepPlanes}
+                    min={bounds[0]}
+                    max={bounds[1]}
+                    valueLabelDisplay='auto'
+                  />
+                </Box>
+              </div>
+              <div
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle'
+                }}
+                className={classes.vtkText}
+              >
+                {streamsXValue}
+              </div>
+            </div>
+          </div>
+          <div style={{alignItems: 'center', verticalAlign: 'middle', padding: 0}}>
+            <div
+              style={{
+                paddingLeft: 6,
+                display: 'flex',
+                flexFlow: 'row',
+                paddingTop: 2
+              }}
+              className={classes.vtkText}
+            >
+              <span className={classes.vtkText}>
+                Position Y (m)
+              </span>
+            </div>
+            <div style={{display: 'flex', flexFlow: 'row', padding: 0}}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  padding: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    paddingBottom: 0,
+                    paddingLeft: 1,
+                    paddingTop: 0,
+                    paddingRight: 3,
+                    width: 200
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  <Slider
+                    className={classes.slider}
+                    name={'slider-streamsY'}
+                    defaultValue={streamsYValue}
+                    onChange={handleChangeStreams}
+                    step={stepPlanes}
+                    min={bounds[2]}
+                    max={bounds[3]}
+                    valueLabelDisplay='auto'
+                  />
+                </Box>
+              </div>
+              <div
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle'
+                }}
+                className={classes.vtkText}
+              >
+                {streamsYValue}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              alignItems: 'center',
+              verticalAlign: 'middle',
+              padding: 0
+            }}
+          >
+            <div
+              style={{
+                paddingLeft: 6,
+                display: 'flex',
+                flexFlow: 'row',
+                paddingTop: 2
+              }}
+              className={classes.vtkText}
+            >
+              <span className={classes.vtkText}>
+                Position Z (m)
+              </span>
+            </div>
+            <div style={{display: 'flex', flexFlow: 'row', padding: 0}}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  padding: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    paddingBottom: 0,
+                    paddingLeft: 1,
+                    paddingTop: 0,
+                    paddingRight: 3,
+                    width: 200
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  <Slider
+                    className={classes.slider}
+                    name={'slider-streamsZ'}
+                    defaultValue={streamsZValue}
+                    onChange={handleChangeStreams}
+                    step={stepPlanes}
+                    min={bounds[4]}
+                    max={bounds[5]}
+                    valueLabelDisplay='auto'
+                  />
+                </Box>
+              </div>
+              <div
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle'
+                }}
+                className={classes.vtkText}
+              >
+                {streamsZValue}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              alignItems: 'center',
+              verticalAlign: 'middle',
+              padding: 0
+            }}
+          >
+            <div
+              style={{
+                paddingLeft: 6,
+                display: 'flex',
+                flexFlow: 'row',
+                paddingTop: 2
+              }}
+              className={classes.vtkText}
+            >
+              <span className={classes.vtkText}>
+                Radius (m)
+              </span>
+            </div>
+            <div style={{display: 'flex', flexFlow: 'row', padding: 0}}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  padding: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    paddingBottom: 0,
+                    paddingLeft: 1,
+                    paddingTop: 0,
+                    paddingRight: 3,
+                    width: 200
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  <Slider
+                    className={classes.slider}
+                    name={'slider-radius'}
+                    defaultValue={radiusValue}
+                    onChange={handleChangeStreams}
+                    step={stepPlanes}
+                    min={0}
+                    max={0.1*Math.abs(Math.max(bounds[1], bounds[3], bounds[5])
+                           - Math.min(bounds[0], bounds[2], bounds[4]))}
+                    valueLabelDisplay='auto'
+                  />
+                </Box>
+              </div>
+              <div
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle'
+                }}
+                className={classes.vtkText}
+              >
+                {radiusValue}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              alignItems: 'center',
+              verticalAlign: 'middle',
+              padding: 0
+            }}
+          >
+            <div
+              style={{
+                paddingLeft: 6,
+                display: 'flex',
+                flexFlow: 'row',
+                paddingTop: 2
+              }}
+              className={classes.vtkText}
+            >
+              <span className={classes.vtkText}>
+                Propagation (m)
+              </span>
+            </div>
+            <div style={{display: 'flex', flexFlow: 'row', padding: 0}}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle',
+                  padding: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    paddingBottom: 0,
+                    paddingLeft: 1,
+                    paddingTop: 0,
+                    paddingRight: 3,
+                    width: 200
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    verticalAlign: 'middle'
+                  }}
+                >
+                  <Slider
+                    className={classes.slider}
+                    name={'slider-propagation'}
+                    defaultValue={propagationValue}
+                    onChange={handleChangeStreams}
+                    step={stepPlanes}
+                    min={0}
+                    max={1.0*Math.abs(Math.max(bounds[1], bounds[3], bounds[5])
+                           - Math.min(bounds[0], bounds[2], bounds[4]))}
+                    valueLabelDisplay='auto'
+                  />
+                </Box>
+              </div>
+              <div
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingRight: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  verticalAlign: 'middle'
+                }}
+                className={classes.vtkText}
+              >
+                {propagationValue}
               </div>
             </div>
           </div>

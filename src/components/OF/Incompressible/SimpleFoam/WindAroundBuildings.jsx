@@ -5,6 +5,7 @@ const surrogatesPath = '/surrogates';
 
 // - Define case custom data
 const threeDimensions = true;
+const initialStreamsCoords = [-20.0, 42.0, 10.0];
 const initialPlanesCoords = [300.0, 150.0, 28.0];
 const stepPlanes = 1.0;
 const stabilization = "PPE";
@@ -27,7 +28,9 @@ const ROMLink = "examples/OpenFOAM/incompressible/simpleFoam/windAroundBuildings
 function WindAroundBuildings() {
   const casePath = window.location.pathname
   const caseName = casePath.split("/").pop();
-  const path = surrogatesPath + casePath
+  const repo = "https://raw.githubusercontent.com/simzero-oss/cfd-xyz-data/main/surrogates_v1.1.0/"
+  // const path = surrogatesPath + casePath;
+  const path = repo + casePath;
 
   useEffect(() => {
     document.title = "cfd.xyz | OF/incompressible/simpleFoam/windAroundBuildings"
@@ -37,6 +40,7 @@ function WindAroundBuildings() {
     <div style={{ paddingBottom: 50}}>
       <ROMView
         threeDimensions={threeDimensions}
+        initialStreamsCoords={initialStreamsCoords}
         initialPlanesCoords={initialPlanesCoords}
         stepPlanes={stepPlanes}
         caseName={caseName}
